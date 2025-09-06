@@ -24,7 +24,7 @@
 <table border="1">
   <tr><th>ID</th><th>Nombre</th><th>RUT</th><th>Fecha Alta</th><th>Activo</th></tr>
   <%
-    List<PrestadorSalud> lista = (List<PrestadorSalud>) request.getAttribute("prestadorSalud");
+    List<PrestadorSalud> lista = (List<PrestadorSalud>) request.getAttribute("listaPrestadorSalud");
     if (lista != null) {
       for (PrestadorSalud p : lista) {
   %>
@@ -34,8 +34,16 @@
           <td><%= p.getRut() %></td>
           <td><%= p.getFechaAlta() %></td>
           <td><%= p.isActivo() %></td>
+          <td>
+            <form method="post" action="<%= request.getContextPath() %>/prestadorSalud">
+              <input type="hidden" name="rut" value="<%= p.getRut() %>">
+              <input type="hidden" name="accion" value="eliminar">
+              <button type="submit">Eliminar</button>
+            </form>
+          </td>
         </tr>
   <%  } } %>
 </table>
+
 </body>
 </html>

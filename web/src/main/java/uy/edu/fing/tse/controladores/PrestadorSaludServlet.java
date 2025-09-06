@@ -17,30 +17,49 @@ public class PrestadorSaludServlet extends HttpServlet {
     @EJB
     private PrestadorSaludServiceLocal prestadorService;
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+   @Override
+protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
 
-        PrestadorSalud p = new PrestadorSalud();
-        p.setNombre(req.getParameter("nombre"));
-        p.setRut(req.getParameter("rut"));
-        p.setFechaAlta(LocalDate.now());
-        p.setActivo(true);
+    String accion = req.getParameter("accion");
 
+    if ("eliminar".equals(accion)) {
         try {
-            prestadorService.crear(p);
+            String rut = req.getParameter("rut");
+            prestadorService.eliminar(rut);  // <-- ver método del servicio abajo
             resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
-        } catch (IllegalArgumentException e) {
+            return;
+        } catch (Exception e) {
             req.setAttribute("error", e.getMessage());
-            doGet(req, resp); // vuelve a mostrar la página con el error
+            doGet(req, resp);
+            return;
         }
     }
+
+    
+    PrestadorSalud p = new PrestadorSalud();
+    p.setNombre(req.getParameter("nombre"));
+    p.setRut(req.getParameter("rut"));
+    p.setFechaAlta(java.time.LocalDate.now());
+    p.setActivo(true);
+
+    try {
+        prestadorService.crear(p);
+        resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
+    } catch (IllegalArgumentException e) {
+        req.setAttribute("error", e.getMessage());
+        doGet(req, resp);
+    }
+}
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
         List<PrestadorSalud> lista = prestadorService.listar();
-        req.setAttribute("prestadorSalud", lista);
+
+        req.setAttribute("listaPrestadorSalud", lista);
         req.getRequestDispatcher("/vistas/prestadorSalud.jsp").forward(req, resp);
     }
 }

@@ -9,9 +9,9 @@ import uy.edu.fing.tse.entidades.PrestadorSalud;
 public interface PrestadorSaludServiceRemote extends PrestadorSaludServiceLocal {
 
     PrestadorSalud crear(PrestadorSalud prestador);
-    PrestadorSalud obtener(long id);
+    PrestadorSalud obtener(String rut);
     void actualizar(PrestadorSalud prestador);
-    void eliminar(long id);
+    void eliminar(String rut);
     List<PrestadorSalud> listar();
 
 }

@@ -1,6 +1,7 @@
 package uy.edu.fing.tse.entidades;
 
 import java.time.LocalDate;
+//import java.util.List;
 
 public class PrestadorSalud {
     private long id;
@@ -8,6 +9,9 @@ public class PrestadorSalud {
     private String rut;
     private LocalDate fechaAlta;
     private boolean activo;
+    //private List<UsuarioServicioSalud> lstUsuariosAfiliados;
+    //private List<TrabajadorSalud> lstEmpleados;
+    //private List<DocumentoClinico> lstDocumentoClinicoS;
 
 
     public long getId() {

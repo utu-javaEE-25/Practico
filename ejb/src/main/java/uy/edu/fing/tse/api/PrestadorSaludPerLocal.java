@@ -8,8 +8,11 @@ import uy.edu.fing.tse.entidades.PrestadorSalud;
 @Local
 public interface PrestadorSaludPerLocal {
     PrestadorSalud crear(PrestadorSalud prestador);
-    PrestadorSalud obtener(long id);
+    PrestadorSalud obtener(String rut);
     void actualizar(PrestadorSalud prestador);
-    void eliminar(long id);
+    void eliminar(String rut);
     List<PrestadorSalud> listar();
+    PrestadorSalud obtenerPorRut(String rut);
+    boolean existeRut(String rut);
+
 }

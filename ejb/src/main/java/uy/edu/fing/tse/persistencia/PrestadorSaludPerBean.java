@@ -12,7 +12,7 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
     private final Map<Long, PrestadorSalud> dato = new LinkedHashMap<>();
     private long secuencia = 1L;
 
-
+    @Override
     public PrestadorSalud crear(PrestadorSalud prestadorSalud) {
         if (prestadorSalud.getId() == 0) {
             prestadorSalud.setId(secuencia++);
@@ -21,10 +21,12 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
         return prestadorSalud;
     }
 
-    public PrestadorSalud obtener(long id) {
-        return dato.get(id);
+    @Override
+    public PrestadorSalud obtener(String rut) {
+        return dato.get(rut);
     }
 
+    @Override
     public void actualizar(PrestadorSalud prestadorSalud) {
         if (!dato.containsKey(prestadorSalud.getId())) {
             throw new IllegalArgumentException("El prestador de salud con ID " + prestadorSalud.getId() + " no existe.");
@@ -33,13 +35,31 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
         dato.put(prestadorSalud.getId(), prestadorSalud);
     }
     
-    public void eliminar(long id) {
-
-        dato.remove(id);
+    @Override
+    public void eliminar(String rut) {
+        PrestadorSalud prestador = obtenerPorRut(rut);
+        if (prestador != null) {
+            dato.remove(prestador.getId());
+        }
     }
 
+    @Override
     public List<PrestadorSalud> listar() {
         return new ArrayList<>(dato.values());
+    }
+
+    @Override
+    public PrestadorSalud obtenerPorRut(String rut) {
+        if (rut == null) return null;
+        for (PrestadorSalud p : dato.values()) {
+            if (rut.equals(p.getRut())) return p;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean existeRut(String rut) {
+        return obtenerPorRut(rut) != null;
     }
     
 
