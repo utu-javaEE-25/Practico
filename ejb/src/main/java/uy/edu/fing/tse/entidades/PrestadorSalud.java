@@ -7,6 +7,7 @@ public class PrestadorSalud {
     private String nombre;
     private String rut;
     private LocalDate fechaAlta;
+    private boolean activo;
 
 
     public long getId() {
@@ -20,5 +21,23 @@ public class PrestadorSalud {
     }
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+        public String getRut() {
+        return rut;
+    }
+    public void setRut(String rut) {
+        this.rut = rut;
+    }
+    public LocalDate getFechaAlta() {
+        return fechaAlta;
+    }
+    public void setFechaAlta(LocalDate fechaAlta) {
+        this.fechaAlta = fechaAlta;
+    }
+    public boolean isActivo() {
+        return activo;
+    }
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }

@@ -2,15 +2,17 @@ package uy.edu.fing.tse.servicios;
 
 import java.util.List;
 
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
-import uy.edu.fing.tse.persistencia.PrestadorSaludPerBean;
+import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
 
 @Stateless
 public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
-    private PrestadorSaludPerBean prestadorSaludPerBean;
+    @EJB
+    private PrestadorSaludPerLocal per;
 
     @Override
     public PrestadorSalud crear(PrestadorSalud prestador) {
@@ -23,27 +25,27 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
             
         }
         
-        return prestadorSaludPerBean.crear(prestador);
+        return per.crear(prestador);
     }
 
     @Override
     public PrestadorSalud obtener(long id) {
-        return prestadorSaludPerBean.obtener(id);
+        return per.obtener(id);
     }
 
     @Override
     public void actualizar(PrestadorSalud prestador) {
-        prestadorSaludPerBean.actualizar(prestador);
+        per.actualizar(prestador);
     }
 
     @Override
     public void eliminar(long id) {
-        prestadorSaludPerBean.eliminar(id);
+        per.eliminar(id);
     }
 
     @Override
     public List<PrestadorSalud> listar() {
-        return prestadorSaludPerBean.listarTodos();
+        return per.listar();
     }
 
 }

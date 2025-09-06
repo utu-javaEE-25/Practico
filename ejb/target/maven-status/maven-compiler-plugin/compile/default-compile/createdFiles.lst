@@ -1,0 +1,7 @@
+uy\edu\fing\tse\api\PrestadorSaludServiceLocal.class
+uy\edu\fing\tse\servicios\PrestadorSaludServiceBean.class
+uy\edu\fing\tse\persistencia\PrestadorSaludPerBean.class
+uy\edu\fing\tse\entidades\PrestadorSalud.class
+uy\edu\fing\tse\api\PrestadorSaludPerRemote.class
+uy\edu\fing\tse\api\PrestadorSaludServiceRemote.class
+uy\edu\fing\tse\api\PrestadorSaludPerLocal.class

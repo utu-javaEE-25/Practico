@@ -4,10 +4,11 @@ import java.util.*;
 
 import jakarta.ejb.Singleton;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
+import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
 
 @Singleton
-public class PrestadorSaludPerBean {
-    
+public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
+
     private final Map<Long, PrestadorSalud> dato = new LinkedHashMap<>();
     private long secuencia = 1L;
 
@@ -37,8 +38,7 @@ public class PrestadorSaludPerBean {
         dato.remove(id);
     }
 
-    public List<PrestadorSalud> listarTodos() {
-
+    public List<PrestadorSalud> listar() {
         return new ArrayList<>(dato.values());
     }
     
