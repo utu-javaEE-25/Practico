@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Gestión de Trabajadores con JSF</title>
+</h:head>
+<h:body>
+    <h1>Formulario de Alta</h1>
+
+    <h:form id="formAlta">
+        <h:panelGrid columns="2">
+            <h:outputLabel value="Cédula:" />
+            <h:inputText value="#{trabajadorSaludBean.nuevoTrabajador.cedula}" required="true" />
+
+            <h:outputLabel value="Nombre Completo:" />
+            <h:inputText value="#{trabajadorSaludBean.nuevoTrabajador.nombreCompleto}" required="true" />
+
+            <h:outputLabel value="Especialidad:" />
+            <h:inputText value="#{trabajadorSaludBean.nuevoTrabajador.especialidad}" required="true" />
+        </h:panelGrid>
+
+        <h:commandButton value="Agregar Trabajador" action="#{trabajadorSaludBean.darDeAlta}">
+
+            <f:ajax execute="@form" render=":tablaTrabajadores :formAlta" />
+        </h:commandButton>
+    </h:form>
+
+    <hr />
+
+    <h1>Buscar Trabajador por Cédula</h1>
+    <h:form id="formBusqueda">
+        <h:panelGrid columns="3" style="vertical-align: middle;">
+            <h:outputLabel for="cedulaBusqueda" value="Ingrese Cédula:" />
+            <h:inputText id="cedulaBusqueda" value="#{trabajadorSaludBean.cedulaBusqueda}" />
+            
+            <h:commandButton value="Buscar" action="#{trabajadorSaludBean.buscarPorCedula}">
+                <f:ajax execute="@form" render=":areaResultados" />
+            </h:commandButton>
+        </h:panelGrid>
+    </h:form>
+
+    <h:panelGroup id="areaResultados" layout="block">
+
+        <h:panelGroup id="panelMensajes">
+            <h:messages style="color: red;" />
+        </h:panelGroup>
+
+        <h:panelGroup id="resultadoBusqueda">
+            <h:panelGrid columns="2" rendered="#{trabajadorSaludBean.trabajadorEncontrado != null}" style="margin-top: 20px; border: 1px solid black; padding: 10px;">
+                <f:facet name="header">
+                     <h:outputText value="Resultado de la Búsqueda" />
+                </f:facet>
+                <h:outputLabel value="ID:" />
+                <h:outputText value="#{trabajadorSaludBean.trabajadorEncontrado.id}" />
+
+                <h:outputLabel value="Cédula:" />
+                <h:outputText value="#{trabajadorSaludBean.trabajadorEncontrado.cedula}" />
+
+                <h:outputLabel value="Nombre Completo:" />
+                <h:outputText value="#{trabajadorSaludBean.trabajadorEncontrado.nombreCompleto}" />
+
+                <h:outputLabel value="Fecha Ingreso:" />
+                <h:outputText value="#{trabajadorSaludBean.trabajadorEncontrado.fechaIngreso}" />
+
+                <h:outputLabel value="Especialidad:" />
+                <h:outputText value="#{trabajadorSaludBean.trabajadorEncontrado.especialidad}" />
+            </h:panelGrid>
+        </h:panelGroup>
+
+    </h:panelGroup>
+
+    <hr />
+    
+    <h1>Listado de Trabajadores</h1>
+    
+    <h:dataTable id="tablaTrabajadores" value="#{trabajadorSaludBean.trabajadores}" var="t" border="1">
+        <h:column><f:facet name="header">ID</f:facet>#{t.id}</h:column>
+        <h:column><f:facet name="header">Cédula</f:facet>#{t.cedula}</h:column>
+        <h:column><f:facet name="header">Nombre Completo</f:facet>#{t.nombreCompleto}</h:column>
+        <h:column><f:facet name="header">Fecha Ingreso</f:facet>#{t.fechaIngreso}</h:column>
+        <h:column><f:facet name="header">Especialidad</f:facet>#{t.especialidad}</h:column>
+    </h:dataTable>
+
+</h:body>
+</html>
