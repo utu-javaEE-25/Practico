@@ -42,3 +42,6 @@ buildNumber.properties
 *.ipr
 *.iws
 out/
+
+# Maven compilation files
+target/
