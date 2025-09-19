@@ -5,6 +5,7 @@ import jakarta.ejb.Local;
 
 import uy.edu.fing.tse.entidades.TrabajadorSalud;
 
+@Local
 public interface TrabajadorSaludServiceLocal {
 
     void altaTrabajador(TrabajadorSalud trabajador) throws Exception;

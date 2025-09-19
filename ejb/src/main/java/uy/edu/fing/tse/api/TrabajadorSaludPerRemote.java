@@ -5,6 +5,7 @@ import jakarta.ejb.Remote;
 
 import uy.edu.fing.tse.entidades.TrabajadorSalud;
 
+@Remote
 public interface TrabajadorSaludPerRemote {
 
     void agregarTrabajador(TrabajadorSalud trabajador);
