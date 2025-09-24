@@ -1,3 +1,4 @@
 uy\edu\fing\tse\controladores\UsuarioServicioSaludServlet.class
+uy\edu\fing\tse\controladores\beans\PrestadorSaludBean.class
 uy\edu\fing\tse\controladores\beans\TrabajadorSaludBean.class
 uy\edu\fing\tse\controladores\PrestadorSaludServlet.class
