@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jakarta.ee/jsf/html"
+      xmlns:f="http://xmlns.jakarta.ee/jsf/core">
+
+<h:head>
+  <title>Prestadores de Salud</title>
+</h:head>
+<h:body>
+
+  <h:messages id="msgs" globalOnly="true" />
+
+  <h1>Alta</h1>
+  <h:form id="formAlta">
+    <h:panelGrid columns="3" cellpadding="5">
+      <h:outputLabel for="nombre" value="Nombre:" />
+      <h:inputText value="#{prestadorSaludBean.prestadorSalud.nombre}"
+                   required="true"/>
+
+      <h:outputLabel for="rut" value="RUT:" />
+      <h:inputText value="#{prestadorSaludBean.prestadorSalud.rut}"
+                   required="true" />
+
+    </h:panelGrid>
+
+    <h:commandButton value="Guardar" action="#{prestadorSaludBean.crear()}">
+      <f:ajax execute="@form" render="formAlta frmLista msgs" />
+    </h:commandButton>
+
+  </h:form>
+
+  <h1>Buscar</h1>
+  <h:form id="frmBuscar">
+    <h:panelGrid columns="3" cellpadding="5">
+      <h:outputLabel for="rut" value="RUT:" />
+      <h:inputText id="rutBuscar"
+                   value="#{prestadorSaludBean.rutBuscar}" />
+
+      <h:commandButton value="Buscar"
+                       action="#{prestadorSaludBean.obtener()}">
+        <f:ajax execute="@form" render="frmLista msgs" />
+      </h:commandButton>
+    </h:panelGrid>
+  </h:form>
+
+  <h1>Lista de Prestadores de Salud</h1>
+  <h:form id="frmLista">
+    <h:dataTable value="#{prestadorSaludBean.prestadores}"
+                 var="buscarPrestadorSalud"
+                 border="1"
+                 style="width:50%">
+      <h:column>
+        <f:facet name="header">Nombre</f:facet>
+        #{buscarPrestadorSalud.nombre}
+      </h:column>
+      <h:column>
+        <f:facet name="header">RUT</f:facet>
+        #{buscarPrestadorSalud.rut}
+      </h:column>
+    </h:dataTable>
+  
+  </h:form>
+
+</h:body>
+</html>

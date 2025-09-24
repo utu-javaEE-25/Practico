@@ -117,7 +117,7 @@
             <artifactId>arquillian-junit5-container</artifactId>
             <scope>test</scope>
         </dependency>
-
+    
     </dependencies>
 
     <build>
