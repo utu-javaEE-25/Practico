@@ -4,62 +4,74 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
-  <title>Prestadores de Salud</title>
+    <title>Prestadores de Salud</title>
 </h:head>
 <h:body>
+    <h1>Prestadores de Salud</h1>
 
-  <h:messages id="msgs" globalOnly="true" />
+    <h:messages id="globalMessages" globalOnly="true" style="color:red; font-weight: bold;" />
 
-  <h1>Alta</h1>
-  <h:form id="formAlta">
-    <h:panelGrid columns="3" cellpadding="5">
-      <h:outputLabel for="nombre" value="Nombre:" />
-      <h:inputText value="#{nuevoPrestadorSalud.nombre}"
-                   required="true"/> 
+    <h:form id="formCrear">
+        <h:panelGrid columns="3">
+            <h:outputLabel for="nombre" value="Nombre:" />
+            <h:inputText id="nombre" value="#{prestadorSaludBean.nuevoPrestador.nombre}" required="true" />
+            <h:message for="nombre" style="color:red" />
 
-      <h:outputLabel for="rut" value="RUT:" />
-      <h:inputText value="#{nuevoPrestadorSalud.rut}"
-                   required="true" />
+            <h:outputLabel for="rut" value="RUT:" />
+            <h:inputText id="rut" value="#{prestadorSaludBean.nuevoPrestador.rut}" required="true" />
+            <h:message for="rut" style="color:red" />
+        </h:panelGrid>
 
-    </h:panelGrid>
+        <h:commandButton value="Crear" action="#{prestadorSaludBean.crear}">
+            <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages" />
+        </h:commandButton>
+    </h:form>
 
-    <h:commandButton value="Guardar" action="#{prestadorSaludBean.crear()}">
-      <f:ajax execute="@form" render="formAlta frmLista msgs" />
-    </h:commandButton>
+    <hr/>
 
-  </h:form>
+    <h:form id="formBuscar">
+        <h:panelGrid columns="6" style="margin-bottom: 8px;">
+            <h:outputLabel for="buscarRut" value="Buscar por RUT:" />
+            <h:inputText id="buscarRut" value="#{prestadorSaludBean.buscarRut}" />
 
-  <h1>Buscar</h1>
-  <h:form id="frmBuscar">
-    <h:panelGrid columns="3" cellpadding="5">
-      <h:outputLabel for="rut" value="RUT:" />
-      <h:inputText id="rutBuscar"
-                   value="#{prestadorSaludBean.rutBuscar}" />
+            <h:outputLabel for="buscarNombre" value="o por Nombre:" />
+            <h:inputText id="buscarNombre" value="#{prestadorSaludBean.buscarNombre}" />
 
-      <h:commandButton value="Buscar"
-                       action="#{prestadorSaludBean.obtener()}">
-        <f:ajax execute="@form" render="frmLista msgs" />
-      </h:commandButton>
-    </h:panelGrid>
-  </h:form>
+            <h:commandButton value="Buscar" action="#{prestadorSaludBean.buscar}">
+                <f:ajax execute="@form" render=":formTabla:tablaContainer" />
+            </h:commandButton>
 
-  <h1>Lista de Prestadores de Salud</h1>
-  <h:form id="frmLista">
-    <h:dataTable value="#{prestadorSaludBean.prestadores}"
-                 var="buscarPrestadorSalud"
-                 border="1"
-                 style="width:50%">
-      <h:column>
-        <f:facet name="header">Nombre</f:facet>
-        #{buscarPrestadorSalud.nombre}
-      </h:column>
-      <h:column>
-        <f:facet name="header">RUT</f:facet>
-        #{buscarPrestadorSalud.rut}
-      </h:column>
-    </h:dataTable>
-  
-  </h:form>
+            <h:commandButton value="Limpiar" action="#{prestadorSaludBean.limpiarBusqueda}" style="margin-left:5px;">
+                <f:ajax render=":formTabla:tablaContainer :formBuscar" />
+            </h:commandButton>
+        </h:panelGrid>
+    </h:form>
+
+    <h:form id="formTabla">
+        <h:panelGroup id="tablaContainer" layout="block">
+            <h:dataTable id="tablaPrestadores" value="#{prestadorSaludBean.prestadoresFiltrados}" var="p"
+                         border="1" cellpadding="6" width="100%">
+
+                <h:column><f:facet name="header">ID</f:facet>#{p.id}</h:column>
+                <h:column><f:facet name="header">Nombre</f:facet>#{p.nombre}</h:column>
+                <h:column><f:facet name="header">RUT</f:facet>#{p.rut}</h:column>
+                <h:column><f:facet name="header">Fecha Alta</f:facet>#{p.fechaAlta}</h:column>
+                <h:column><f:facet name="header">Activo</f:facet>#{p.activo ? 'Sí' : 'No'}</h:column>
+
+                <h:column>
+                    <f:facet name="header">Acciones</f:facet>
+                    <h:commandButton value="Eliminar" action="#{prestadorSaludBean.eliminar(p.rut)}">
+                        <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
+                    </h:commandButton>
+                </h:column>
+
+                <f:facet name="footer">
+                    <h:outputText value="Sin resultados." rendered="#{empty prestadorSaludBean.prestadoresFiltrados}" />
+                </f:facet>
+
+            </h:dataTable>
+        </h:panelGroup>
+    </h:form>
 
 </h:body>
 </html>
