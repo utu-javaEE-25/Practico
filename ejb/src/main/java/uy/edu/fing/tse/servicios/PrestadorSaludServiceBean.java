@@ -18,9 +18,9 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
     public PrestadorSalud crear(PrestadorSalud prestador) {
         validarCampos(prestador);
         
-        if (per.existeRut(prestador.getRut())) {
-            throw new IllegalArgumentException("El RUT ya existe en el sistema.");
-        }
+        // if (per.existeRut(prestador.getRut())) {
+        //     throw new IllegalArgumentException("El RUT ya existe en el sistema.");
+        // }
 
         return per.crear(prestador);
     }
@@ -36,9 +36,9 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
         PrestadorSalud existente = per.obtenerPorRut(prestador.getRut());
 
-        if (existente == null) {
-            throw new IllegalArgumentException("No existe el prestador a actualizar.");
-        }
+        // if (existente == null) {
+        //     throw new IllegalArgumentException("No existe el prestador a actualizar.");
+        // }
 
         per.actualizar(prestador);
     }

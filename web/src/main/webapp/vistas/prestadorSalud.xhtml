@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jakarta.ee/jsf/html"
-      xmlns:f="http://xmlns.jakarta.ee/jsf/core">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
   <title>Prestadores de Salud</title>
@@ -14,11 +14,11 @@
   <h:form id="formAlta">
     <h:panelGrid columns="3" cellpadding="5">
       <h:outputLabel for="nombre" value="Nombre:" />
-      <h:inputText value="#{prestadorSaludBean.prestadorSalud.nombre}"
-                   required="true"/>
+      <h:inputText value="#{nuevoPrestadorSalud.nombre}"
+                   required="true"/> 
 
       <h:outputLabel for="rut" value="RUT:" />
-      <h:inputText value="#{prestadorSaludBean.prestadorSalud.rut}"
+      <h:inputText value="#{nuevoPrestadorSalud.rut}"
                    required="true" />
 
     </h:panelGrid>

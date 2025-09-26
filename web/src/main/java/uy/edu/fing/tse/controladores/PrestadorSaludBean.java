@@ -33,6 +33,7 @@ public class PrestadorSaludBean implements Serializable {
     }
 
     public void crear() {
+        System.out.println("Método crear invocado desde: " + Thread.currentThread().getStackTrace()[2]);
         try {
             servicio.crear(nuevoPrestadorSalud);
             prestadores = servicio.listar();
@@ -44,6 +45,7 @@ public class PrestadorSaludBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), null));
         }
     }
+
     public void obtener() {
         this.buscarPrestadorSalud = servicio.obtener(this.rutBuscar);
 
