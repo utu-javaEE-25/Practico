@@ -1,5 +1,6 @@
 package uy.edu.fing.tse.servicios;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.ejb.EJB;
@@ -64,6 +65,20 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
     private boolean existeRut(String rut) {
         return per.existeRut(rut);
+    }
+
+    @Override
+    public void altaDesdeJms(String rut, String nombre, String fecha) {
+
+        LocalDate fechaLocal = LocalDate.parse(fecha);
+
+        PrestadorSalud prestador = new PrestadorSalud();
+        
+        prestador.setRut(rut);
+        prestador.setNombre(nombre);
+        prestador.setFechaAlta(fechaLocal);
+        prestador.setActivo(true);
+        crear(prestador);
     }
 
 }

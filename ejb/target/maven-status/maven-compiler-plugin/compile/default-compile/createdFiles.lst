@@ -4,6 +4,7 @@ uy\edu\fing\tse\persistencia\TrabajadorSaludDAO.class
 uy\edu\fing\tse\api\TrabajadorSaludPerLocal.class
 uy\edu\fing\tse\api\UsuarioServicioSaludServiceRemote.class
 uy\edu\fing\tse\api\PrestadorSaludPerRemote.class
+uy\edu\fing\tse\mdb\AltaPrestadorMDB.class
 uy\edu\fing\tse\servicios\TrabajadorSaludService.class
 uy\edu\fing\tse\api\PrestadorSaludPerLocal.class
 uy\edu\fing\tse\entidades\TrabajadorSalud.class
