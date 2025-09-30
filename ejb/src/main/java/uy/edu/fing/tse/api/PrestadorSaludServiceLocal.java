@@ -13,5 +13,7 @@ public interface PrestadorSaludServiceLocal {
     void actualizar(PrestadorSalud prestador);
     void eliminar(String rut);
     List<PrestadorSalud> listar();
+    void altaDesdeJms(String rut, String nombre, String fecha);
+
 
 }
