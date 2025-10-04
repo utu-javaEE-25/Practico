@@ -7,6 +7,7 @@ uy\edu\fing\tse\api\PrestadorSaludPerRemote.class
 uy\edu\fing\tse\mdb\AltaPrestadorMDB.class
 uy\edu\fing\tse\servicios\TrabajadorSaludService.class
 uy\edu\fing\tse\api\PrestadorSaludPerLocal.class
+uy\edu\fing\tse\dto\PrestadorSaludDTO.class
 uy\edu\fing\tse\entidades\TrabajadorSalud.class
 uy\edu\fing\tse\api\PrestadorSaludServiceLocal.class
 uy\edu\fing\tse\api\UsuarioServicioSaludPerRemote.class
