@@ -1,13 +1,25 @@
 package uy.edu.fing.tse.entidades;
 
 import java.time.LocalDate;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "usuario_servicio_salud")
 public class UsuarioServicioSalud {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    
+    @Column(name = "nombre_completo", nullable = false)
     private String nombreCompleto;
+    
+    @Column(name = "cedula_identidad", unique = true, nullable = false)
     private String cedulaIdentidad;
+    
+    @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
+    
     private boolean activo;
 
     // Getters y Setters

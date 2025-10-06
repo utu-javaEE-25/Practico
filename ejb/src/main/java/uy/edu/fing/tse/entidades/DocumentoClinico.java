@@ -2,17 +2,34 @@ package uy.edu.fing.tse.entidades;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "documento_clinico")
 public class DocumentoClinico implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    
+    @Column(unique = true, nullable = false)
     private String codigo;
+    
+    @Column(name = "paciente_ci", nullable = false)
     private String pacienteCI;
+    
+    @Column(name = "prestador_rut", nullable = false)
     private String prestadorRUT;
+    
+    @Column(name = "fecha_emision")
     private LocalDate fechaEmision;
+    
     private boolean firmado;
+    
     private String tipo;
+    
+    @Column(length = 2000)
     private String contenido;
 
     public long getId() {
