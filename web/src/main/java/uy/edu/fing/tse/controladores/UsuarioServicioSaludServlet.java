@@ -66,6 +66,10 @@ public class UsuarioServicioSaludServlet extends HttpServlet {
             }
 
             u.setActivo(true); // Valor por defecto al crear
+            
+            // Set the tenant from session
+            String prestadorRUT = (String) req.getSession().getAttribute("currentTenantRUT");
+            u.setPrestadorRUT(prestadorRUT);
 
             usuarioService.crear(u);
             // Redirigimos para mostrar la nueva lista

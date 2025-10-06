@@ -4,6 +4,7 @@ import jakarta.ejb.Singleton;
 import uy.edu.fing.tse.api.UsuarioServicioSaludPerLocal;
 import uy.edu.fing.tse.api.UsuarioServicioSaludPerRemote;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
+import uy.edu.fing.tse.util.TenantContext;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,9 +30,12 @@ public class UsuarioServicioSaludPerBean implements UsuarioServicioSaludPerLocal
     @Override
     public UsuarioServicioSalud obtenerPorCI(String cedulaIdentidad) {
         if (cedulaIdentidad == null) return null;
+        String tenantRUT = TenantContext.getCurrentTenant();
         for (UsuarioServicioSalud u : dato.values()) {
             if (cedulaIdentidad.equals(u.getCedulaIdentidad())) {
-                return u;
+                if (tenantRUT == null || tenantRUT.equals(u.getPrestadorRUT())) {
+                    return u;
+                }
             }
         }
         return null;
@@ -55,7 +59,17 @@ public class UsuarioServicioSaludPerBean implements UsuarioServicioSaludPerLocal
 
     @Override
     public List<UsuarioServicioSalud> listar() {
-        return new ArrayList<>(dato.values());
+        String tenantRUT = TenantContext.getCurrentTenant();
+        if (tenantRUT == null) {
+            return new ArrayList<>(dato.values());
+        }
+        List<UsuarioServicioSalud> result = new ArrayList<>();
+        for (UsuarioServicioSalud u : dato.values()) {
+            if (tenantRUT.equals(u.getPrestadorRUT())) {
+                result.add(u);
+            }
+        }
+        return result;
     }
 
     @Override

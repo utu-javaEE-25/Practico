@@ -9,6 +9,7 @@ public class UsuarioServicioSalud {
     private String cedulaIdentidad;
     private LocalDate fechaNacimiento;
     private boolean activo;
+    private String prestadorRUT;
 
     // Getters y Setters
 
@@ -50,5 +51,13 @@ public class UsuarioServicioSalud {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public String getPrestadorRUT() {
+        return prestadorRUT;
+    }
+
+    public void setPrestadorRUT(String prestadorRUT) {
+        this.prestadorRUT = prestadorRUT;
     }
 }

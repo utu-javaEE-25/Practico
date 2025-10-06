@@ -9,6 +9,22 @@
 <body>
 <h1>Gestión de Usuarios de Servicios de Salud</h1>
 
+<%-- Display current tenant --%>
+<% 
+  String currentTenant = (String) session.getAttribute("currentTenantRUT");
+  if (currentTenant != null && !currentTenant.isEmpty()) {
+%>
+<p style="background-color: #e0f0ff; padding: 10px; border: 1px solid #0066cc;">
+  <strong>Prestador actual (RUT):</strong> <%= currentTenant %>
+  <br>
+  <small>Solo verá usuarios asociados a este prestador</small>
+</p>
+<% } else { %>
+<p style="background-color: #ffe0e0; padding: 10px; border: 1px solid #cc0000;">
+  <strong>Advertencia:</strong> No hay prestador seleccionado. Verá todos los usuarios.
+</p>
+<% } %>
+
 <%-- Bloque para mostrar errores --%>
 <% String error = (String) request.getAttribute("error");
   if (error != null) { %>
@@ -36,6 +52,7 @@
     <th>Cédula</th>
     <th>Fecha de Nacimiento</th>
     <th>Activo</th>
+    <th>Prestador RUT</th>
     <th>Acciones</th>
   </tr>
   </thead>
@@ -51,6 +68,7 @@
     <td><%= u.getCedulaIdentidad() %></td>
     <td><%= u.getFechaNacimiento() %></td>
     <td><%= u.isActivo() %></td>
+    <td><%= u.getPrestadorRUT() != null ? u.getPrestadorRUT() : "N/A" %></td>
     <td>
       <%-- Formulario individual para eliminar --%>
       <form method="post" action="<%= request.getContextPath() %>/usuarioServicioSalud" style="margin:0;">
@@ -62,7 +80,7 @@
   </tr>
   <%    }
   } else { %>
-  <tr><td colspan="6">No hay usuarios registrados.</td></tr>
+  <tr><td colspan="7">No hay usuarios registrados.</td></tr>
   <%  } %>
   </tbody>
 </table>
