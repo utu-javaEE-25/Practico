@@ -1,0 +1,140 @@
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                   ESQUEMA MULTI-TENANT - BASE DE DATOS                   │
+└──────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        TABLA PRINCIPAL - TENANT                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────┐
+│     PRESTADOR_SALUD        │  ← TABLA DE TENANT (Proveedor de Salud)
+├────────────────────────────┤
+│ id (PK) BIGINT             │
+│ nombre VARCHAR(100)        │
+│ rut VARCHAR(12) UNIQUE     │  ← Identificador único del Tenant
+│ fecha_alta DATE            │
+│ activo BOOLEAN             │
+└────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    TABLAS CON DATOS DEL TENANT                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────┐
+│  USUARIO_SERVICIO_SALUD          │  ← Pacientes/Usuarios de un prestador
+├──────────────────────────────────┤
+│ id (PK) BIGINT                   │
+│ nombre_completo VARCHAR(200)     │
+│ cedula_identidad VARCHAR(8)      │
+│ fecha_nacimiento DATE            │
+│ activo BOOLEAN                   │
+│ prestador_rut VARCHAR(12) (FK)   │  ← Discriminador de Tenant
+└──────────────────────────────────┘
+          │
+          │ FK: prestador_rut → prestador_salud.rut
+          ▼
+┌────────────────────────────┐
+│     PRESTADOR_SALUD        │
+│  rut (UNIQUE)              │
+└────────────────────────────┘
+
+┌──────────────────────────────────┐
+│     TRABAJADOR_SALUD             │  ← Empleados de un prestador
+├──────────────────────────────────┤
+│ id (PK) BIGINT                   │
+│ cedula VARCHAR(8)                │
+│ nombre_completo VARCHAR(200)     │
+│ fecha_ingreso DATE               │
+│ especialidad VARCHAR(100)        │
+│ prestador_rut VARCHAR(12) (FK)   │  ← Discriminador de Tenant
+└──────────────────────────────────┘
+          │
+          │ FK: prestador_rut → prestador_salud.rut
+          ▼
+┌────────────────────────────┐
+│     PRESTADOR_SALUD        │
+│  rut (UNIQUE)              │
+└────────────────────────────┘
+
+┌──────────────────────────────────┐
+│     DOCUMENTO_CLINICO            │  ← Documentos de un prestador
+├──────────────────────────────────┤
+│ id (PK) BIGINT                   │
+│ codigo VARCHAR(50) UNIQUE        │
+│ paciente_ci VARCHAR(8)           │
+│ prestador_rut VARCHAR(12) (FK)   │  ← Discriminador de Tenant
+│ fecha_emision DATE               │
+│ firmado BOOLEAN                  │
+│ tipo VARCHAR(50)                 │
+│ contenido TEXT                   │
+└──────────────────────────────────┘
+          │
+          │ FK: prestador_rut → prestador_salud.rut
+          ▼
+┌────────────────────────────┐
+│     PRESTADOR_SALUD        │
+│  rut (UNIQUE)              │
+└────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          AISLAMIENTO DE DATOS                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  Tenant 1 (RUT: 111111111111)          Tenant 2 (RUT: 222222222222)
+  ┌─────────────────────┐               ┌─────────────────────┐
+  │ Hospital Central    │               │ Clínica del Este    │
+  └─────────────────────┘               └─────────────────────┘
+            │                                     │
+            ├───> Usuarios:                      ├───> Usuarios:
+            │     - Juan Pérez                   │     - María García
+            │     - Ana López                    │     - Carlos Rodríguez
+            │                                    │
+            ├───> Trabajadores:                  ├───> Trabajadores:
+            │     - Dr. Martínez                 │     - Dra. Fernández
+            │     - Enf. González                │     - Dr. Silva
+            │                                    │
+            └───> Documentos:                    └───> Documentos:
+                  - DOC-001 (Juan)                    - DOC-100 (María)
+                  - DOC-002 (Ana)                     - DOC-101 (Carlos)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      REGLAS DE SEGURIDAD                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+✓ TODAS las consultas deben filtrar por prestador_rut
+✓ NO se permiten consultas cross-tenant sin autorización
+✓ Cada usuario debe estar asociado a UN solo tenant
+✓ Los índices en prestador_rut optimizan las consultas por tenant
+
+Ejemplo de consulta segura:
+┌───────────────────────────────────────────────────────────────┐
+│ SELECT * FROM trabajador_salud                                │
+│ WHERE prestador_rut = :current_tenant_rut                     │
+└───────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          ÍNDICES PRINCIPALES                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+prestador_salud:
+  ├─ PRIMARY KEY (id)
+  └─ UNIQUE INDEX (rut)
+
+usuario_servicio_salud:
+  ├─ PRIMARY KEY (id)
+  ├─ UNIQUE INDEX (cedula_identidad)
+  └─ INDEX (prestador_rut)  ← Optimiza filtros por tenant
+
+trabajador_salud:
+  ├─ PRIMARY KEY (id)
+  ├─ UNIQUE INDEX (cedula)
+  └─ INDEX (prestador_rut)  ← Optimiza filtros por tenant
+
+documento_clinico:
+  ├─ PRIMARY KEY (id)
+  ├─ UNIQUE INDEX (codigo)
+  ├─ INDEX (prestador_rut)  ← Optimiza filtros por tenant
+  └─ INDEX (paciente_ci)
+
+```
