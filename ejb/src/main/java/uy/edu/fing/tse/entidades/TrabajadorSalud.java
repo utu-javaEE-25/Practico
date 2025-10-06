@@ -12,6 +12,7 @@ public class TrabajadorSalud implements Serializable {
     private String nombreCompleto;
     private LocalDate fechaIngreso;
     private String especialidad;
+    private String tenantId; // Para enfoque de tabla única con FK a tenant
 
     public TrabajadorSalud() {
     }
@@ -54,6 +55,14 @@ public class TrabajadorSalud implements Serializable {
 
     public void setEspecialidad(String especialidad) {
         this.especialidad = especialidad;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override

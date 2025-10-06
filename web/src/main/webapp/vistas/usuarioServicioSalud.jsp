@@ -4,10 +4,43 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Usuarios de Servicios de Salud</title>
+  <title>Usuarios de Servicios de Salud - Multitenant POC</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    .tenant-info { 
+      background-color: #e7f3fe; 
+      border-left: 4px solid #2196F3; 
+      padding: 10px; 
+      margin: 15px 0; 
+    }
+    .nav-links { margin: 15px 0; }
+    .nav-links a { margin-right: 15px; }
+  </style>
 </head>
 <body>
-<h1>Gestión de Usuarios de Servicios de Salud</h1>
+<h1>Gestión de Usuarios de Servicios de Salud - POC Multitenant</h1>
+
+<div class="nav-links">
+  <a href="<%= request.getContextPath() %>/tenant">🏢 Gestión de Tenants</a> | 
+  <a href="<%= request.getContextPath() %>/prestadorSalud">Prestadores</a> | 
+  <a href="<%= request.getContextPath() %>/usuarioServicioSalud">Usuarios</a>
+</div>
+
+<% 
+String currentTenantId = (String) session.getAttribute("tenantId");
+if (currentTenantId != null) { 
+%>
+  <div class="tenant-info">
+    <strong>🏢 Tenant activo:</strong> <%= currentTenantId %> 
+    (Los usuarios se crearán y filtrarán automáticamente para este tenant)
+  </div>
+<% } else { %>
+  <div class="tenant-info" style="background-color: #fff3cd; border-color: #ffc107;">
+    <strong>⚠️ Sin tenant seleccionado:</strong> Verás todos los usuarios. 
+    <a href="<%= request.getContextPath() %>/tenant">Selecciona un tenant aquí</a>
+  </div>
+<% } %>
 
 <%-- Bloque para mostrar errores --%>
 <% String error = (String) request.getAttribute("error");
@@ -36,6 +69,7 @@
     <th>Cédula</th>
     <th>Fecha de Nacimiento</th>
     <th>Activo</th>
+    <th>Tenant</th>
     <th>Acciones</th>
   </tr>
   </thead>
@@ -51,6 +85,7 @@
     <td><%= u.getCedulaIdentidad() %></td>
     <td><%= u.getFechaNacimiento() %></td>
     <td><%= u.isActivo() %></td>
+    <td><strong><%= u.getTenantId() != null ? u.getTenantId() : "-" %></strong></td>
     <td>
       <%-- Formulario individual para eliminar --%>
       <form method="post" action="<%= request.getContextPath() %>/usuarioServicioSalud" style="margin:0;">
@@ -62,7 +97,7 @@
   </tr>
   <%    }
   } else { %>
-  <tr><td colspan="6">No hay usuarios registrados.</td></tr>
+  <tr><td colspan="7">No hay usuarios registrados.</td></tr>
   <%  } %>
   </tbody>
 </table>

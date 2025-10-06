@@ -1,10 +1,12 @@
 package uy.edu.fing.tse.persistencia;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import jakarta.ejb.Singleton;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
+import uy.edu.fing.tse.multitenant.TenantContext;
 
 @Singleton
 public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
@@ -45,7 +47,15 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
 
     @Override
     public List<PrestadorSalud> listar() {
-        return new ArrayList<>(dato.values());
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            // Sin tenant, retornar todos
+            return new ArrayList<>(dato.values());
+        }
+        // Filtrar por tenant
+        return dato.values().stream()
+                .filter(p -> tenantId.equals(p.getTenantId()))
+                .collect(Collectors.toList());
     }
 
     @Override

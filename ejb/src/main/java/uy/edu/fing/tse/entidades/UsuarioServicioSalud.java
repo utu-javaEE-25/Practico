@@ -9,6 +9,7 @@ public class UsuarioServicioSalud {
     private String cedulaIdentidad;
     private LocalDate fechaNacimiento;
     private boolean activo;
+    private String tenantId; // Para enfoque de tabla única con FK a tenant
 
     // Getters y Setters
 
@@ -50,5 +51,13 @@ public class UsuarioServicioSalud {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

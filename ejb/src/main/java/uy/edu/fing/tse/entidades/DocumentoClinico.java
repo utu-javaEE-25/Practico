@@ -14,6 +14,7 @@ public class DocumentoClinico implements Serializable {
     private boolean firmado;
     private String tipo;
     private String contenido;
+    private String tenantId; // Para enfoque de tabla única con FK a tenant
 
     public long getId() {
         return id;
@@ -77,5 +78,13 @@ public class DocumentoClinico implements Serializable {
 
     public void setContenido(String contenido) {
         this.contenido = contenido;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

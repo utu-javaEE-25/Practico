@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Ejemplo de configuración de persistence.xml para el Enfoque 2: Multi-esquema
+    
+    Este archivo muestra cómo configurar múltiples persistence units,
+    cada uno apuntando a un esquema diferente de la base de datos.
+    
+    NOTA: Este es un ejemplo educativo. Para usar esto en producción:
+    1. Necesitas configurar los datasources en WildFly/standalone.xml
+    2. Cada tenant necesita su propio datasource
+    3. Considera usar un enfoque más dinámico para tenants variables
+-->
+<persistence version="3.0"
+   xmlns="https://jakarta.ee/xml/ns/persistence" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+        https://jakarta.ee/xml/ns/persistence
+        https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+        
+   <!-- Persistence Unit para Tenant A (Mutualista A) -->
+   <persistence-unit name="TenantA_PU">
+      <jta-data-source>java:/jdbc/TenantA</jta-data-source>
+      <properties>
+         <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+         <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>
+         <property name="jakarta.persistence.schema-generation.drop-source" value="metadata"/>
+         <property name="hibernate.show_sql" value="false" />
+      </properties>
+   </persistence-unit>
+   
+   <!-- Persistence Unit para Tenant B (Hospital B) -->
+   <persistence-unit name="TenantB_PU">
+      <jta-data-source>java:/jdbc/TenantB</jta-data-source>
+      <properties>
+         <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+         <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>
+         <property name="jakarta.persistence.schema-generation.drop-source" value="metadata"/>
+         <property name="hibernate.show_sql" value="false" />
+      </properties>
+   </persistence-unit>
+   
+   <!-- Persistence Unit para Tenant C (Clínica C) -->
+   <persistence-unit name="TenantC_PU">
+      <jta-data-source>java:/jdbc/TenantC</jta-data-source>
+      <properties>
+         <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+         <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>
+         <property name="jakarta.persistence.schema-generation.drop-source" value="metadata"/>
+         <property name="hibernate.show_sql" value="false" />
+      </properties>
+   </persistence-unit>
+   
+</persistence>

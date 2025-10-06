@@ -1,0 +1,63 @@
+<!--
+    Ejemplo de configuración de datasources en WildFly para el Enfoque 2: Multi-esquema
+    
+    Este archivo muestra cómo configurar datasources en standalone.xml de WildFly.
+    Cada tenant tiene su propio datasource apuntando a un esquema/base de datos diferente.
+    
+    UBICACIÓN: WILDFLY_HOME/standalone/configuration/standalone.xml
+    
+    Alternativa: Usar WildFly CLI para agregar datasources dinámicamente
+-->
+
+<!-- Agregar dentro de <subsystem xmlns="urn:jboss:domain:datasources:7.1"> -->
+
+<!-- Datasource para Tenant A -->
+<datasource jndi-name="java:/jdbc/TenantA" pool-name="TenantADS" enabled="true">
+    <!-- Opción 1: Esquema separado en la misma BD -->
+    <connection-url>jdbc:h2:mem:tenantA;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</connection-url>
+    
+    <!-- Opción 2: Base de datos separada (PostgreSQL) -->
+    <!-- <connection-url>jdbc:postgresql://localhost:5432/tenant_a_db</connection-url> -->
+    
+    <driver>h2</driver>
+    <security>
+        <user-name>sa</user-name>
+        <password>sa</password>
+    </security>
+</datasource>
+
+<!-- Datasource para Tenant B -->
+<datasource jndi-name="java:/jdbc/TenantB" pool-name="TenantBDS" enabled="true">
+    <connection-url>jdbc:h2:mem:tenantB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</connection-url>
+    <!-- <connection-url>jdbc:postgresql://localhost:5432/tenant_b_db</connection-url> -->
+    <driver>h2</driver>
+    <security>
+        <user-name>sa</user-name>
+        <password>sa</password>
+    </security>
+</datasource>
+
+<!-- Datasource para Tenant C -->
+<datasource jndi-name="java:/jdbc/TenantC" pool-name="TenantCDS" enabled="true">
+    <connection-url>jdbc:h2:mem:tenantC;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</connection-url>
+    <!-- <connection-url>jdbc:postgresql://localhost:5432/tenant_c_db</connection-url> -->
+    <driver>h2</driver>
+    <security>
+        <user-name>sa</user-name>
+        <password>sa</password>
+    </security>
+</datasource>
+
+<!--
+    Comandos WildFly CLI para agregar datasources dinámicamente:
+    
+    /subsystem=datasources/data-source=TenantADS:add(
+        jndi-name="java:/jdbc/TenantA",
+        driver-name=h2,
+        connection-url="jdbc:h2:mem:tenantA;DB_CLOSE_DELAY=-1",
+        user-name=sa,
+        password=sa
+    )
+    
+    /subsystem=datasources/data-source=TenantADS:enable
+-->

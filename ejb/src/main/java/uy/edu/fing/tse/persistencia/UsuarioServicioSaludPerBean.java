@@ -4,11 +4,13 @@ import jakarta.ejb.Singleton;
 import uy.edu.fing.tse.api.UsuarioServicioSaludPerLocal;
 import uy.edu.fing.tse.api.UsuarioServicioSaludPerRemote;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
+import uy.edu.fing.tse.multitenant.TenantContext;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Singleton
 public class UsuarioServicioSaludPerBean implements UsuarioServicioSaludPerLocal, UsuarioServicioSaludPerRemote {
@@ -55,7 +57,15 @@ public class UsuarioServicioSaludPerBean implements UsuarioServicioSaludPerLocal
 
     @Override
     public List<UsuarioServicioSalud> listar() {
-        return new ArrayList<>(dato.values());
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            // Sin tenant, retornar todos
+            return new ArrayList<>(dato.values());
+        }
+        // Filtrar por tenant
+        return dato.values().stream()
+                .filter(u -> tenantId.equals(u.getTenantId()))
+                .collect(Collectors.toList());
     }
 
     @Override
