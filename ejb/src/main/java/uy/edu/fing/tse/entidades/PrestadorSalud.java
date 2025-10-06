@@ -1,13 +1,24 @@
 package uy.edu.fing.tse.entidades;
 
 import java.time.LocalDate;
-//import java.util.List;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "prestador_salud")
 public class PrestadorSalud {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    
+    @Column(nullable = false, length = 100)
     private String nombre;
+    
+    @Column(nullable = false, unique = true, length = 12)
     private String rut;
+    
+    @Column(name = "fecha_alta")
     private LocalDate fechaAlta;
+    
     private boolean activo;
     //private List<UsuarioServicioSalud> lstUsuariosAfiliados;
     //private List<TrabajadorSalud> lstEmpleados;
