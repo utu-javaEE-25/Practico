@@ -24,6 +24,13 @@
       <!-- If you are running in a production environment, add a managed
          data source, this configuration uses the JakartaEE default data source is just for development and testing! -->
       <jta-data-source>java:comp/DefaultDataSource</jta-data-source>
+      
+      <!-- Entity classes -->
+      <class>uy.edu.fing.tse.entidades.PrestadorSalud</class>
+      <class>uy.edu.fing.tse.entidades.DocumentoClinico</class>
+      <class>uy.edu.fing.tse.entidades.UsuarioServicioSalud</class>
+      <class>uy.edu.fing.tse.entidades.TrabajadorSalud</class>
+      
       <properties>
          <!--The database schema is auto created on deployment and dropped before redeploy.
              Note: the following configuration does not drop the tables on undeploy. If you prefer this, use this
