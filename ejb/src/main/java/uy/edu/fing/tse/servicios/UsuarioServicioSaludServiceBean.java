@@ -6,6 +6,7 @@ import uy.edu.fing.tse.api.UsuarioServicioSaludPerLocal;
 import uy.edu.fing.tse.api.UsuarioServicioSaludServiceLocal;
 import uy.edu.fing.tse.api.UsuarioServicioSaludServiceRemote;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
+import uy.edu.fing.tse.multitenant.TenantContext;
 
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class UsuarioServicioSaludServiceBean implements UsuarioServicioSaludServ
         // REGLA DE NEGOCIO: No pueden existir dos usuarios con la misma cédula
         if (per.existeCI(usuario.getCedulaIdentidad())) {
             throw new IllegalArgumentException("La cédula de identidad '" + usuario.getCedulaIdentidad() + "' ya existe en el sistema.");
+        }
+
+        // Asignar el tenant actual al usuario
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null) {
+            usuario.setTenantId(tenantId);
         }
 
         return per.crear(usuario);

@@ -7,6 +7,7 @@ import jakarta.ejb.Stateless;
 import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
+import uy.edu.fing.tse.multitenant.TenantContext;
 
 @Stateless
 public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
@@ -20,6 +21,12 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
         
         if (per.existeRut(prestador.getRut())) {
             throw new IllegalArgumentException("El RUT ya existe en el sistema.");
+        }
+
+        // Asignar el tenant actual al prestador
+        String tenantId = TenantContext.getCurrentTenant();
+        if (tenantId != null) {
+            prestador.setTenantId(tenantId);
         }
 
         return per.crear(prestador);
