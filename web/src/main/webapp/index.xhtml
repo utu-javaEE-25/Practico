@@ -34,7 +34,18 @@
                     Gestionar Usuarios y Servicios (Servlet)
                 </h:outputLink>
             </li>
+            
+            <li>
+                <!-- ENLACE PARA API REST (Mobile) -->
+                <h:outputLink value="#{request.contextPath}/api" target="_blank">
+                    REST API para Aplicaciones Móviles
+                </h:outputLink>
+            </li>
         </ul>
     </h:form>
+    
+    <hr/>
+    <p><strong>Nota:</strong> La REST API está disponible en <code>/api</code> para ser consumida por aplicaciones móviles.</p>
+    <p>Ver <a href="https://github.com/utu-javaEE-25/Practico/blob/main/API_DOCUMENTATION.md" target="_blank">API_DOCUMENTATION.md</a> para más información.</p>
 </h:body>
 </html>
