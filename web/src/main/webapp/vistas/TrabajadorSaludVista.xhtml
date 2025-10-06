@@ -7,7 +7,20 @@
     <title>Gestión de Trabajadores con JSF</title>
 </h:head>
 <h:body>
-    <h1>Formulario de Alta</h1>
+    <h1>Gestión de Trabajadores de Salud</h1>
+
+    <!-- Display current tenant -->
+    <h:panelGroup rendered="#{not empty session.currentTenantRUT}" layout="block" style="background-color: #e0f0ff; padding: 10px; border: 1px solid #0066cc; margin-bottom: 20px;">
+        <strong>Prestador actual (RUT):</strong> #{session.currentTenantRUT}
+        <br/>
+        <small>Solo verá trabajadores asociados a este prestador</small>
+    </h:panelGroup>
+    
+    <h:panelGroup rendered="#{empty session.currentTenantRUT}" layout="block" style="background-color: #ffe0e0; padding: 10px; border: 1px solid #cc0000; margin-bottom: 20px;">
+        <strong>Advertencia:</strong> No hay prestador seleccionado. Verá todos los trabajadores.
+    </h:panelGroup>
+
+    <h2>Formulario de Alta</h2>
 
     <h:form id="formAlta">
         <h:panelGrid columns="2">
@@ -81,7 +94,10 @@
         <h:column><f:facet name="header">Nombre Completo</f:facet>#{t.nombreCompleto}</h:column>
         <h:column><f:facet name="header">Fecha Ingreso</f:facet>#{t.fechaIngreso}</h:column>
         <h:column><f:facet name="header">Especialidad</f:facet>#{t.especialidad}</h:column>
+        <h:column><f:facet name="header">Prestador RUT</f:facet>#{t.prestadorRUT != null ? t.prestadorRUT : 'N/A'}</h:column>
     </h:dataTable>
+
+    <p><a href="#{request.contextPath}/index.xhtml">Volver al Menú Principal</a></p>
 
 </h:body>
 </html>

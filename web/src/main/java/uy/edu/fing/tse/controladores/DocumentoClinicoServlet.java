@@ -63,7 +63,14 @@ public class DocumentoClinicoServlet extends HttpServlet {
             DocumentoClinico d = new DocumentoClinico();
             d.setCodigo(req.getParameter("codigo"));
             d.setPacienteCI(req.getParameter("pacienteCI"));
-            d.setPrestadorRUT(req.getParameter("prestadorRUT"));
+            
+            // Get prestadorRUT from parameter or session
+            String prestadorRUT = req.getParameter("prestadorRUT");
+            if (prestadorRUT == null || prestadorRUT.trim().isEmpty()) {
+                prestadorRUT = (String) req.getSession().getAttribute("currentTenantRUT");
+            }
+            d.setPrestadorRUT(prestadorRUT);
+            
             d.setTipo(req.getParameter("tipo"));
             d.setContenido(req.getParameter("contenido"));
             d.setFirmado("on".equals(req.getParameter("firmado")));
