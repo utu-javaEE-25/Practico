@@ -5,7 +5,35 @@
     <title>Menú Principal del Laboratorio</title>
 </h:head>
 <h:body>
-    <h1>Menú Principal</h1>
+    <h1>Menú Principal - Sistema Multitenant</h1>
+    
+    <!-- Tenant Selector -->
+    <div style="background-color: #f0f0f0; padding: 15px; margin-bottom: 20px; border: 2px solid #333;">
+        <h3>Seleccionar Prestador de Salud (Tenant)</h3>
+        <p>Para acceder al sistema, primero seleccione un prestador de salud:</p>
+        <h:form>
+            <h:outputLink value="#{request.contextPath}/prestadorSalud?prestadorRUT=">
+                Administrar Prestadores de Salud
+            </h:outputLink>
+        </h:form>
+        
+        <form method="get" action="#{request.contextPath}/usuarioServicioSalud">
+            <label>RUT del Prestador: 
+                <input type="text" name="prestadorRUT" placeholder="Ej: 123456789012" required />
+            </label>
+            <button type="submit">Establecer Tenant</button>
+        </form>
+        
+        <% 
+          String currentTenant = (String) session.getAttribute("currentTenantRUT");
+          if (currentTenant != null && !currentTenant.isEmpty()) {
+        %>
+        <p style="color: green; font-weight: bold;">Prestador actual: <%= currentTenant %></p>
+        <% } else { %>
+        <p style="color: red;">No hay prestador seleccionado</p>
+        <% } %>
+    </div>
+    
     <p>Seleccione una opción para continuar:</p>
 
     <!-- Usamos un formulario para los botones de JSF -->

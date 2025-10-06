@@ -5,6 +5,7 @@ import jakarta.ejb.Singleton;
 import uy.edu.fing.tse.api.DocumentoClinicoPerLocal;
 import uy.edu.fing.tse.api.DocumentoClinicoPerRemote;
 import uy.edu.fing.tse.entidades.DocumentoClinico;
+import uy.edu.fing.tse.util.TenantContext;
 
 @Singleton
 public class DocumentoClinicoPerBean implements DocumentoClinicoPerLocal, DocumentoClinicoPerRemote {
@@ -24,16 +25,30 @@ public class DocumentoClinicoPerBean implements DocumentoClinicoPerLocal, Docume
     public DocumentoClinico obtenerPorCodigo(String codigo) {
         if (codigo == null)
             return null;
+        String tenantRUT = TenantContext.getCurrentTenant();
         for (DocumentoClinico d : data.values()) {
-            if (codigo.equalsIgnoreCase(d.getCodigo()))
-                return d;
+            if (codigo.equalsIgnoreCase(d.getCodigo())) {
+                if (tenantRUT == null || tenantRUT.equals(d.getPrestadorRUT())) {
+                    return d;
+                }
+            }
         }
         return null;
     }
 
     @Override
     public List<DocumentoClinico> listar() {
-        return new ArrayList<>(data.values());
+        String tenantRUT = TenantContext.getCurrentTenant();
+        if (tenantRUT == null) {
+            return new ArrayList<>(data.values());
+        }
+        List<DocumentoClinico> result = new ArrayList<>();
+        for (DocumentoClinico d : data.values()) {
+            if (tenantRUT.equals(d.getPrestadorRUT())) {
+                result.add(d);
+            }
+        }
+        return result;
     }
 
     @Override

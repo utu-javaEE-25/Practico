@@ -12,6 +12,7 @@ public class TrabajadorSalud implements Serializable {
     private String nombreCompleto;
     private LocalDate fechaIngreso;
     private String especialidad;
+    private String prestadorRUT;
 
     public TrabajadorSalud() {
     }
@@ -54,6 +55,14 @@ public class TrabajadorSalud implements Serializable {
 
     public void setEspecialidad(String especialidad) {
         this.especialidad = especialidad;
+    }
+
+    public String getPrestadorRUT() {
+        return prestadorRUT;
+    }
+
+    public void setPrestadorRUT(String prestadorRUT) {
+        this.prestadorRUT = prestadorRUT;
     }
 
     @Override

@@ -62,5 +62,7 @@
   %>
 </table>
 
+<p><a href="<%= request.getContextPath() %>/index.xhtml">Volver al Menú Principal</a></p>
+
 </body>
 </html>

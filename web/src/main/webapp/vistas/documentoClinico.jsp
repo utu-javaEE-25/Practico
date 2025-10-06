@@ -9,6 +9,22 @@
     <body>
         <h1>Documento Clínico</h1>
 
+        <%-- Display current tenant --%>
+        <% 
+          String currentTenant = (String) session.getAttribute("currentTenantRUT");
+          if (currentTenant != null && !currentTenant.isEmpty()) {
+        %>
+        <p style="background-color: #e0f0ff; padding: 10px; border: 1px solid #0066cc;">
+          <strong>Prestador actual (RUT):</strong> <%= currentTenant %>
+          <br>
+          <small>Solo verá documentos asociados a este prestador</small>
+        </p>
+        <% } else { %>
+        <p style="background-color: #ffe0e0; padding: 10px; border: 1px solid #cc0000;">
+          <strong>Advertencia:</strong> No hay prestador seleccionado. Verá todos los documentos.
+        </p>
+        <% } %>
+
         <% String error=(String) request.getAttribute("error"); if (error !=null) { %>
             <p style="color:red;">
                 <%= error %>
@@ -19,7 +35,11 @@
                 <form method="post" action="${pageContext.request.contextPath}/documentoClinico">
                     Código: <input name="codigo" required />
                     Paciente CI: <input name="pacienteCI" required />
-                    Prestador RUT: <input name="prestadorRUT" />
+                    <% if (currentTenant != null && !currentTenant.isEmpty()) { %>
+                    Prestador RUT: <input name="prestadorRUT" value="<%= currentTenant %>" readonly style="background-color: #f0f0f0;" />
+                    <% } else { %>
+                    Prestador RUT: <input name="prestadorRUT" required />
+                    <% } %>
                     Tipo: <input name="tipo" />
                     Fecha Emisión:
                     <input type="date" name="fechaEmision" max="<%= java.time.LocalDate.now() %>" required />

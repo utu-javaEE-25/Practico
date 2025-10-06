@@ -43,6 +43,12 @@ public class TrabajadorSaludBean implements Serializable {
     public void darDeAlta() {
         try {
             this.nuevoTrabajador.setFechaIngreso(LocalDate.now());
+            
+            // Set the tenant from session
+            String prestadorRUT = (String) FacesContext.getCurrentInstance()
+                .getExternalContext().getSessionMap().get("currentTenantRUT");
+            this.nuevoTrabajador.setPrestadorRUT(prestadorRUT);
+            
             trabajadorService.altaTrabajador(this.nuevoTrabajador);
             this.nuevoTrabajador = new TrabajadorSalud();
             this.cargarLista();
