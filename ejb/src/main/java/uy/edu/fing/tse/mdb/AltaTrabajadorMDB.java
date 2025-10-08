@@ -36,7 +36,7 @@ public class AltaTrabajadorMDB implements MessageListener {
     @Override
     public void onMessage(Message message) {
         try {
-            Thread.sleep(60000);
+            
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
                 String payload = textMessage.getText();
