@@ -12,6 +12,7 @@ uy\edu\fing\tse\api\UsuarioServicioSaludPerRemote.class
 uy\edu\fing\tse\api\TrabajadorSaludPerRemote.class
 uy\edu\fing\tse\entidades\UsuarioServicioSalud.class
 uy\edu\fing\tse\persistencia\PrestadorSaludPerBean.class
+uy\edu\fing\tse\mdb\AltaTrabajadorMDB.class
 uy\edu\fing\tse\entidades\PrestadorSalud.class
 uy\edu\fing\tse\servicios\UsuarioServicioSaludServiceBean.class
 uy\edu\fing\tse\persistencia\UsuarioServicioSaludPerBean.class
