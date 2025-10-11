@@ -7,7 +7,7 @@ import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import java.util.List;
 import java.net.URI;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Path("/prestadores")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -30,8 +30,11 @@ public class PrestadorSaludResource {
 
     @POST
     public Response crear(PrestadorSalud prestador, @Context UriInfo uriInfo) {
-        prestador.setFechaAlta(LocalDate.now());
-        prestador.setActivo(true);
+        LocalDateTime ahora = LocalDateTime.now();
+        if (prestador.getFechaCreacion() == null) {
+            prestador.setFechaCreacion(ahora);
+        }
+        prestador.setFechaModificacion(ahora);
         PrestadorSalud creado = servicio.crear(prestador);
         URI uri = uriInfo.getAbsolutePathBuilder().path(creado.getRut()).build();
         return Response.created(uri).entity(creado).build();

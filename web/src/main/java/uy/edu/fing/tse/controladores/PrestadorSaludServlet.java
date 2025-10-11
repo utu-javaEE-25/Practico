@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,9 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp)
     PrestadorSalud p = new PrestadorSalud();
     p.setNombre(req.getParameter("nombre"));
     p.setRut(req.getParameter("rut"));
-    p.setFechaAlta(java.time.LocalDate.now());
-    p.setActivo(true);
+    LocalDateTime ahora = LocalDateTime.now();
+    p.setFechaCreacion(ahora);
+    p.setFechaModificacion(ahora);
 
     try {
         prestadorService.crear(p);

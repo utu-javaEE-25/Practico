@@ -6,6 +6,8 @@ import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @WebService(serviceName = "PrestadorSaludWS")
@@ -23,8 +25,14 @@ public class PrestadorSaludWebService {
         PrestadorSalud p = new PrestadorSalud();
         p.setRut(rut);
         p.setNombre(nombre);
-        p.setFechaAlta(java.time.LocalDate.parse(fechaAlta));
-        p.setActivo(true);
+
+        LocalDateTime fechaCreacion = LocalDate.now().atStartOfDay();
+        if (fechaAlta != null && !fechaAlta.isBlank()) {
+            fechaCreacion = LocalDate.parse(fechaAlta).atStartOfDay();
+        }
+        p.setFechaCreacion(fechaCreacion);
+        p.setFechaModificacion(fechaCreacion);
+
         return servicio.crear(p);
     }
 
