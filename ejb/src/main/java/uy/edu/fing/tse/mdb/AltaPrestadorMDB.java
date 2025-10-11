@@ -8,7 +8,6 @@ import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
 import jakarta.jms.TextMessage;
 import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
-import java.util.logging.Logger;
 
 @MessageDriven(
     activationConfig = {
