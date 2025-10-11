@@ -1,7 +1,7 @@
 package uy.edu.fing.tse.controladores.beans;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,39 +43,41 @@ public class PrestadorSaludBean implements Serializable {
 
     public void crear() {
         try {
-            this.nuevoPrestador.setFechaAlta(LocalDate.now());
-            this.nuevoPrestador.setActivo(true);
+            LocalDateTime ahora = LocalDateTime.now();
+            if (this.nuevoPrestador.getFechaCreacion() == null) {
+                this.nuevoPrestador.setFechaCreacion(ahora);
+            }
+            this.nuevoPrestador.setFechaModificacion(ahora);
+
             prestadorService.crear(this.nuevoPrestador);
             this.nuevoPrestador = new PrestadorSalud(); // Limpiar el formulario
             this.cargarListaCompleta();
             this.buscar(); // Actualizar la lista mostrada
-            addMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Prestador de salud creado correctamente.");
+            addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud creado correctamente.");
         } catch (IllegalArgumentException e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage());
         }
     }
 
     public void eliminar(String rut) {
-    System.out.println("--- INTENTANDO ELIMINAR PRESTADOR CON RUT: " + rut);
-    try {
-        prestadorService.eliminar(rut);
-        System.out.println("--- ELIMINACIÓN DE LA BASE DE DATOS EXITOSA.");
+        System.out.println("--- INTENTANDO ELIMINAR PRESTADOR CON RUT: " + rut);
+        try {
+            prestadorService.eliminar(rut);
+            System.out.println("--- ELIMINACION DE LA BASE DE DATOS EXITOSA.");
 
-        // Estos dos pasos son CRÍTICOS para refrescar la lista
-        this.cargarListaCompleta();
-        System.out.println("--- LISTA COMPLETA RECARGADA. TAMAÑO: " + this.listaCompleta.size());
-        
-        this.buscar(); // Vuelve a aplicar los filtros actuales
-        System.out.println("--- LISTA FILTRADA ACTUALIZADA. TAMAÑO: " + this.prestadoresFiltrados.size());
+            this.cargarListaCompleta();
+            System.out.println("--- LISTA COMPLETA RECARGADA. TAMANO: " + this.listaCompleta.size());
 
-        addMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Prestador de salud eliminado.");
+            this.buscar();
+            System.out.println("--- LISTA FILTRADA ACTUALIZADA. TAMANO: " + this.prestadoresFiltrados.size());
 
-    } catch (Exception e) {
-        System.err.println("--- !!! ERROR AL ELIMINAR PRESTADOR !!! ---");
-        e.printStackTrace(); // Esto imprimirá el error completo en la consola del servidor
-        addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un error al eliminar: " + e.getMessage());
+            addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud eliminado.");
+        } catch (Exception e) {
+            System.err.println("--- ERROR AL ELIMINAR PRESTADOR ---");
+            e.printStackTrace();
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrio un error al eliminar: " + e.getMessage());
+        }
     }
-}
 
     public void buscar() {
         this.prestadoresFiltrados = this.listaCompleta.stream()
@@ -85,7 +87,8 @@ public class PrestadorSaludBean implements Serializable {
                         match = match && p.getRut() != null && p.getRut().trim().equalsIgnoreCase(buscarRut.trim());
                     }
                     if (buscarNombre != null && !buscarNombre.trim().isEmpty()) {
-                        match = match && p.getNombre() != null && p.getNombre().toLowerCase().contains(buscarNombre.trim().toLowerCase());
+                        match = match && p.getNombre() != null
+                                && p.getNombre().toLowerCase().contains(buscarNombre.trim().toLowerCase());
                     }
                     return match;
                 })

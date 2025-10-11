@@ -1,3 +1,7 @@
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\DocumentoClinicoPerLocal.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\DocumentoClinicoPerRemote.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\DocumentoClinicoServiceLocal.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\DocumentoClinicoServiceRemote.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\PrestadorSaludPerLocal.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\PrestadorSaludPerRemote.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\PrestadorSaludServiceLocal.java
@@ -10,13 +14,16 @@ C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\UsuarioServicioSa
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\UsuarioServicioSaludServiceLocal.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\UsuarioServicioSaludServiceRemote.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\dto\PrestadorSaludDTO.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\DocumentoClinico.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\PrestadorSalud.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\TrabajadorSalud.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\UsuarioServicioSalud.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\mdb\AltaPrestadorMDB.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\DocumentoClinicoPerBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\PrestadorSaludPerBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\TrabajadorSaludDAO.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\UsuarioServicioSaludPerBean.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\DocumentoClinicoServiceBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\PrestadorSaludServiceBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\TrabajadorSaludService.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\UsuarioServicioSaludServiceBean.java

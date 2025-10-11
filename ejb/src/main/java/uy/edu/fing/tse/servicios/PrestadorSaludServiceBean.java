@@ -1,7 +1,10 @@
 package uy.edu.fing.tse.servicios;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
@@ -18,10 +21,10 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
     @Override
     public PrestadorSalud crear(PrestadorSalud prestador) {
         validarCampos(prestador);
-        
-        // if (per.existeRut(prestador.getRut())) {
-        //     throw new IllegalArgumentException("El RUT ya existe en el sistema.");
-        // }
+
+        if (per.existeRut(prestador.getRut())) {
+            throw new IllegalArgumentException("El RUT ya existe en el sistema.");
+        }
 
         return per.crear(prestador);
     }
@@ -37,9 +40,14 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
         PrestadorSalud existente = per.obtenerPorRut(prestador.getRut());
 
-        // if (existente == null) {
-        //     throw new IllegalArgumentException("No existe el prestador a actualizar.");
-        // }
+        if (existente == null) {
+            throw new IllegalArgumentException("No existe el prestador a actualizar.");
+        }
+
+        prestador.setTenantId(existente.getTenantId());
+        if (prestador.getFechaCreacion() == null) {
+            prestador.setFechaCreacion(existente.getFechaCreacion());
+        }
 
         per.actualizar(prestador);
     }
@@ -56,28 +64,25 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
     private void validarCampos(PrestadorSalud prestador) {
         if (prestador.getNombre() == null || prestador.getNombre().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del prestador de salud no puede ser nulo o vacío.");
+            throw new IllegalArgumentException("El nombre del prestador de salud no puede ser nulo o vacio.");
         }
         if (prestador.getRut() == null || prestador.getRut().isEmpty()) {
-            throw new IllegalArgumentException("El RUT del prestador de salud no puede ser nulo o vacío.");
+            throw new IllegalArgumentException("El RUT del prestador de salud no puede ser nulo o vacio.");
         }
-    }
-
-    private boolean existeRut(String rut) {
-        return per.existeRut(rut);
     }
 
     @Override
     public void altaDesdeJms(String rut, String nombre, String fecha) {
 
         LocalDate fechaLocal = LocalDate.parse(fecha);
+        LocalDateTime fechaCreacion = fechaLocal.atStartOfDay();
 
         PrestadorSalud prestador = new PrestadorSalud();
         
         prestador.setRut(rut);
         prestador.setNombre(nombre);
-        prestador.setFechaAlta(fechaLocal);
-        prestador.setActivo(true);
+        prestador.setFechaCreacion(fechaCreacion);
+        prestador.setFechaModificacion(fechaCreacion);
         crear(prestador);
     }
 

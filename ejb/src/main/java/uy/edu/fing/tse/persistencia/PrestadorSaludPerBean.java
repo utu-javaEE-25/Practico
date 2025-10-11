@@ -1,66 +1,95 @@
 package uy.edu.fing.tse.persistencia;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.ejb.Singleton;
-import uy.edu.fing.tse.entidades.PrestadorSalud;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
+import uy.edu.fing.tse.entidades.PrestadorSalud;
 
 @Singleton
 public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
 
-    private final Map<Long, PrestadorSalud> dato = new LinkedHashMap<>();
-    private long secuencia = 1L;
+    @PersistenceContext(unitName = "PU_CENTRAL")
+    private EntityManager em;
 
     @Override
     public PrestadorSalud crear(PrestadorSalud prestadorSalud) {
-        if (prestadorSalud.getId() == 0) {
-            prestadorSalud.setId(secuencia++);
+        if (prestadorSalud == null) {
+            throw new IllegalArgumentException("El prestador de salud no puede ser nulo.");
         }
-        dato.put(prestadorSalud.getId(), prestadorSalud);
+
+        LocalDateTime ahora = LocalDateTime.now();
+        if (prestadorSalud.getFechaCreacion() == null) {
+            prestadorSalud.setFechaCreacion(ahora);
+        }
+        prestadorSalud.setFechaModificacion(ahora);
+
+        em.persist(prestadorSalud);
         return prestadorSalud;
     }
 
     @Override
     public PrestadorSalud obtener(String rut) {
-        return dato.get(rut);
+        return obtenerPorRut(rut);
     }
 
     @Override
     public void actualizar(PrestadorSalud prestadorSalud) {
-        if (!dato.containsKey(prestadorSalud.getId())) {
-            throw new IllegalArgumentException("El prestador de salud con ID " + prestadorSalud.getId() + " no existe.");
+        if (prestadorSalud == null || prestadorSalud.getTenantId() == null) {
+            throw new IllegalArgumentException("El prestador debe tener un identificador valido para actualizarse.");
         }
 
-        dato.put(prestadorSalud.getId(), prestadorSalud);
+        PrestadorSalud existente = em.find(PrestadorSalud.class, prestadorSalud.getTenantId());
+        if (existente == null) {
+            throw new IllegalArgumentException("El prestador de salud con ID " + prestadorSalud.getTenantId() + " no existe.");
+        }
+
+        prestadorSalud.setFechaCreacion(existente.getFechaCreacion());
+        prestadorSalud.setFechaModificacion(LocalDateTime.now());
+
+        em.merge(prestadorSalud);
     }
     
     @Override
     public void eliminar(String rut) {
         PrestadorSalud prestador = obtenerPorRut(rut);
         if (prestador != null) {
-            dato.remove(prestador.getId());
+            PrestadorSalud administrado = em.contains(prestador) ? prestador : em.merge(prestador);
+            em.remove(administrado);
         }
     }
 
     @Override
     public List<PrestadorSalud> listar() {
-        return new ArrayList<>(dato.values());
+        return em.createQuery("SELECT p FROM PrestadorSalud p ORDER BY p.nombre", PrestadorSalud.class).getResultList();
     }
 
     @Override
     public PrestadorSalud obtenerPorRut(String rut) {
-        if (rut == null) return null;
-        for (PrestadorSalud p : dato.values()) {
-            if (rut.equals(p.getRut())) return p;
+        if (rut == null || rut.isBlank()) {
+            return null;
         }
-        return null;
+
+        TypedQuery<PrestadorSalud> query = em.createQuery(
+                "SELECT p FROM PrestadorSalud p WHERE p.rut = :rut",
+                PrestadorSalud.class);
+        query.setParameter("rut", rut);
+        query.setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
     public boolean existeRut(String rut) {
         return obtenerPorRut(rut) != null;
     }
-    
-
 }

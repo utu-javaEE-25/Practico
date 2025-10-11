@@ -3,6 +3,7 @@ uy\edu\fing\tse\ws\PrestadorSaludWebService.class
 uy\edu\fing\tse\controladores\PrestadorSenderBean.class
 uy\edu\fing\tse\rest\JaxRsActivator.class
 uy\edu\fing\tse\controladores\beans\PrestadorSaludBean.class
+uy\edu\fing\tse\controladores\DocumentoClinicoServlet.class
 uy\edu\fing\tse\rest\PrestadorSaludResource.class
 uy\edu\fing\tse\controladores\beans\TrabajadorSaludBean.class
 uy\edu\fing\tse\controladores\PrestadorSaludServlet.class

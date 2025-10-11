@@ -4,20 +4,38 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
 
-   <persistence-unit name="LaboratorioPersistenceUnit" transaction-type="JTA">
-      <!-- 👇 Esto debe coincidir con el JNDI Name del datasource que creaste -->
-      <jta-data-source>java:/jdbc/PrestadorDS</jta-data-source>
+  <!-- PU para el esquema central -->
+  <persistence-unit name="PU_CENTRAL" transaction-type="JTA">
+    <jta-data-source>java:/jdbc/PrestadorDS</jta-data-source>
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+      <property name="hibernate.default_schema" value="central"/>
+      <!-- DEV: update | PROD: validate -->
+      <property name="hibernate.hbm2ddl.auto" value="validate"/>
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.format_sql" value="true"/>
+    </properties>
+  </persistence-unit>
 
-      <properties>
-         <!-- Dialecto de PostgreSQL -->
-         <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+  <!-- PU multitenant por esquema -->
+  <persistence-unit name="PU_TENANT" transaction-type="JTA">
+    <jta-data-source>java:/jdbc/PrestadorDS</jta-data-source>
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 
-         <!-- Crea/actualiza las tablas según las entidades -->
-         <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
+      <!-- Multitenancy por SCHEMA (deshabilitado hasta implementar los providers) -->
+      <!--
+      <property name="hibernate.multiTenancy" value="SCHEMA"/>
+      <property name="hibernate.multi_tenant_connection_provider"
+                value="uy.edu.tse.infra.SchemaConnectionProvider"/>
+      <property name="hibernate.tenant_identifier_resolver"
+                value="uy.edu.tse.infra.TenantResolver"/>
+      -->
 
-         <!-- Mostrar las consultas SQL en consola -->
-         <property name="hibernate.show_sql" value="true"/>
-         <property name="hibernate.format_sql" value="true"/>
-      </properties>
-   </persistence-unit>
+      <!-- DEV: update | PROD: validate -->
+      <property name="hibernate.hbm2ddl.auto" value="validate"/>
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.format_sql" value="true"/>
+    </properties>
+  </persistence-unit>
 </persistence>

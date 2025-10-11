@@ -20,6 +20,22 @@
             <h:outputLabel for="rut" value="RUT:" />
             <h:inputText id="rut" value="#{prestadorSaludBean.nuevoPrestador.rut}" required="true" />
             <h:message for="rut" style="color:red" />
+
+            <h:outputLabel for="schema" value="Nombre Schema:" />
+            <h:inputText id="schema" value="#{prestadorSaludBean.nuevoPrestador.nombreSchema}" />
+            <h:message for="schema" style="color:red" />
+
+            <h:outputLabel for="estado" value="Estado:" />
+            <h:inputText id="estado" value="#{prestadorSaludBean.nuevoPrestador.estado}" />
+            <h:message for="estado" style="color:red" />
+
+            <h:outputLabel for="contacto" value="Contacto Mail:" />
+            <h:inputText id="contacto" value="#{prestadorSaludBean.nuevoPrestador.contactoMail}" />
+            <h:message for="contacto" style="color:red" />
+
+            <h:outputLabel for="tipo" value="Tipo:" />
+            <h:inputText id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}" />
+            <h:message for="tipo" style="color:red" />
         </h:panelGrid>
 
         <h:commandButton value="Crear" action="#{prestadorSaludBean.crear}">
@@ -52,11 +68,15 @@
             <h:dataTable id="tablaPrestadores" value="#{prestadorSaludBean.prestadoresFiltrados}" var="p"
                          border="1" cellpadding="6" width="100%">
 
-                <h:column><f:facet name="header">ID</f:facet>#{p.id}</h:column>
+                <h:column><f:facet name="header">ID</f:facet>#{p.tenantId}</h:column>
+                <h:column><f:facet name="header">Schema</f:facet>#{p.nombreSchema}</h:column>
                 <h:column><f:facet name="header">Nombre</f:facet>#{p.nombre}</h:column>
                 <h:column><f:facet name="header">RUT</f:facet>#{p.rut}</h:column>
-                <h:column><f:facet name="header">Fecha Alta</f:facet>#{p.fechaAlta}</h:column>
-                <h:column><f:facet name="header">Activo</f:facet>#{p.activo ? 'Sí' : 'No'}</h:column>
+                <h:column><f:facet name="header">Estado</f:facet>#{p.estado}</h:column>
+                <h:column><f:facet name="header">Contacto</f:facet>#{p.contactoMail}</h:column>
+                <h:column><f:facet name="header">Tipo</f:facet>#{p.tipo}</h:column>
+                <h:column><f:facet name="header">Creado</f:facet>#{p.fechaCreacion}</h:column>
+                <h:column><f:facet name="header">Modificado</f:facet>#{p.fechaModificacion}</h:column>
 
                 <h:column>
                     <f:facet name="header">Acciones</f:facet>
