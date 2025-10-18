@@ -3,7 +3,6 @@ package uy.edu.fing.tse.api;
 import java.util.*;
 
 import jakarta.ejb.Local;
-import jakarta.persistence.PersistenceContext;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 
 @Local

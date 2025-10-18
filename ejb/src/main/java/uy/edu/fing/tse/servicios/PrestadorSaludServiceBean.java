@@ -18,6 +18,12 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
     @EJB
     private PrestadorSaludPerLocal per;
 
+    @EJB
+    private TenantProvisioningBean tenantProvisioning;
+
+    // Limitaciones para nombres de schema
+    private static final Pattern SCHEMA_PATTERN = Pattern.compile("^[a-z_][a-z0-9_]{1,30}$");
+
     @Override
     public PrestadorSalud crear(PrestadorSalud prestador) {
         validarCampos(prestador);
@@ -26,7 +32,11 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
             throw new IllegalArgumentException("El RUT ya existe en el sistema.");
         }
 
-        return per.crear(prestador);
+        PrestadorSalud creado = per.crear(prestador);
+
+        tenantProvisioning.provisionarTenant(creado.getNombreSchema());
+
+        return creado;
     }
 
     @Override
@@ -69,6 +79,18 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
         if (prestador.getRut() == null || prestador.getRut().isEmpty()) {
             throw new IllegalArgumentException("El RUT del prestador de salud no puede ser nulo o vacio.");
         }
+
+        String schema = prestador.getNombreSchema();
+        if (schema == null || schema.isBlank()) {
+            throw new IllegalArgumentException("El nombre del schema no puede ser nulo o vacio.");
+        }
+
+        String schemaNormalizado = schema.trim().toLowerCase(Locale.ROOT);
+        if (!SCHEMA_PATTERN.matcher(schemaNormalizado).matches()) {
+            throw new IllegalArgumentException("Nombre de schema invalido. Use [a-z_][a-z0-9_]{1,30}");
+        }
+
+        prestador.setNombreSchema(schemaNormalizado);
     }
 
     @Override
@@ -81,9 +103,36 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
         
         prestador.setRut(rut);
         prestador.setNombre(nombre);
+        prestador.setNombreSchema(generarNombreSchema(rut, nombre));
         prestador.setFechaCreacion(fechaCreacion);
         prestador.setFechaModificacion(fechaCreacion);
         crear(prestador);
     }
+
+    private String generarNombreSchema(String rut, String nombre) {
+        String base = rut != null ? rut.replaceAll("[^a-zA-Z0-9]", "") : "";
+
+        if (base.isBlank() && nombre != null) {
+            base = nombre.replaceAll("[^a-zA-Z0-9]", "");
+        }
+
+        if (base.isBlank()) {
+            throw new IllegalArgumentException("No se pudo derivar un nombre de schema valido para el tenant.");
+        }
+
+        String schema = ("tenant_" + base).toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_");
+
+        if (schema.length() > 31) {
+            schema = schema.substring(0, 31);
+        }
+
+        if (!SCHEMA_PATTERN.matcher(schema).matches()) {
+            throw new IllegalArgumentException("Nombre de schema derivado invalido: " + schema);
+        }
+
+        return schema;
+    }
+
+
 
 }

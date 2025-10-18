@@ -12,7 +12,7 @@ public class PrestadorSalud implements Serializable{
     
     @Id @Column(name="tenant_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer tenantId;
+    private Long tenantId;
 
     @Column(name="nombre_schema")
     private String nombreSchema;
@@ -38,10 +38,10 @@ public class PrestadorSalud implements Serializable{
     @Column(name="fecha_modificacion")
     private LocalDateTime fechaModificacion;
 
-    public Integer getTenantId() {
+    public Long getTenantId() {
         return tenantId;
     }
-    public void setTenantId(Integer tenantId) {
+    public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
 

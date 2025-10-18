@@ -13,9 +13,16 @@ C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\UsuarioServicioSa
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\UsuarioServicioSaludPerRemote.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\UsuarioServicioSaludServiceLocal.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\UsuarioServicioSaludServiceRemote.java
-C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\dto\PrestadorSaludDTO.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\AdminHcen.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\AuditLog.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\DocumentoClinico.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\DocumentoClinicoMetadata.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\Notificacion.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\PoliticaAcceso.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\PrefNotificacion.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\PrestadorSalud.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\SolicitudAcceso.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\TenantEndpoint.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\TrabajadorSalud.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\UsuarioServicioSalud.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\mdb\AltaPrestadorMDB.java
@@ -25,5 +32,6 @@ C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\Trabajad
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\UsuarioServicioSaludPerBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\DocumentoClinicoServiceBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\PrestadorSaludServiceBean.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\TenantProvisioningBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\TrabajadorSaludService.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\UsuarioServicioSaludServiceBean.java
