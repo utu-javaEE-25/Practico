@@ -2,6 +2,9 @@ package uy.edu.fing.tse.entidades;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
+@Entity
+//@Table(name = "usuario_global", schema = "central")
 public class UsuarioServicioSalud {
 
     private long id;
