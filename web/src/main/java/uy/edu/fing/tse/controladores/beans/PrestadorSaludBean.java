@@ -48,6 +48,7 @@ public class PrestadorSaludBean implements Serializable {
                 this.nuevoPrestador.setFechaCreacion(ahora);
             }
             this.nuevoPrestador.setFechaModificacion(ahora);
+            this.nuevoPrestador.setTenantId(null);
 
             prestadorService.crear(this.nuevoPrestador);
             this.nuevoPrestador = new PrestadorSalud(); // Limpiar el formulario
@@ -56,6 +57,8 @@ public class PrestadorSaludBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud creado correctamente.");
         } catch (IllegalArgumentException e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage());
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo crear el prestador: " + e.getMessage());
         }
     }
 

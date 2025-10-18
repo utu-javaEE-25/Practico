@@ -43,13 +43,6 @@
           <property name="hibernate.hbm2ddl.auto" value="validate"/>
           <property name="hibernate.show_sql" value="false"/>
           <property name="hibernate.format_sql" value="true"/>
-
-          <!-- Multi-tenancy por schema -->
-          <property name="hibernate.multiTenancy" value="SCHEMA"/>
-          <property name="hibernate.multi_tenant_connection_provider"
-                    value="uy.edu.fing.tse.multitenant.SchemaMultiTenantConnectionProvider"/>
-          <property name="hibernate.tenant_identifier_resolver"
-                    value="uy.edu.fing.tse.multitenant.CurrentTenantIdentifierResolverImpl"/>
       </properties>
   </persistence-unit>
 

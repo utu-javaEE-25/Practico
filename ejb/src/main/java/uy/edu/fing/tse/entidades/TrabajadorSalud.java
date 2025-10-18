@@ -2,17 +2,19 @@ package uy.edu.fing.tse.entidades;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import jakarta.persistence.Entity;
 
-@Entity
 public class TrabajadorSalud implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
     private String cedula;
+
     private String nombreCompleto;
+
     private LocalDate fechaIngreso;
+
     private String especialidad;
 
     public TrabajadorSalud() {
