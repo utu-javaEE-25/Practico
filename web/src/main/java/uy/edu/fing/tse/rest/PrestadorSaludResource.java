@@ -43,7 +43,21 @@ public class PrestadorSaludResource {
     @DELETE
     @Path("/{rut}")
     public Response eliminar(@PathParam("rut") String rut) {
-        servicio.eliminar(rut);
+        servicio.desactivar(rut);
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/{rut}/activar")
+    public Response activar(@PathParam("rut") String rut) {
+        servicio.activar(rut);
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/{rut}/desactivar")
+    public Response desactivar(@PathParam("rut") String rut) {
+        servicio.desactivar(rut);
         return Response.noContent().build();
     }
 }

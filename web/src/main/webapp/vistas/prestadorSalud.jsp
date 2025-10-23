@@ -33,22 +33,33 @@
 
 <!-- Resultados -->
 <table border="1" cellpadding="6">
-  <tr><th>ID</th><th>Nombre</th><th>RUT</th><th>Fecha Alta</th><th>Activo</th><th>Acciones</th></tr>
+  <tr>
+    <th>ID</th>
+    <th>Nombre</th>
+    <th>RUT</th>
+    <th>Fecha Creación</th>
+    <th>Estado</th>
+    <th>Acciones</th>
+  </tr>
   <%
     List<PrestadorSalud> lista = (List<PrestadorSalud>) request.getAttribute("listaPrestadorSalud");
     if (lista != null && !lista.isEmpty()) {
       for (PrestadorSalud p : lista) {
   %>
         <tr>
-          <td><%= p.getId() %></td>
+          <td><%= p.getTenantId() %></td>
           <td><%= p.getNombre() %></td>
           <td><%= p.getRut() %></td>
-          <td><%= p.getFechaAlta() %></td>
-          <td><%= p.isActivo() %></td>
+          <td><%= p.getFechaCreacion() %></td>
+          <td><%= (p.getEstado() != null && p.getEstado()) ? "Activo" : "Inactivo" %></td>
           <td>
             <form method="post" action="<%= request.getContextPath() %>/prestadorSalud" style="display:inline;">
               <input type="hidden" name="rut" value="<%= p.getRut() %>">
-              <button type="submit" name="accion" value="eliminar">Eliminar</button>
+              <% if (p.getEstado() != null && p.getEstado()) { %>
+                <button type="submit" name="accion" value="desactivar">Desactivar</button>
+              <% } else { %>
+                <button type="submit" name="accion" value="activar">Activar</button>
+              <% } %>
             </form>
           </td>
         </tr>

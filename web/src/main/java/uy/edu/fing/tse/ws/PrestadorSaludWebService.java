@@ -32,6 +32,7 @@ public class PrestadorSaludWebService {
         }
         p.setFechaCreacion(fechaCreacion);
         p.setFechaModificacion(fechaCreacion);
+        p.setEstado(Boolean.TRUE);
 
         return servicio.crear(p);
     }
@@ -48,7 +49,12 @@ public class PrestadorSaludWebService {
 
     @WebMethod
     public void eliminar(@WebParam(name="rut") String rut) {
-        servicio.eliminar(rut);
+        servicio.desactivar(rut);
+    }
+
+    @WebMethod
+    public void activar(@WebParam(name = "rut") String rut) {
+        servicio.activar(rut);
     }
 
 }

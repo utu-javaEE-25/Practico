@@ -1,15 +1,4 @@
-CREATE USER clinica1_user WITH PASSWORD 'pass1';
-
-CREATE SCHEMA IF NOT EXISTS tenant_clinica1
-    AUTHORIZATION clinica1_user;
-
-GRANT ALL PRIVILEGES ON SCHEMA tenant_clinica1 TO clinica1_user;
-GRANT ALL PRIVILEGES ON SCHEMA tenant_clinica1 TO clinica1_user;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA tenant_clinica1 TO clinica1_user;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA tenant_clinica1 TO clinica1_user;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA tenant_clinica1 TO clinica1_user;
-
-SET search_path TO tenant_clinica1;
+SET search_path TO clinica1;
 
 CREATE TABLE admin_tenant (
     admin_id BIGSERIAL PRIMARY KEY,

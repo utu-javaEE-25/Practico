@@ -25,8 +25,8 @@
             <h:inputText id="schema" value="#{prestadorSaludBean.nuevoPrestador.nombreSchema}" />
             <h:message for="schema" style="color:red" />
 
-            <h:outputLabel for="estado" value="Estado:" />
-            <h:inputText id="estado" value="#{prestadorSaludBean.nuevoPrestador.estado}" />
+            <h:outputLabel for="estado" value="Activo:" />
+            <h:selectBooleanCheckbox id="estado" value="#{prestadorSaludBean.nuevoPrestador.estado}" />
             <h:message for="estado" style="color:red" />
 
             <h:outputLabel for="contacto" value="Contacto Mail:" />
@@ -72,7 +72,10 @@
                 <h:column><f:facet name="header">Schema</f:facet>#{p.nombreSchema}</h:column>
                 <h:column><f:facet name="header">Nombre</f:facet>#{p.nombre}</h:column>
                 <h:column><f:facet name="header">RUT</f:facet>#{p.rut}</h:column>
-                <h:column><f:facet name="header">Estado</f:facet>#{p.estado}</h:column>
+                <h:column>
+                    <f:facet name="header">Estado</f:facet>
+                    <h:outputText value="#{p.estado ? 'Activo' : 'Inactivo'}" />
+                </h:column>
                 <h:column><f:facet name="header">Contacto</f:facet>#{p.contactoMail}</h:column>
                 <h:column><f:facet name="header">Tipo</f:facet>#{p.tipo}</h:column>
                 <h:column><f:facet name="header">Creado</f:facet>#{p.fechaCreacion}</h:column>
@@ -80,9 +83,16 @@
 
                 <h:column>
                     <f:facet name="header">Acciones</f:facet>
-                    <h:commandButton value="Eliminar" action="#{prestadorSaludBean.eliminar(p.rut)}">
-                        <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
-                    </h:commandButton>
+                    <h:panelGroup>
+                        <h:commandButton value="Desactivar" action="#{prestadorSaludBean.desactivar(p.rut)}"
+                                         rendered="#{p.estado}">
+                            <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
+                        </h:commandButton>
+                        <h:commandButton value="Activar" action="#{prestadorSaludBean.activar(p.rut)}"
+                                         rendered="#{not p.estado}">
+                            <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
+                        </h:commandButton>
+                    </h:panelGroup>
                 </h:column>
 
                 <f:facet name="footer">

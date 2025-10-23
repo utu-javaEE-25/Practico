@@ -64,7 +64,17 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
     @Override
     public void eliminar(String rut) {
-        per.eliminar(rut);
+        desactivar(rut);
+    }
+
+    @Override
+    public void activar(String rut) {
+        per.actualizarEstado(rut, true);
+    }
+
+    @Override
+    public void desactivar(String rut) {
+        per.actualizarEstado(rut, false);
     }
 
     @Override

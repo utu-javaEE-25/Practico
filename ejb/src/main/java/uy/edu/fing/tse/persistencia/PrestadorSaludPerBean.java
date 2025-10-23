@@ -28,6 +28,9 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
             prestadorSalud.setFechaCreacion(ahora);
         }
         prestadorSalud.setFechaModificacion(ahora);
+        if (prestadorSalud.getEstado() == null) {
+            prestadorSalud.setEstado(Boolean.TRUE);
+        }
 
         em.persist(prestadorSalud);
         return prestadorSalud;
@@ -57,11 +60,7 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
     
     @Override
     public void eliminar(String rut) {
-        PrestadorSalud prestador = obtenerPorRut(rut);
-        if (prestador != null) {
-            PrestadorSalud administrado = em.contains(prestador) ? prestador : em.merge(prestador);
-            em.remove(administrado);
-        }
+        actualizarEstado(rut, false);
     }
 
     @Override
@@ -91,5 +90,17 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
     @Override
     public boolean existeRut(String rut) {
         return obtenerPorRut(rut) != null;
+    }
+
+    @Override
+    public void actualizarEstado(String rut, boolean activo) {
+        PrestadorSalud prestador = obtenerPorRut(rut);
+        if (prestador == null) {
+            throw new IllegalArgumentException("No se encontró un prestador con RUT " + rut);
+        }
+
+        PrestadorSalud administrado = em.contains(prestador) ? prestador : em.merge(prestador);
+        administrado.setEstado(activo);
+        administrado.setFechaModificacion(LocalDateTime.now());
     }
 }
