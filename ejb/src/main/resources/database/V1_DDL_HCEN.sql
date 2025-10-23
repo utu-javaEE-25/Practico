@@ -21,7 +21,7 @@ CREATE TABLE tenant (
     nombre_schema VARCHAR(15) UNIQUE NOT NULL,
     nombre VARCHAR(50) UNIQUE NOT NULL,
     rut VARCHAR(11) UNIQUE NOT NULL,
-    estado VARCHAR(20),
+    estado BOOLEAN NOT NULL,
     contacto_mail VARCHAR(50),
     tipo VARCHAR(15),
     fecha_creacion TIMESTAMP,

@@ -8,15 +8,15 @@ select * from Tenant;
 -- 1) Admins globales
 INSERT INTO admin_global (gubuy_id, email, estado, fecha_creacion)
 VALUES 
-('gubuy_admin1', 'admin1@hcen.uy', 'ACTIVO', NOW()),
+('gubuy_admin1', 'admin1@hcen.uy', , NOW()),
 ('gubuy_admin2', 'admin2@hcen.uy', 'ACTIVO', NOW())
 ON CONFLICT (email) DO NOTHING;
 
 -- 2) Tenants (usa claves únicas: nombre_schema, nombre, rut)
 INSERT INTO tenant (nombre_schema, nombre, rut, estado, contacto_mail, tipo, fecha_creacion, fecha_modificacion)
 VALUES
-('tenant_clinica1', 'Clínica del Sol',  '21456789011', 'ACTIVA', 'contacto@clinicasol.uy', 'privado',     NOW(), NOW()),
-('tenant_clinica2', 'Laboratorio Norte','21999887766', 'ACTIVA', 'info@labnorte.uy',       'laboratorio', NOW(), NOW())
+('tenant_clinica1', 'Clínica del Sol',  '21456789011', TRUE, 'contacto@clinicasol.uy', 'privado',     NOW(), NOW()),
+('tenant_clinica2', 'Laboratorio Norte','21999887766', TRUE, 'info@labnorte.uy',       'laboratorio', NOW(), NOW())
 ON CONFLICT (nombre_schema) DO UPDATE
 SET estado = EXCLUDED.estado,
     contacto_mail = EXCLUDED.contacto_mail,

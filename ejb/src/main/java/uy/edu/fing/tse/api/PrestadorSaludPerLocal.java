@@ -11,6 +11,7 @@ public interface PrestadorSaludPerLocal {
     PrestadorSalud obtener(String rut);
     void actualizar(PrestadorSalud prestador);
     void eliminar(String rut);
+    void actualizarEstado(String rut, boolean activo);
     List<PrestadorSalud> listar();
     PrestadorSalud obtenerPorRut(String rut);
     boolean existeRut(String rut);

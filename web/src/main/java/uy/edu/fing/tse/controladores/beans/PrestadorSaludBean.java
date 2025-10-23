@@ -33,6 +33,7 @@ public class PrestadorSaludBean implements Serializable {
     @PostConstruct
     public void init() {
         this.nuevoPrestador = new PrestadorSalud();
+        this.nuevoPrestador.setEstado(Boolean.TRUE);
         this.cargarListaCompleta();
         this.prestadoresFiltrados = this.listaCompleta;
     }
@@ -52,6 +53,7 @@ public class PrestadorSaludBean implements Serializable {
 
             prestadorService.crear(this.nuevoPrestador);
             this.nuevoPrestador = new PrestadorSalud(); // Limpiar el formulario
+            this.nuevoPrestador.setEstado(Boolean.TRUE);
             this.cargarListaCompleta();
             this.buscar(); // Actualizar la lista mostrada
             addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud creado correctamente.");
@@ -62,11 +64,11 @@ public class PrestadorSaludBean implements Serializable {
         }
     }
 
-    public void eliminar(String rut) {
-        System.out.println("--- INTENTANDO ELIMINAR PRESTADOR CON RUT: " + rut);
+    public void desactivar(String rut) {
+        System.out.println("--- INTENTANDO DESACTIVAR PRESTADOR CON RUT: " + rut);
         try {
-            prestadorService.eliminar(rut);
-            System.out.println("--- ELIMINACION DE LA BASE DE DATOS EXITOSA.");
+            prestadorService.desactivar(rut);
+            System.out.println("--- PRESTADOR DESACTIVADO EXITOSAMENTE.");
 
             this.cargarListaCompleta();
             System.out.println("--- LISTA COMPLETA RECARGADA. TAMANO: " + this.listaCompleta.size());
@@ -74,11 +76,28 @@ public class PrestadorSaludBean implements Serializable {
             this.buscar();
             System.out.println("--- LISTA FILTRADA ACTUALIZADA. TAMANO: " + this.prestadoresFiltrados.size());
 
-            addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud eliminado.");
+            addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud desactivado.");
         } catch (Exception e) {
-            System.err.println("--- ERROR AL ELIMINAR PRESTADOR ---");
+            System.err.println("--- ERROR AL DESACTIVAR PRESTADOR ---");
             e.printStackTrace();
-            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrio un error al eliminar: " + e.getMessage());
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrio un error al desactivar: " + e.getMessage());
+        }
+    }
+
+    public void activar(String rut) {
+        System.out.println("--- INTENTANDO ACTIVAR PRESTADOR CON RUT: " + rut);
+        try {
+            prestadorService.activar(rut);
+            System.out.println("--- PRESTADOR ACTIVADO EXITOSAMENTE.");
+
+            this.cargarListaCompleta();
+            this.buscar();
+
+            addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud activado.");
+        } catch (Exception e) {
+            System.err.println("--- ERROR AL ACTIVAR PRESTADOR ---");
+            e.printStackTrace();
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrio un error al activar: " + e.getMessage());
         }
     }
 

@@ -24,7 +24,7 @@ public class PrestadorSalud implements Serializable{
     private String rut;
 
     @Column(name="estado")
-    private String estado;
+    private Boolean estado;
 
     @Column(name="contacto_mail")
     private String contactoMail;
@@ -63,10 +63,10 @@ public class PrestadorSalud implements Serializable{
     public void setRut(String rut) {
         this.rut = rut;
     }
-    public String getEstado() {
+    public Boolean getEstado() {
         return estado;
     }
-    public void setEstado(String estado) {
+    public void setEstado(Boolean estado) {
         this.estado = estado;
     }
     public String getContactoMail() {
