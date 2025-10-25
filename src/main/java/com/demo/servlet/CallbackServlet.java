@@ -7,13 +7,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Objects;
 
 import org.json.JSONObject;
 
 import com.demo.dao.UsuarioDAO;
 import com.demo.entidad.Usuario;
+import com.demo.util.TokenValidator;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.annotation.WebServlet;
@@ -89,31 +89,30 @@ public class CallbackServlet extends HttpServlet {
                 return;
             }
 
-            //Decodificar el payload del id_token
-            String[] parts = idToken.split("\\.");
-            if (parts.length < 2) {
-                resp.getWriter().println("<p>Error: id_token inválido.</p>");
-                return;
-            }
+            // Validar el id_token usando la clase TokenValidator
+            JSONObject claims = TokenValidator.validar(idToken);
 
-            String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-            JSONObject claims = new JSONObject(payload);
+            // Extraer los claims
+            String nombre = claims.optString("given_name");
+            String apellido = claims.optString("family_name");
+            String email = claims.optString("email");
+            String numeroDocumento = claims.optString("numero_documento");
+            String sub = claims.optString("sub");
 
-            // Crear o actualizar el usuario en base de datos
+             // Guardar en base de datos
             Usuario usuario = new Usuario();
-            usuario.setSub(claims.optString("sub"));
-            usuario.setNombre(claims.optString("given_name"));
-            usuario.setApellido(claims.optString("family_name"));
-            usuario.setEmail(claims.optString("email"));
-            usuario.setNumeroDocumento(claims.optString("numero_documento"));
-
+            usuario.setSub(sub);
+            usuario.setNombre(nombre);
+            usuario.setApellido(apellido);
+            usuario.setEmail(email);
+            usuario.setNumeroDocumento(numeroDocumento);
             usuarioDAO.guardar(usuario);
 
             // =============================================================
             
-            session.setAttribute("nombre", claims.optString("given_name"));
-            session.setAttribute("apellido", claims.optString("family_name"));
-            session.setAttribute("email", claims.optString("email"));
+            session.setAttribute("nombre", nombre);
+            session.setAttribute("apellido", apellido);
+            session.setAttribute("email", email);
             session.setAttribute("id_token", idToken);
 
             
