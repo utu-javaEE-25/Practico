@@ -103,31 +103,5 @@
         </h:panelGroup>
     </h:form>
 
-    <h1>Enviar Prestador a JMS</h1>
-    <h:form id="frm">
-    <h:panelGrid columns="3">
-        <h:outputLabel value="RUT:"/>
-        <h:inputText id="rut" value="#{prestadorSenderBean.rut}" required="true"/>
-        <h:message for="rut" style="color:red" />
-
-        <h:outputLabel value="Nombre:"/>
-        <h:inputText id="nombre" value="#{prestadorSenderBean.nombre}" required="true"/>
-        <h:message for="nombre" style="color:red" />
-
-        <h:outputLabel value="Fecha (YYYY-MM-DD):"/>
-        <h:inputText id="fecha" value="#{prestadorSenderBean.fecha}" required="true"/>
-        <h:message for="fecha" style="color:red" />
-
-    </h:panelGrid>
-    <h:commandButton value="Enviar a JMS"
-      action="#{prestadorSenderBean.enviarAlta(prestadorSenderBean.rut, prestadorSenderBean.nombre, prestadorSenderBean.fecha)}">
-      <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages"/>
-    </h:commandButton>
-    <h:commandButton value="Probar payload demo"
-      action="#{prestadorSenderBean.enviarPrueba}">
-      <f:ajax render="@form"/>
-    </h:commandButton>
-  </h:form>
-
 </h:body>
 </html>

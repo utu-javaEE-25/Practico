@@ -33,16 +33,17 @@ public class TenantProvisioningBean {
         final String schema = validarSchema(nombreEsquema);
 
         try (Connection c = dsMaster.getConnection();
-            Statement st = c.createStatement()) {
-        st.executeUpdate("CREATE SCHEMA IF NOT EXISTS " + schema + " AUTHORIZATION hcen_tenant");
-        st.executeUpdate("REVOKE ALL ON SCHEMA " + schema + " FROM PUBLIC");
-        st.executeUpdate("GRANT USAGE ON SCHEMA " + schema + " TO hcen_tenant");
-        st.executeUpdate("GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA " + schema + " TO hcen_tenant");
-        st.executeUpdate("GRANT ALL ON ALL SEQUENCES IN SCHEMA " + schema + " TO hcen_tenant");
-        st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " " +
-                        "GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO hcen_tenant");
-        st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " " +
-                        "GRANT ALL ON SEQUENCES TO hcen_tenant");
+             Statement st = c.createStatement()) {
+            st.executeUpdate("CREATE SCHEMA IF NOT EXISTS " + schema);
+            st.executeUpdate("REVOKE ALL ON SCHEMA " + schema + " FROM PUBLIC");
+            st.executeUpdate("GRANT USAGE ON SCHEMA " + schema + " TO hcen_tenant");
+            st.executeUpdate("GRANT CREATE ON SCHEMA " + schema + " TO hcen_tenant");
+            st.executeUpdate("GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA " + schema + " TO hcen_tenant");
+            st.executeUpdate("GRANT ALL ON ALL SEQUENCES IN SCHEMA " + schema + " TO hcen_tenant");
+            st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " "
+                + "GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO hcen_tenant");
+            st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " "
+                + "GRANT ALL ON SEQUENCES TO hcen_tenant");
         }
   }
 
@@ -51,7 +52,7 @@ public class TenantProvisioningBean {
         schema = validarSchema(schema);
 
         Flyway flyway = Flyway.configure()
-            .dataSource("jdbc:postgresql://localhost:5432/hcen", "hcen_tenant", "hcen_pass")
+            .dataSource("jdbc:postgresql://10.1.3.13:5432/hcen", "hcen_tenant", "hcen_pass")
             .schemas(schema)
             .locations("classpath:database")
             .baselineOnMigrate(true)
