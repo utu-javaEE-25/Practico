@@ -71,34 +71,3 @@
     </properties>
   </persistence-unit>
 </persistence>
-
-
-data-source add \
- --name=DS_MASTER \
- --driver-name=postgresql-42.7.8.jar \
- --jndi-name=java:/jdbc/DS_MASTER \
- --connection-url=jdbc:postgresql://10.1.3.13:5432/hcen \
- --user-name=hcen_master --password=hcen_pass \
- --validate-on-match=true --background-validation=false \
- --max-pool-size=10 --min-pool-size=1 \
- --enabled=true
-
-data-source add \
- --name=DS_CENTRAL \
- --driver-name=postgresql-42.7.8.jar \
- --jndi-name=java:/jdbc/DS_CENTRAL \
- --connection-url="jdbc:postgresql://10.1.3.13:5432/hcen?currentSchema=central" \
- --user-name=hcen_user --password=hcen_pass \
- --validate-on-match=true --background-validation=false \
- --max-pool-size=20 --min-pool-size=2 \
- --enabled=true
-
-data-source add \
- --name=DS_TENANT \
- --driver-name=postgresql-42.7.8.jar \
- --jndi-name=java:/jdbc/DS_TENANT \
- --connection-url=jdbc:postgresql://10.1.3.13:5432/hcen \
- --user-name=hcen_tenant --password=hcen_pass \
- --validate-on-match=true --background-validation=false \
- --max-pool-size=20 --min-pool-size=2 \
- --enabled=true
