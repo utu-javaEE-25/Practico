@@ -5,103 +5,156 @@
 
 <h:head>
     <title>Prestadores de Salud</title>
+    <h:outputStylesheet library="css" name="prestadorSalud.css" />
 </h:head>
 <h:body>
-    <h1>Prestadores de Salud</h1>
+    <div class="layout-column">
+        <h1>Prestadores de Salud</h1>
 
-    <h:messages id="globalMessages" globalOnly="true" style="color:red; font-weight: bold;" />
+        <h:messages id="globalMessages" globalOnly="true" styleClass="faces-messages"
+                    infoClass="info" errorClass="error" warnClass="warn" />
 
-    <h:form id="formCrear">
-        <h:panelGrid columns="3">
-            <h:outputLabel for="nombre" value="Nombre:" />
-            <h:inputText id="nombre" value="#{prestadorSaludBean.nuevoPrestador.nombre}" required="true" />
-            <h:message for="nombre" style="color:red" />
+        <h:form id="formCrear" styleClass="card">
+            <h:panelGroup layout="block">
+                <h2>Crear Prestador de Salud</h2>
+                <h:panelGrid columns="3" styleClass="form-grid">
+                    <h:outputLabel for="nombre" value="Nombre:" />
+                    <h:inputText id="nombre" value="#{prestadorSaludBean.nuevoPrestador.nombre}" required="true" />
+                    <h:message for="nombre" styleClass="error" />
 
-            <h:outputLabel for="rut" value="RUT:" />
-            <h:inputText id="rut" value="#{prestadorSaludBean.nuevoPrestador.rut}" required="true" />
-            <h:message for="rut" style="color:red" />
+                    <h:outputLabel for="rut" value="RUT:" />
+                    <h:inputText id="rut" value="#{prestadorSaludBean.nuevoPrestador.rut}" required="true" />
+                    <h:message for="rut" styleClass="error" />
 
-            <h:outputLabel for="schema" value="Nombre Schema:" />
-            <h:inputText id="schema" value="#{prestadorSaludBean.nuevoPrestador.nombreSchema}" />
-            <h:message for="schema" style="color:red" />
+                    <h:outputLabel for="schema" value="Nombre Schema:" />
+                    <h:inputText id="schema" value="#{prestadorSaludBean.nuevoPrestador.nombreSchema}" />
+                    <h:message for="schema" styleClass="error" />
 
-            <h:outputLabel for="estado" value="Activo:" />
-            <h:selectBooleanCheckbox id="estado" value="#{prestadorSaludBean.nuevoPrestador.estado}" />
-            <h:message for="estado" style="color:red" />
+                    <h:outputLabel for="estado" value="Activo:" />
+                    <h:selectBooleanCheckbox id="estado" value="#{prestadorSaludBean.nuevoPrestador.estado}" />
+                    <h:message for="estado" styleClass="error" />
 
-            <h:outputLabel for="contacto" value="Contacto Mail:" />
-            <h:inputText id="contacto" value="#{prestadorSaludBean.nuevoPrestador.contactoMail}" />
-            <h:message for="contacto" style="color:red" />
+                    <h:outputLabel for="contacto" value="Contacto Mail:" />
+                    <h:inputText id="contacto" value="#{prestadorSaludBean.nuevoPrestador.contactoMail}" />
+                    <h:message for="contacto" styleClass="error" />
 
-            <h:outputLabel for="tipo" value="Tipo:" />
-            <h:inputText id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}" />
-            <h:message for="tipo" style="color:red" />
-        </h:panelGrid>
+                    <h:outputLabel for="tipo" value="Tipo:" />
+                    <h:inputText id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}" />
+                    <h:message for="tipo" styleClass="error" />
+                </h:panelGrid>
+            </h:panelGroup>
 
-        <h:commandButton value="Crear" action="#{prestadorSaludBean.crear}">
-            <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages" />
-        </h:commandButton>
-    </h:form>
-
-    <hr/>
-
-    <h:form id="formBuscar">
-        <h:panelGrid columns="6" style="margin-bottom: 8px;">
-            <h:outputLabel for="buscarRut" value="Buscar por RUT:" />
-            <h:inputText id="buscarRut" value="#{prestadorSaludBean.buscarRut}" />
-
-            <h:outputLabel for="buscarNombre" value="o por Nombre:" />
-            <h:inputText id="buscarNombre" value="#{prestadorSaludBean.buscarNombre}" />
-
-            <h:commandButton value="Buscar" action="#{prestadorSaludBean.buscar}">
-                <f:ajax execute="@form" render=":formTabla:tablaContainer" />
+            <h:commandButton value="Crear" action="#{prestadorSaludBean.crear}" styleClass="btn btn-primario">
+                <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages" />
             </h:commandButton>
+        </h:form>
 
-            <h:commandButton value="Limpiar" action="#{prestadorSaludBean.limpiarBusqueda}" style="margin-left:5px;">
-                <f:ajax render=":formTabla:tablaContainer :formBuscar" />
-            </h:commandButton>
-        </h:panelGrid>
-    </h:form>
+        <h:form id="formEditar" styleClass="card">
+            <h:panelGroup id="editarContainer" layout="block" rendered="#{prestadorSaludBean.modoEdicion}">
+                <h2>Modificar Prestador de Salud</h2>
+                <h:panelGrid columns="3" styleClass="form-grid">
+                    <h:outputLabel for="editNombre" value="Nombre:" />
+                    <h:inputText id="editNombre" value="#{prestadorSaludBean.prestadorEnEdicion.nombre}" required="true" />
+                    <h:message for="editNombre" styleClass="error" />
 
-    <h:form id="formTabla">
-        <h:panelGroup id="tablaContainer" layout="block">
-            <h:dataTable id="tablaPrestadores" value="#{prestadorSaludBean.prestadoresFiltrados}" var="p"
-                         border="1" cellpadding="6" width="100%">
+                    <h:outputLabel for="editRut" value="RUT:" />
+                    <h:inputText id="editRut" value="#{prestadorSaludBean.prestadorEnEdicion.rut}" disabled="true" />
+                    <h:message for="editRut" styleClass="error" />
 
-                <h:column><f:facet name="header">ID</f:facet>#{p.tenantId}</h:column>
-                <h:column><f:facet name="header">Schema</f:facet>#{p.nombreSchema}</h:column>
-                <h:column><f:facet name="header">Nombre</f:facet>#{p.nombre}</h:column>
-                <h:column><f:facet name="header">RUT</f:facet>#{p.rut}</h:column>
-                <h:column>
-                    <f:facet name="header">Estado</f:facet>
-                    <h:outputText value="#{p.estado ? 'Activo' : 'Inactivo'}" />
-                </h:column>
-                <h:column><f:facet name="header">Contacto</f:facet>#{p.contactoMail}</h:column>
-                <h:column><f:facet name="header">Tipo</f:facet>#{p.tipo}</h:column>
-                <h:column><f:facet name="header">Creado</f:facet>#{p.fechaCreacion}</h:column>
-                <h:column><f:facet name="header">Modificado</f:facet>#{p.fechaModificacion}</h:column>
+                    <h:outputLabel for="editSchema" value="Nombre Schema:" />
+                    <h:inputText id="editSchema" value="#{prestadorSaludBean.prestadorEnEdicion.nombreSchema}" disabled="true" />
+                    <h:message for="editSchema" styleClass="error" />
 
-                <h:column>
-                    <f:facet name="header">Acciones</f:facet>
-                    <h:panelGroup>
-                        <h:commandButton value="Desactivar" action="#{prestadorSaludBean.desactivar(p.rut)}"
-                                         rendered="#{p.estado}">
-                            <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
-                        </h:commandButton>
-                        <h:commandButton value="Activar" action="#{prestadorSaludBean.activar(p.rut)}"
-                                         rendered="#{not p.estado}">
-                            <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
-                        </h:commandButton>
-                    </h:panelGroup>
-                </h:column>
+                    <h:outputLabel for="editEstado" value="Activo:" />
+                    <h:selectBooleanCheckbox id="editEstado" value="#{prestadorSaludBean.prestadorEnEdicion.estado}" />
+                    <h:message for="editEstado" styleClass="error" />
 
-                <f:facet name="footer">
-                    <h:outputText value="Sin resultados." rendered="#{empty prestadorSaludBean.prestadoresFiltrados}" />
-                </f:facet>
+                    <h:outputLabel for="editContacto" value="Contacto Mail:" />
+                    <h:inputText id="editContacto" value="#{prestadorSaludBean.prestadorEnEdicion.contactoMail}" />
+                    <h:message for="editContacto" styleClass="error" />
 
-            </h:dataTable>
-        </h:panelGroup>
-    </h:form>
+                    <h:outputLabel for="editTipo" value="Tipo:" />
+                    <h:inputText id="editTipo" value="#{prestadorSaludBean.prestadorEnEdicion.tipo}" />
+                    <h:message for="editTipo" styleClass="error" />
+                </h:panelGrid>
 
+                <h:commandButton value="Guardar cambios" action="#{prestadorSaludBean.actualizar}"
+                                 styleClass="btn btn-primario">
+                    <f:ajax execute="@form" render=":formTabla:tablaContainer :formEditar :globalMessages" />
+                </h:commandButton>
+                <h:commandButton value="Cancelar" action="#{prestadorSaludBean.cancelarEdicion}"
+                                 styleClass="btn btn-secundario">
+                    <f:ajax execute="@this" render=":formEditar" />
+                </h:commandButton>
+            </h:panelGroup>
+        </h:form>
+
+        <h:form id="formBuscar" styleClass="card">
+            <h:panelGroup layout="block">
+                <h2>Buscar Prestadores</h2>
+                <h:panelGrid columns="4" styleClass="form-grid">
+                    <h:outputLabel for="buscarRut" value="Buscar por RUT:" />
+                    <h:inputText id="buscarRut" value="#{prestadorSaludBean.buscarRut}" />
+
+                    <h:outputLabel for="buscarNombre" value="o por Nombre:" />
+                    <h:inputText id="buscarNombre" value="#{prestadorSaludBean.buscarNombre}" />
+
+                    <h:commandButton value="Buscar" action="#{prestadorSaludBean.buscar}" styleClass="btn btn-primario">
+                        <f:ajax execute="@form" render=":formTabla:tablaContainer" />
+                    </h:commandButton>
+
+                    <h:commandButton value="Limpiar" action="#{prestadorSaludBean.limpiarBusqueda}"
+                                     styleClass="btn btn-secundario">
+                        <f:ajax render=":formTabla:tablaContainer :formBuscar" />
+                    </h:commandButton>
+                </h:panelGrid>
+            </h:panelGroup>
+        </h:form>
+
+        <h:form id="formTabla" styleClass="card">
+            <h:panelGroup id="tablaContainer" layout="block">
+                <h2>Listado de Prestadores</h2>
+                <h:dataTable id="tablaPrestadores" value="#{prestadorSaludBean.prestadoresFiltrados}" var="p"
+                             styleClass="tabla-prestadores">
+
+                    <h:column><f:facet name="header">ID</f:facet>#{p.tenantId}</h:column>
+                    <h:column><f:facet name="header">Schema</f:facet>#{p.nombreSchema}</h:column>
+                    <h:column><f:facet name="header">Nombre</f:facet>#{p.nombre}</h:column>
+                    <h:column><f:facet name="header">RUT</f:facet>#{p.rut}</h:column>
+                    <h:column>
+                        <f:facet name="header">Estado</f:facet>
+                        <h:outputText value="#{p.estado ? 'Activo' : 'Inactivo'}" />
+                    </h:column>
+                    <h:column><f:facet name="header">Contacto</f:facet>#{p.contactoMail}</h:column>
+                    <h:column><f:facet name="header">Tipo</f:facet>#{p.tipo}</h:column>
+                    <h:column><f:facet name="header">Creado</f:facet>#{p.fechaCreacion}</h:column>
+                    <h:column><f:facet name="header">Modificado</f:facet>#{p.fechaModificacion}</h:column>
+
+                    <h:column>
+                        <f:facet name="header">Acciones</f:facet>
+                        <h:panelGroup styleClass="acciones-tabla">
+                            <h:commandButton value="Modificar" action="#{prestadorSaludBean.prepararEdicion(p)}"
+                                             styleClass="btn btn-secundario">
+                                <f:ajax execute="@this" render=":formEditar :globalMessages" />
+                            </h:commandButton>
+                            <h:commandButton value="Desactivar" action="#{prestadorSaludBean.desactivar(p.rut)}"
+                                             rendered="#{p.estado}" styleClass="btn btn-secundario">
+                                <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
+                            </h:commandButton>
+                            <h:commandButton value="Activar" action="#{prestadorSaludBean.activar(p.rut)}"
+                                             rendered="#{not p.estado}" styleClass="btn btn-primario">
+                                <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
+                            </h:commandButton>
+                        </h:panelGroup>
+                    </h:column>
+
+                    <f:facet name="footer">
+                        <h:outputText value="Sin resultados." rendered="#{empty prestadorSaludBean.prestadoresFiltrados}" />
+                    </f:facet>
+
+                </h:dataTable>
+            </h:panelGroup>
+        </h:form>
+    </div>
 </h:body>
 </html>

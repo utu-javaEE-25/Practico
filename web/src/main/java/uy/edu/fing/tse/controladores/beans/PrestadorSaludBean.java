@@ -26,6 +26,8 @@ public class PrestadorSaludBean implements Serializable {
     private List<PrestadorSalud> listaCompleta;
     private List<PrestadorSalud> prestadoresFiltrados;
     private PrestadorSalud nuevoPrestador;
+    private PrestadorSalud prestadorEnEdicion;
+    private boolean modoEdicion;
 
     private String buscarRut;
     private String buscarNombre;
@@ -61,6 +63,52 @@ public class PrestadorSaludBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage());
         } catch (Exception e) {
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo crear el prestador: " + e.getMessage());
+        }
+    }
+
+    public void prepararEdicion(PrestadorSalud prestador) {
+        if (prestador == null) {
+            return;
+        }
+
+        this.prestadorEnEdicion = copiarPrestador(prestador);
+        this.modoEdicion = true;
+    }
+
+    public void cancelarEdicion() {
+        this.modoEdicion = false;
+        this.prestadorEnEdicion = null;
+    }
+
+    public void actualizar() {
+        if (this.prestadorEnEdicion == null) {
+            addMessage(FacesMessage.SEVERITY_WARN, "Aviso", "No hay un prestador seleccionado para modificar.");
+            return;
+        }
+
+        try {
+            PrestadorSalud actual = prestadorService.obtener(this.prestadorEnEdicion.getRut());
+            if (actual == null) {
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "El prestador a modificar no existe.");
+                return;
+            }
+
+            this.prestadorEnEdicion.setTenantId(actual.getTenantId());
+            this.prestadorEnEdicion.setNombreSchema(actual.getNombreSchema());
+            this.prestadorEnEdicion.setFechaCreacion(actual.getFechaCreacion());
+
+            this.prestadorEnEdicion.setFechaModificacion(LocalDateTime.now());
+            prestadorService.actualizar(this.prestadorEnEdicion);
+
+            this.cargarListaCompleta();
+            this.buscar();
+
+            this.cancelarEdicion();
+            addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud actualizado correctamente.");
+        } catch (IllegalArgumentException e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage());
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el prestador: " + e.getMessage());
         }
     }
 
@@ -123,6 +171,20 @@ public class PrestadorSaludBean implements Serializable {
         this.prestadoresFiltrados = this.listaCompleta;
     }
 
+    private PrestadorSalud copiarPrestador(PrestadorSalud origen) {
+        PrestadorSalud copia = new PrestadorSalud();
+        copia.setTenantId(origen.getTenantId());
+        copia.setNombreSchema(origen.getNombreSchema());
+        copia.setNombre(origen.getNombre());
+        copia.setRut(origen.getRut());
+        copia.setEstado(origen.getEstado());
+        copia.setContactoMail(origen.getContactoMail());
+        copia.setTipo(origen.getTipo());
+        copia.setFechaCreacion(origen.getFechaCreacion());
+        copia.setFechaModificacion(origen.getFechaModificacion());
+        return copia;
+    }
+
     private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }
@@ -159,5 +221,21 @@ public class PrestadorSaludBean implements Serializable {
 
     public void setBuscarNombre(String buscarNombre) {
         this.buscarNombre = buscarNombre;
+    }
+
+    public PrestadorSalud getPrestadorEnEdicion() {
+        return prestadorEnEdicion;
+    }
+
+    public void setPrestadorEnEdicion(PrestadorSalud prestadorEnEdicion) {
+        this.prestadorEnEdicion = prestadorEnEdicion;
+    }
+
+    public boolean isModoEdicion() {
+        return modoEdicion;
+    }
+
+    public void setModoEdicion(boolean modoEdicion) {
+        this.modoEdicion = modoEdicion;
     }
 }
