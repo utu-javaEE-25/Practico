@@ -45,3 +45,6 @@ out/
 
 # Maven compilation files
 target/
+.mvn/wrapper/maven-wrapper.jar
+keycloak/
+.vscode/
