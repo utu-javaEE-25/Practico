@@ -1,7 +1,5 @@
 package uy.edu.fing.tse.servicios;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -102,47 +100,5 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
         prestador.setNombreSchema(schemaNormalizado);
     }
-
-    @Override
-    public void altaDesdeJms(String rut, String nombre, String fecha) {
-
-        LocalDate fechaLocal = LocalDate.parse(fecha);
-        LocalDateTime fechaCreacion = fechaLocal.atStartOfDay();
-
-        PrestadorSalud prestador = new PrestadorSalud();
-        
-        prestador.setRut(rut);
-        prestador.setNombre(nombre);
-        prestador.setNombreSchema(generarNombreSchema(rut, nombre));
-        prestador.setFechaCreacion(fechaCreacion);
-        prestador.setFechaModificacion(fechaCreacion);
-        crear(prestador);
-    }
-
-    private String generarNombreSchema(String rut, String nombre) {
-        String base = rut != null ? rut.replaceAll("[^a-zA-Z0-9]", "") : "";
-
-        if (base.isBlank() && nombre != null) {
-            base = nombre.replaceAll("[^a-zA-Z0-9]", "");
-        }
-
-        if (base.isBlank()) {
-            throw new IllegalArgumentException("No se pudo derivar un nombre de schema valido para el tenant.");
-        }
-
-        String schema = ("tenant_" + base).toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_");
-
-        if (schema.length() > 31) {
-            schema = schema.substring(0, 31);
-        }
-
-        if (!SCHEMA_PATTERN.matcher(schema).matches()) {
-            throw new IllegalArgumentException("Nombre de schema derivado invalido: " + schema);
-        }
-
-        return schema;
-    }
-
-
 
 }

@@ -15,7 +15,5 @@ public interface PrestadorSaludServiceLocal {
     void activar(String rut);
     void desactivar(String rut);
     List<PrestadorSalud> listar();
-    void altaDesdeJms(String rut, String nombre, String fecha);
-
 
 }

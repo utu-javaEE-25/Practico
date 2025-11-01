@@ -1,5 +1,3 @@
-SET search_path TO clinica1;
-
 CREATE TABLE admin_tenant (
     admin_id BIGSERIAL PRIMARY KEY,
     nombre_usuario VARCHAR(50) UNIQUE NOT NULL,

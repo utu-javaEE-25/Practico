@@ -4,7 +4,6 @@ uy\edu\fing\tse\persistencia\TrabajadorSaludDAO.class
 uy\edu\fing\tse\api\DocumentoClinicoServiceRemote.class
 uy\edu\fing\tse\api\PrestadorSaludPerRemote.class
 uy\edu\fing\tse\entidades\AdminHcen.class
-uy\edu\fing\tse\mdb\AltaPrestadorMDB.class
 uy\edu\fing\tse\api\DocumentoClinicoServiceLocal.class
 uy\edu\fing\tse\entidades\DocumentoClinico.class
 uy\edu\fing\tse\entidades\DocumentoClinicoMetadata.class
