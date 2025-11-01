@@ -3,6 +3,8 @@ package uy.edu.fing.tse.controladores.beans;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
@@ -19,6 +21,7 @@ import uy.edu.fing.tse.entidades.PrestadorSalud;
 public class PrestadorSaludBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(PrestadorSaludBean.class.getName());
 
     @EJB
     private PrestadorSaludServiceLocal prestadorService;
@@ -113,38 +116,36 @@ public class PrestadorSaludBean implements Serializable {
     }
 
     public void desactivar(String rut) {
-        System.out.println("--- INTENTANDO DESACTIVAR PRESTADOR CON RUT: " + rut);
+        LOGGER.info("--- INTENTANDO DESACTIVAR PRESTADOR CON RUT: " + rut);
         try {
             prestadorService.desactivar(rut);
-            System.out.println("--- PRESTADOR DESACTIVADO EXITOSAMENTE.");
+            LOGGER.info("--- PRESTADOR DESACTIVADO EXITOSAMENTE.");
 
             this.cargarListaCompleta();
-            System.out.println("--- LISTA COMPLETA RECARGADA. TAMANO: " + this.listaCompleta.size());
+            LOGGER.info("--- LISTA COMPLETA RECARGADA. TAMANO: " + this.listaCompleta.size());
 
             this.buscar();
-            System.out.println("--- LISTA FILTRADA ACTUALIZADA. TAMANO: " + this.prestadoresFiltrados.size());
+            LOGGER.info("--- LISTA FILTRADA ACTUALIZADA. TAMANO: " + this.prestadoresFiltrados.size());
 
             addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud desactivado.");
         } catch (Exception e) {
-            System.err.println("--- ERROR AL DESACTIVAR PRESTADOR ---");
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "--- ERROR AL DESACTIVAR PRESTADOR ---", e);
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrio un error al desactivar: " + e.getMessage());
         }
     }
 
     public void activar(String rut) {
-        System.out.println("--- INTENTANDO ACTIVAR PRESTADOR CON RUT: " + rut);
+        LOGGER.info("--- INTENTANDO ACTIVAR PRESTADOR CON RUT: " + rut);
         try {
             prestadorService.activar(rut);
-            System.out.println("--- PRESTADOR ACTIVADO EXITOSAMENTE.");
+            LOGGER.info("--- PRESTADOR ACTIVADO EXITOSAMENTE.");
 
             this.cargarListaCompleta();
             this.buscar();
 
             addMessage(FacesMessage.SEVERITY_INFO, "Exito", "Prestador de salud activado.");
         } catch (Exception e) {
-            System.err.println("--- ERROR AL ACTIVAR PRESTADOR ---");
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "--- ERROR AL ACTIVAR PRESTADOR ---", e);
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrio un error al activar: " + e.getMessage());
         }
     }

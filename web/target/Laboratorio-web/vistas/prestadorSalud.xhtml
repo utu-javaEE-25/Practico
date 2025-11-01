@@ -111,9 +111,9 @@
             </h:panelGroup>
         </h:form>
 
-        <h:form id="formTabla" styleClass="card">
-            <h:panelGroup id="tablaContainer" layout="block">
-                <h2>Listado de Prestadores</h2>
+        <h:form id="formTabla" styleClass="card tabla-card">
+            <h2>Listado de Prestadores</h2>
+            <h:panelGroup id="tablaContainer" layout="block" styleClass="tabla-scroll">
                 <h:dataTable id="tablaPrestadores" value="#{prestadorSaludBean.prestadoresFiltrados}" var="p"
                              styleClass="tabla-prestadores">
 

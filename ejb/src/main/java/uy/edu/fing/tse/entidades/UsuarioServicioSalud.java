@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "usuario_global", schema = "central")
@@ -22,14 +23,17 @@ public class UsuarioServicioSalud implements Serializable {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "gubuy_id")
-    private String gubUyId;
+    @Column(name = "gubuy_id", unique = true)
+    private String sub;
 
     @Column(name = "ci")
     private String cedulaIdentidad;
 
     @Column(name = "nombre")
-    private String nombreCompleto;
+    private String nombre;
+
+    @Column(name = "apellido")
+    private String apellido;
 
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
@@ -54,12 +58,12 @@ public class UsuarioServicioSalud implements Serializable {
         this.id = id;
     }
 
-    public String getGubUyId() {
-        return gubUyId;
+    public String getSub() {
+        return sub;
     }
 
-    public void setGubUyId(String gubUyId) {
-        this.gubUyId = gubUyId;
+    public void setSub(String sub) {
+        this.sub = sub;
     }
 
     public String getCedulaIdentidad() {
@@ -70,12 +74,51 @@ public class UsuarioServicioSalud implements Serializable {
         this.cedulaIdentidad = cedulaIdentidad;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    @Transient
     public String getNombreCompleto() {
-        return nombreCompleto;
+        if ((nombre == null || nombre.isBlank()) && (apellido == null || apellido.isBlank())) {
+            return null;
+        }
+        if (apellido == null || apellido.isBlank()) {
+            return nombre;
+        }
+        if (nombre == null || nombre.isBlank()) {
+            return apellido;
+        }
+        return nombre + " " + apellido;
     }
 
     public void setNombreCompleto(String nombreCompleto) {
-        this.nombreCompleto = nombreCompleto;
+        if (nombreCompleto == null) {
+            this.nombre = null;
+            this.apellido = null;
+            return;
+        }
+        String trimmed = nombreCompleto.trim();
+        if (trimmed.isEmpty()) {
+            this.nombre = null;
+            this.apellido = null;
+            return;
+        }
+        String[] partes = trimmed.split("\\s+", 2);
+        this.nombre = partes[0];
+        this.apellido = partes.length > 1 ? partes[1] : null;
     }
 
     public LocalDate getFechaNacimiento() {
