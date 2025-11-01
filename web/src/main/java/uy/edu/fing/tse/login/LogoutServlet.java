@@ -16,6 +16,7 @@ public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private static final String LOGOUT_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/logout";
+    private static final String POST_LOGOUT_REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/logout";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -38,10 +39,9 @@ public class LogoutServlet extends HttpServlet {
             return;
         }
 
-        String postLogoutRedirect = OidcEndpoints.buildRedirectUri(req, "/logout");
         String logoutUrl = LOGOUT_ENDPOINT
                 + "?id_token_hint=" + URLEncoder.encode(idToken, StandardCharsets.UTF_8)
-                + "&post_logout_redirect_uri=" + URLEncoder.encode(postLogoutRedirect, StandardCharsets.UTF_8)
+                + "&post_logout_redirect_uri=" + URLEncoder.encode(POST_LOGOUT_REDIRECT_URI, StandardCharsets.UTF_8)
                 + "&state=logout_done";
 
         resp.sendRedirect(logoutUrl);

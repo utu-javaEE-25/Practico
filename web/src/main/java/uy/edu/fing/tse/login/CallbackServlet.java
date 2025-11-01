@@ -28,7 +28,7 @@ public class CallbackServlet extends HttpServlet {
     private static final String CLIENT_ID = "890192";
     private static final String CLIENT_SECRET = "457d52f181bf11804a3365b49ae4d29a2e03bbabe74997a2f510b179";
     private static final String TOKEN_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/token";
-    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
+    private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
 
     @EJB
     private UsuarioDAO usuarioDAO;
@@ -60,20 +60,20 @@ public class CallbackServlet extends HttpServlet {
             session.removeAttribute("oauth_state");
             session.removeAttribute("oauth_nonce");
 
-            String redirectUri = OidcEndpoints.buildRedirectUri(req, "/callback");
             String body = "code=" + URLEncoder.encode(code, StandardCharsets.UTF_8)
                     + "&client_id=" + CLIENT_ID
                     + "&client_secret=" + CLIENT_SECRET
-                    + "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8)
+                    + "&redirect_uri=" + URLEncoder.encode(REDIRECT_URI, StandardCharsets.UTF_8)
                     + "&grant_type=authorization_code";
 
+            HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(TOKEN_ENDPOINT))
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
                     .build();
 
-            HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
                 resp.getWriter().println("<pre>OIDC token endpoint error (" + response.statusCode() + "):\n" + response.body() + "</pre>");
                 return;
