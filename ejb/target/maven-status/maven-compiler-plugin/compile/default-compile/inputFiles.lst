@@ -1,3 +1,4 @@
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\AdminGlobalServiceLocal.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\DocumentoClinicoPerLocal.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\DocumentoClinicoPerRemote.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\api\DocumentoClinicoServiceLocal.java
@@ -25,11 +26,13 @@ C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\SolicitudAc
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\TenantEndpoint.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\TrabajadorSalud.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\entidades\UsuarioServicioSalud.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\AdminGlobalDAO.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\DocumentoClinicoPerBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\PrestadorSaludPerBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\TrabajadorSaludDAO.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\UsuarioDAO.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\persistencia\UsuarioServicioSaludPerBean.java
+C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\AdminGlobalServiceBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\DocumentoClinicoServiceBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\PrestadorSaludServiceBean.java
 C:\Proyectos\Laboratorio\ejb\src\main\java\uy\edu\fing\tse\servicios\TenantProvisioningBean.java

@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import uy.edu.fing.tse.persistencia.UsuarioDAO;
 
@@ -32,6 +33,8 @@ public class CallbackServlet extends HttpServlet {
 
     @EJB
     private UsuarioDAO usuarioDAO;
+    @EJB
+    private AdminGlobalServiceLocal adminService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -99,14 +102,26 @@ public class CallbackServlet extends HttpServlet {
             usuario.setApellido(apellido);
             usuario.setEmail(email);
             usuario.setCedulaIdentidad(cedulaIdentidad);
-            usuarioDAO.guardar(usuario);
+            UsuarioServicioSalud guardado = usuarioDAO.guardar(usuario);
+            if (guardado == null) {
+                guardado = usuarioDAO.buscarPorSub(sub);
+            }
 
             session.setAttribute("nombre", nombre);
             session.setAttribute("apellido", apellido);
             session.setAttribute("email", email);
+            session.setAttribute("sub", sub);
             session.setAttribute("id_token", idToken);
+            if (guardado != null) {
+                session.setAttribute("usuario_id", guardado.getId());
+            }
 
-            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            boolean esAdmin = adminService != null && adminService.esAdminPorSub(sub);
+            session.setAttribute("isAdmin", esAdmin);
+            session.setAttribute("rol", esAdmin ? "ADMIN" : "USUARIO");
+
+            String destino = esAdmin ? "/index_admin" : "/index.jsp";
+            resp.sendRedirect(req.getContextPath() + destino);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             resp.getWriter().println("<p>Callback aborted while contacting the identity provider.</p>");
