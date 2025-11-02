@@ -3,5 +3,6 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "utu-javaee-25",
         "projectKey": "utu-javaEE-25_Practico"
-    }
+    },
+    "chatgpt.openOnStartup": true
 }
