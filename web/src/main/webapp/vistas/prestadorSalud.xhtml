@@ -8,15 +8,19 @@
     <h:outputStylesheet library="css" name="prestadorSalud.css" />
 </h:head>
 <h:body>
-    <div class="layout-column">
-        <h1>Prestadores de Salud</h1>
+    <div class="page-wrapper">
+        <div class="page-header">
+            <h1>Prestadores de Salud</h1>
+            <p class="subtitle">Administre el alta, edición y la búsqueda con la estética del portal HCEN.</p>
+        </div>
 
         <h:messages id="globalMessages" globalOnly="true" styleClass="faces-messages"
                     infoClass="info" errorClass="error" warnClass="warn" />
 
-        <h:form id="formCrear" styleClass="card">
-            <h:panelGroup layout="block">
+        <div class="section-grid">
+            <h:form id="formCrear" styleClass="card card-create">
                 <h2>Crear Prestador de Salud</h2>
+                <p class="lead">Complete el formulario para habilitar un nuevo prestador dentro del ecosistema HCEN.</p>
                 <h:panelGrid columns="3" styleClass="form-grid">
                     <h:outputLabel for="nombre" value="Nombre:" />
                     <h:inputText id="nombre" value="#{prestadorSaludBean.nuevoPrestador.nombre}" required="true" />
@@ -42,19 +46,26 @@
                     <h:inputText id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}" />
                     <h:message for="tipo" styleClass="error" />
                 </h:panelGrid>
-            </h:panelGroup>
 
-            <h:commandButton value="Crear" action="#{prestadorSaludBean.crear}" styleClass="btn btn-primario">
-                <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages" />
-            </h:commandButton>
-        </h:form>
+                <h:commandButton value="Crear" action="#{prestadorSaludBean.crear}" styleClass="btn btn-primario">
+                    <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages" />
+                </h:commandButton>
+            </h:form>
 
-        <h:form id="formEditar" styleClass="card">
-            <h:panelGroup id="editarContainer" layout="block" rendered="#{prestadorSaludBean.modoEdicion}">
+            <h:form id="formEditar" styleClass="card card-edit">
                 <h2>Modificar Prestador de Salud</h2>
-                <h:panelGrid columns="3" styleClass="form-grid">
+                <p class="lead">Actualice los datos del prestador seleccionado o cancele para volver al listado.</p>
+
+                <h:panelGroup layout="block" rendered="#{not prestadorSaludBean.modoEdicion}" styleClass="card-placeholder">
+                    <strong>Seleccione un prestador de salud</strong>
+                    <span>Utilice el listado para elegir un registro y habilitar la edición.</span>
+                </h:panelGroup>
+
+                <h:panelGrid id="editarContainer" columns="3" styleClass="form-grid" rendered="true">
                     <h:outputLabel for="editNombre" value="Nombre:" />
-                    <h:inputText id="editNombre" value="#{prestadorSaludBean.prestadorEnEdicion.nombre}" required="true" />
+                    <h:inputText id="editNombre" value="#{prestadorSaludBean.prestadorEnEdicion.nombre}"
+                                 required="#{prestadorSaludBean.modoEdicion}"
+                                 disabled="#{not prestadorSaludBean.modoEdicion}" />
                     <h:message for="editNombre" styleClass="error" />
 
                     <h:outputLabel for="editRut" value="RUT:" />
@@ -66,32 +77,36 @@
                     <h:message for="editSchema" styleClass="error" />
 
                     <h:outputLabel for="editEstado" value="Activo:" />
-                    <h:selectBooleanCheckbox id="editEstado" value="#{prestadorSaludBean.prestadorEnEdicion.estado}" />
+                    <h:selectBooleanCheckbox id="editEstado" value="#{prestadorSaludBean.prestadorEnEdicion.estado}"
+                                             disabled="#{not prestadorSaludBean.modoEdicion}" />
                     <h:message for="editEstado" styleClass="error" />
 
                     <h:outputLabel for="editContacto" value="Contacto Mail:" />
-                    <h:inputText id="editContacto" value="#{prestadorSaludBean.prestadorEnEdicion.contactoMail}" />
+                    <h:inputText id="editContacto" value="#{prestadorSaludBean.prestadorEnEdicion.contactoMail}"
+                                 disabled="#{not prestadorSaludBean.modoEdicion}" />
                     <h:message for="editContacto" styleClass="error" />
 
                     <h:outputLabel for="editTipo" value="Tipo:" />
-                    <h:inputText id="editTipo" value="#{prestadorSaludBean.prestadorEnEdicion.tipo}" />
+                    <h:inputText id="editTipo" value="#{prestadorSaludBean.prestadorEnEdicion.tipo}"
+                                 disabled="#{not prestadorSaludBean.modoEdicion}" />
                     <h:message for="editTipo" styleClass="error" />
                 </h:panelGrid>
 
-                <h:commandButton value="Guardar cambios" action="#{prestadorSaludBean.actualizar}"
-                                 styleClass="btn btn-primario">
-                    <f:ajax execute="@form" render=":formTabla:tablaContainer :formEditar :globalMessages" />
-                </h:commandButton>
-                <h:commandButton value="Cancelar" action="#{prestadorSaludBean.cancelarEdicion}"
-                                 styleClass="btn btn-secundario">
-                    <f:ajax execute="@this" render=":formEditar" />
-                </h:commandButton>
-            </h:panelGroup>
-        </h:form>
+                <h:panelGroup layout="block" styleClass="card-actions" rendered="#{prestadorSaludBean.modoEdicion}">
+                    <h:commandButton value="Guardar cambios" action="#{prestadorSaludBean.actualizar}"
+                                     styleClass="btn btn-primario">
+                        <f:ajax execute="@form" render=":formTabla:tablaContainer :formEditar :globalMessages" />
+                    </h:commandButton>
+                    <h:commandButton value="Cancelar" action="#{prestadorSaludBean.cancelarEdicion}"
+                                     styleClass="btn btn-secundario">
+                        <f:ajax execute="@this" render=":formEditar" />
+                    </h:commandButton>
+                </h:panelGroup>
+            </h:form>
 
-        <h:form id="formBuscar" styleClass="card">
-            <h:panelGroup layout="block">
+            <h:form id="formBuscar" styleClass="card card-search">
                 <h2>Buscar Prestadores</h2>
+                <p class="lead">Filtre el listado por RUT o por nombre para encontrar prestadores específicos.</p>
                 <h:panelGrid columns="4" styleClass="form-grid">
                     <h:outputLabel for="buscarRut" value="Buscar por RUT:" />
                     <h:inputText id="buscarRut" value="#{prestadorSaludBean.buscarRut}" />
@@ -108,11 +123,12 @@
                         <f:ajax render=":formTabla:tablaContainer :formBuscar" />
                     </h:commandButton>
                 </h:panelGrid>
-            </h:panelGroup>
-        </h:form>
+            </h:form>
+        </div>
 
         <h:form id="formTabla" styleClass="card tabla-card">
             <h2>Listado de Prestadores</h2>
+            <p class="lead">Revise el estado de los prestadores registrados y gestione acciones rápidas.</p>
             <h:panelGroup id="tablaContainer" layout="block" styleClass="tabla-scroll">
                 <h:dataTable id="tablaPrestadores" value="#{prestadorSaludBean.prestadoresFiltrados}" var="p"
                              styleClass="tabla-prestadores">

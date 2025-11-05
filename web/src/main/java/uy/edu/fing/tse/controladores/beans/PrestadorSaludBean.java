@@ -39,6 +39,7 @@ public class PrestadorSaludBean implements Serializable {
     public void init() {
         this.nuevoPrestador = new PrestadorSalud();
         this.nuevoPrestador.setEstado(Boolean.TRUE);
+        this.prestadorEnEdicion = new PrestadorSalud();
         this.cargarListaCompleta();
         this.prestadoresFiltrados = this.listaCompleta;
     }
@@ -80,12 +81,12 @@ public class PrestadorSaludBean implements Serializable {
 
     public void cancelarEdicion() {
         this.modoEdicion = false;
-        this.prestadorEnEdicion = null;
+        this.prestadorEnEdicion = new PrestadorSalud();
     }
 
     public void actualizar() {
-        if (this.prestadorEnEdicion == null) {
-            addMessage(FacesMessage.SEVERITY_WARN, "Aviso", "No hay un prestador seleccionado para modificar.");
+        if (!this.modoEdicion || this.prestadorEnEdicion == null || this.prestadorEnEdicion.getRut() == null) {
+            addMessage(FacesMessage.SEVERITY_WARN, "Aviso", "Seleccione un prestador para modificar.");
             return;
         }
 
