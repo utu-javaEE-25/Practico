@@ -4,8 +4,11 @@ uy\edu\fing\tse\rest\PrestadorSaludResource.class
 uy\edu\fing\tse\controladores\AdminDashboardServlet.class
 uy\edu\fing\tse\controladores\beans\TrabajadorSaludBean.class
 uy\edu\fing\tse\login\CallbackServlet.class
+<<<<<<< HEAD
 uy\edu\fing\tse\controladores\HistoriaClinicaServlet.class
 uy\edu\fing\tse\controladores\VerDocumentoServlet.class
+=======
+>>>>>>> origin/main
 uy\edu\fing\tse\ws\PrestadorSaludWebService.class
 uy\edu\fing\tse\login\LogoutServlet.class
 uy\edu\fing\tse\login\LoginServlet.class

@@ -7,6 +7,9 @@ replay_pid*
 target/
 
 # Archivos generados por Maven
+
+# Maven generated files
+**/target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -58,3 +61,8 @@ out/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+# Maven compilation files
+target/
+.mvn/wrapper/maven-wrapper.jar
+keycloak/
+.vscode/
