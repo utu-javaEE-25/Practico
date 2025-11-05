@@ -47,12 +47,6 @@
         <!-- Bean Validation Implementation
              Provides portable constraints such as @Email
              Hibernate Validator is shipped in WildFly / JBoss EAP -->
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Import the JPA API, we use provided scope as the API is included in WildFly / JBoss EAP -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
@@ -90,45 +84,64 @@
         </dependency>
 
         <dependency>
-            <groupId>jakarta.jms</groupId>
-            <artifactId>jakarta.jms-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>9.22.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <!-- Tell Maven that the resulting file should not have a file name containing the version -
              a non versioned name is required e.g. when building a deployable artifact using the ShrinkWrap API -->
         <finalName>${project.artifactId}</finalName>
-
         <plugins>
-            <!--Configure the EJB plugin: we create EJB 4.0. If not specified, an error will arise because the plugin expects an Ejb-jar by default. -->
-            <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-ejb-plugin</artifactId>
-                    <version>${version.ejb.plugin}</version>
-                    <configuration>
-                        <!-- Tell Maven we are using EJB 4.0 -->
-                        <ejbVersion>4.0</ejbVersion>
-
-                         <archive>
-                            <manifestEntries>
-                                <!-- Esta línea le dice a WildFly que nuestro EJB    -->
-                                <!-- necesita acceso al módulo de JMS del servidor.   -->
-                                <Dependencies>jakarta.jms.api</Dependencies>
-                            </manifestEntries>
-                        </archive>
-                        
-                    </configuration>
-                </plugin>
+            <!-- sin configuraciones específicas por ahora -->
         </plugins>
     </build>
 </project>

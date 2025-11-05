@@ -3,6 +3,8 @@ package uy.edu.fing.tse.controladores.beans;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
@@ -19,6 +21,7 @@ import uy.edu.fing.tse.entidades.TrabajadorSalud;
 public class TrabajadorSaludBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(TrabajadorSaludBean.class.getName());
 
     @EJB
     private TrabajadorSaludServiceLocal trabajadorService;
@@ -47,7 +50,7 @@ public class TrabajadorSaludBean implements Serializable {
             this.nuevoTrabajador = new TrabajadorSalud();
             this.cargarLista();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al dar de alta un trabajador de salud", e);
         }
     }
 

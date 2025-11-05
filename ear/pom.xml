@@ -32,6 +32,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Laboratorio-ejb</artifactId>
+            <version>${project.version}</version>
             <type>ejb</type>
         </dependency>
 
@@ -39,6 +40,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Laboratorio-web</artifactId>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
     </dependencies>
@@ -59,16 +61,11 @@
                         have any modules (EJB-JARs and WARs) use them -->
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
                     <modules>
-                    <!-- Default context root of the web app is /Laboratorio-web.
-                        If a custom context root is needed, uncomment the following snippet to
-                        register our War as a web module and set the contextRoot property -->
-                    <!--
-                    <webModule>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>Laboratorio-web</artifactId>
-                        <contextRoot>/Laboratorio</contextRoot>
-                    </webModule>
-                    -->
+                        <webModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>Laboratorio-web</artifactId>
+                            <contextRoot>/Laboratorio</contextRoot>
+                        </webModule>
                     </modules>
                     <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
                 </configuration>

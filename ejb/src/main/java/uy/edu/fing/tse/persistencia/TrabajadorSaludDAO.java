@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.Singleton;
-import jakarta.ejb.Startup;
+import jakarta.ejb.Stateless;
 
-@Singleton
-@Startup
+@Stateless 
 public class TrabajadorSaludDAO implements TrabajadorSaludPerLocal, TrabajadorSaludPerRemote {
 
     private List<TrabajadorSalud> trabajadores;

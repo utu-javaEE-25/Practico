@@ -37,15 +37,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Bean Validation Implementation
-           Provides portable constraints such as @Email
-           Hibernate Validator is shipped in WildFly / JBoss EAP -->
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Import the JPA API, we use provided scope as the API is included in WildFly / JBoss EAP -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
@@ -58,6 +49,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>Laboratorio-ejb</artifactId>
             <type>ejb</type>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -119,19 +111,25 @@
         </dependency>
 
         <dependency>
-            <groupId>jakarta.jms</groupId>
-            <artifactId>jakarta.jms-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>10.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20250517</version>
+        </dependency>
+
+        
     </dependencies>
 
     <build>

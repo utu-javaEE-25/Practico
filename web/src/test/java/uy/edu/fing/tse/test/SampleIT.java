@@ -1,6 +1,7 @@
 package uy.edu.fing.tse.test;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
  */
 @ExtendWith(ArquillianExtension.class)
 public class SampleIT {
+
+    private static final Logger LOGGER = Logger.getLogger(SampleIT.class.getName());
 
     /**
      * Creates the EAR file that is deployed to the server.
@@ -64,6 +67,6 @@ public class SampleIT {
     @Test
     public void test() {
         // This line will be written on the server console.
-        System.out.println("Test is invoked...");
+        LOGGER.info("Test is invoked...");
     }
 }

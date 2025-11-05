@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,55 +18,69 @@ public class PrestadorSaludServlet extends HttpServlet {
     @EJB
     private PrestadorSaludServiceLocal prestadorService;
 
-   @Override
-protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
-    String accion = req.getParameter("accion");
+        String accion = req.getParameter("accion");
 
-    if ("eliminar".equals(accion)) {
+        if ("eliminar".equals(accion)) {
+            accion = "desactivar";
+        }
+
+        if ("desactivar".equals(accion)) {
+            try {
+                String rut = req.getParameter("rut");
+                prestadorService.desactivar(rut);
+                resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
+                return;
+            } catch (Exception e) {
+                req.setAttribute("error", e.getMessage());
+                doGet(req, resp);
+                return;
+            }
+        } else if ("activar".equals(accion)) {
+            try {
+                String rut = req.getParameter("rut");
+                prestadorService.activar(rut);
+                resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
+                return;
+            } catch (Exception e) {
+                req.setAttribute("error", e.getMessage());
+                doGet(req, resp);
+                return;
+            }
+        }
+
+        PrestadorSalud p = new PrestadorSalud();
+        p.setNombre(req.getParameter("nombre"));
+        p.setRut(req.getParameter("rut"));
+        LocalDateTime ahora = LocalDateTime.now();
+        p.setFechaCreacion(ahora);
+        p.setFechaModificacion(ahora);
+        p.setEstado(Boolean.TRUE);
+
         try {
-            String rut = req.getParameter("rut");
-            prestadorService.eliminar(rut);  // <-- ver método del servicio abajo
+            prestadorService.crear(p);
             resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
-            return;
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             req.setAttribute("error", e.getMessage());
             doGet(req, resp);
-            return;
         }
     }
 
-    
-    PrestadorSalud p = new PrestadorSalud();
-    p.setNombre(req.getParameter("nombre"));
-    p.setRut(req.getParameter("rut"));
-    p.setFechaAlta(java.time.LocalDate.now());
-    p.setActivo(true);
-
-    try {
-        prestadorService.crear(p);
-        resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
-    } catch (IllegalArgumentException e) {
-        req.setAttribute("error", e.getMessage());
-        doGet(req, resp);
-    }
-}
-
-
-   @Override
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         String buscarRut = trim(req.getParameter("buscarRut"));
         String buscarNombre = trim(req.getParameter("buscarNombre"));
 
-        // Traemos todo y filtramos en memoria (simple y suficiente para el práctico)
         List<PrestadorSalud> lista = prestadorService.listar();
         List<PrestadorSalud> resultado = new ArrayList<>();
 
         if (isEmpty(buscarRut) && isEmpty(buscarNombre)) {
-            resultado = lista; // sin filtros -> listar todo
+            resultado = lista;
         } else {
             for (PrestadorSalud p : lista) {
                 boolean match = true;
@@ -79,7 +94,9 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp)
                             p.getNombre().toLowerCase().contains(buscarNombre.toLowerCase());
                 }
 
-                if (match) resultado.add(p);
+                if (match) {
+                    resultado.add(p);
+                }
             }
         }
 

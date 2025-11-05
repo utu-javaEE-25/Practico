@@ -83,30 +83,5 @@
         <h:column><f:facet name="header">Especialidad</f:facet>#{t.especialidad}</h:column>
     </h:dataTable>
 
-    <hr />
-
-<h1>Formulario de Alta Asíncrona (vía JMS)</h1>
-
-<!-- Para mostrar los mensajes de éxito/error -->
-<h:messages globalOnly="true" infoClass="msg-info" errorClass="msg-error"/>
-
-<h:form id="formAltaJMS">
-    <h:panelGrid columns="2">
-        <h:outputLabel value="Cédula:" />
-        <h:inputText value="#{trabajadorSaludSenderBean.cedula}" required="true" />
-
-        <h:outputLabel value="Nombre Completo:" />
-        <h:inputText value="#{trabajadorSaludSenderBean.nombreCompleto}" required="true" />
-
-        <h:outputLabel value="Especialidad:" />
-        <h:inputText value="#{trabajadorSaludSenderBean.especialidad}" required="true" />
-    </h:panelGrid>
-
-    <h:commandButton value="Agregar Trabajador (Asíncrono)" action="#{trabajadorSaludSenderBean.enviarAltaAsync}">
-        <!-- Usamos AJAX para limpiar el formulario y mostrar el mensaje de éxito sin recargar toda la página -->
-        <f:ajax execute="@form" render="@form :globalMessages" />
-    </h:commandButton>
-    </h:form>
-
 </h:body>
 </html>

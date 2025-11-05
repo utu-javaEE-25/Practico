@@ -10,6 +10,7 @@ import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import java.util.List;
 
 @Stateless
+
 public class UsuarioServicioSaludServiceBean implements UsuarioServicioSaludServiceLocal, UsuarioServicioSaludServiceRemote {
 
     @EJB

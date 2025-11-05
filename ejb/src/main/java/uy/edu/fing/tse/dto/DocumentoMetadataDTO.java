@@ -1,0 +1,25 @@
+package uy.edu.fing.tse.dto;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+public class DocumentoMetadataDTO implements Serializable {
+
+    private String idExternaDoc; // Identificador de negocio (String)
+    private Long idCustodio;     // ID numérico del tenant custodio
+    private String tipoDocumento;
+    private LocalDateTime fechaCreacion;
+    private String nombrePrestador;
+
+    // Getters y Setters
+    public String getIdExternaDoc() { return idExternaDoc; }
+    public void setIdExternaDoc(String idExternaDoc) { this.idExternaDoc = idExternaDoc; }
+    public Long getIdCustodio() { return idCustodio; }
+    public void setIdCustodio(Long idCustodio) { this.idCustodio = idCustodio; }
+    public String getTipoDocumento() { return tipoDocumento; }
+    public void setTipoDocumento(String tipoDocumento) { this.tipoDocumento = tipoDocumento; }
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public String getNombrePrestador() { return nombrePrestador; }
+    public void setNombrePrestador(String nombrePrestador) { this.nombrePrestador = nombrePrestador; }
+}
