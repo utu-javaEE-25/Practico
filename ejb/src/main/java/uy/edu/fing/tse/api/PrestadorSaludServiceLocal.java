@@ -12,6 +12,8 @@ public interface PrestadorSaludServiceLocal {
     PrestadorSalud obtener(String rut);
     void actualizar(PrestadorSalud prestador);
     void eliminar(String rut);
+    void activar(String rut);
+    void desactivar(String rut);
     List<PrestadorSalud> listar();
 
 }

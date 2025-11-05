@@ -19,7 +19,7 @@ public class UsuarioServicioSaludPerBean implements UsuarioServicioSaludPerLocal
 
     @Override
     public UsuarioServicioSalud crear(UsuarioServicioSalud usuario) {
-        if (usuario.getId() == 0) {
+        if (usuario.getId() == null || usuario.getId() == 0L) {
             usuario.setId(secuencia++);
         }
         dato.put(usuario.getId(), usuario);

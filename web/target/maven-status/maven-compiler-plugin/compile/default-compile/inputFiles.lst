@@ -1,7 +1,15 @@
-C:\Users\nicop\OneDrive\Desktop\Git-LaboratorioJAVA\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\beans\PrestadorSaludBean.java
-C:\Users\nicop\OneDrive\Desktop\Git-LaboratorioJAVA\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\beans\TrabajadorSaludBean.java
-C:\Users\nicop\OneDrive\Desktop\Git-LaboratorioJAVA\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\beans\TrabajadorSaludSenderBean.java
-C:\Users\nicop\OneDrive\Desktop\Git-LaboratorioJAVA\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\PrestadorSaludServlet.java
-C:\Users\nicop\OneDrive\Desktop\Git-LaboratorioJAVA\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\UsuarioServicioSaludServlet.java
-C:\Users\nicop\OneDrive\Desktop\Git-LaboratorioJAVA\Laboratorio\web\src\main\java\uy\edu\fing\tse\rest\JAXRSConfiguration.java
-C:\Users\nicop\OneDrive\Desktop\Git-LaboratorioJAVA\Laboratorio\web\src\main\java\uy\edu\fing\tse\rest\TrabajadorSaludResource.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\AdminDashboardServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\beans\PrestadorSaludBean.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\beans\TrabajadorSaludBean.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\DocumentoClinicoServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\HistoriaClinicaServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\PrestadorSaludServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\UsuarioServicioSaludServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\VerDocumentoServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\login\CallbackServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\login\LoginServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\login\LogoutServlet.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\login\TokenValidator.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\rest\JaxRsActivator.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\rest\PrestadorSaludResource.java
+C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\ws\PrestadorSaludWebService.java

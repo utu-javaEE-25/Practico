@@ -8,9 +8,13 @@ public class TrabajadorSalud implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
     private String cedula;
+
     private String nombreCompleto;
+
     private LocalDate fechaIngreso;
+
     private String especialidad;
 
     public TrabajadorSalud() {
