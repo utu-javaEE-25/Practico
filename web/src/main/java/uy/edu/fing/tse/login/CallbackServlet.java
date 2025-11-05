@@ -29,6 +29,7 @@ public class CallbackServlet extends HttpServlet {
     private static final String CLIENT_ID = "890192";
     private static final String CLIENT_SECRET = "457d52f181bf11804a3365b49ae4d29a2e03bbabe74997a2f510b179";
     private static final String TOKEN_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/token";
+
     //private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
     private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
 

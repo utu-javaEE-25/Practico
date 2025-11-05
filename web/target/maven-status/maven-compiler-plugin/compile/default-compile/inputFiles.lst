@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\AdminDashboardServlet.java
 C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\beans\PrestadorSaludBean.java
 C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\controladores\beans\TrabajadorSaludBean.java
@@ -13,3 +14,18 @@ C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\
 C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\rest\JaxRsActivator.java
 C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\rest\PrestadorSaludResource.java
 C:\Users\nicop\OneDrive\Desktop\GIT-HCEN main\Practico\web\src\main\java\uy\edu\fing\tse\ws\PrestadorSaludWebService.java
+=======
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\AdminDashboardServlet.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\beans\PrestadorSaludBean.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\beans\TrabajadorSaludBean.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\DocumentoClinicoServlet.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\PrestadorSaludServlet.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\controladores\UsuarioServicioSaludServlet.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\login\CallbackServlet.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\login\LoginServlet.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\login\LogoutServlet.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\login\TokenValidator.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\rest\JaxRsActivator.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\rest\PrestadorSaludResource.java
+C:\Proyectos\Laboratorio\web\src\main\java\uy\edu\fing\tse\ws\PrestadorSaludWebService.java
+>>>>>>> origin/main

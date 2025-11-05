@@ -8,6 +8,7 @@ import uy.edu.fing.tse.entidades.DocumentoClinico;
 @Singleton
 public class DocumentoClinicoPerBean implements DocumentoClinicoPerLocal {
 
+
     private final Map<Long, DocumentoClinico> data = new LinkedHashMap<>();
     private long sequence = 1L;
 

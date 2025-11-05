@@ -16,5 +16,4 @@ public interface PrestadorSaludPerLocal {
     List<PrestadorSalud> listar();
     PrestadorSalud obtenerPorRut(String rut);
     boolean existeRut(String rut);
-
 }
