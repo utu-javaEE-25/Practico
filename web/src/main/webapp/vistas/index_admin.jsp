@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.*, uy.edu.fing.tse.entidades.UsuarioServicioSalud, uy.edu.fing.tse.entidades.AdminHcen" %>
 <!DOCTYPE html>
 <html lang="es">
@@ -32,8 +32,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="<%=request.getContextPath()%>/index_admin">HCEN Admin</a>
-        <div class="d-flex align-items-center ms-auto text-white">
-            <span class="me-3">Superadmin: <strong><%= nombre != null ? nombre : "" %> <%= apellido != null ? apellido : "" %></strong></span>
+        <div class="d-flex align-items-center ms-auto text-white gap-3">
+            <a href="<%=request.getContextPath()%>/faces/vistas/prestadorSalud.xhtml" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-hospital"></i> Gestionar prestadores
+            </a>
+            <a href="<%=request.getContextPath()%>/reportes_admin" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-graph-up"></i> Reportes
+            </a>
+            <span class="me-3">Admin: <strong><%= nombre != null ? nombre : "" %> <%= apellido != null ? apellido : "" %></strong></span>
             <a href="<%=request.getContextPath()%>/logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
         </div>
     </div>
@@ -144,3 +150,4 @@
 
 </body>
 </html>
+
