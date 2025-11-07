@@ -54,13 +54,6 @@ CREATE TABLE tenant_config (
     fecha_modificacion TIMESTAMP
 );
 
-CREATE TABLE central_endpoint (
-    endpoint_id BIGSERIAL PRIMARY KEY,
-    url_base VARCHAR(300) NOT NULL,
-    tipo_auth VARCHAR(40),
-    hash_cliente VARCHAR(255)
-);
-
 CREATE TABLE audit_log (
     audit_id BIGSERIAL PRIMARY KEY,
     tipo_actor VARCHAR(50),
