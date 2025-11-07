@@ -111,3 +111,4 @@ CREATE TABLE audit_log (
     ip VARCHAR(50),
     fecha_creacion TIMESTAMP
 );
+

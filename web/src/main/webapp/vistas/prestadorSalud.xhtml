@@ -1,176 +1,293 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
     <title>Prestadores de Salud</title>
-    <h:outputStylesheet library="css" name="prestadorSalud.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+    <h:outputStylesheet library="css" name="prestadorSalud.css"/>
 </h:head>
-<h:body>
-    <div class="page-wrapper">
-        <div class="page-header">
-            <h1>Prestadores de Salud</h1>
-            <p class="subtitle">Administre el alta, edición y la búsqueda con la estética del portal HCEN.</p>
+<h:body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#{facesContext.externalContext.requestContextPath}/index_admin">HCEN Admin</a>
+        <div class="d-flex gap-2 ms-auto">
+            <h:outputLink value="#{facesContext.externalContext.requestContextPath}/index_admin"
+                          styleClass="btn btn-outline-light btn-sm">
+                <i class="bi bi-speedometer2 me-1"></i>Panel principal
+            </h:outputLink>
+            <h:outputLink value="#{facesContext.externalContext.requestContextPath}/reportes_admin"
+                          styleClass="btn btn-outline-light btn-sm">
+                <i class="bi bi-bar-chart-line me-1"></i>Reportes
+            </h:outputLink>
+            <h:outputLink value="#{facesContext.externalContext.requestContextPath}/logout"
+                          styleClass="btn btn-outline-light btn-sm">
+                Cerrar sesión
+            </h:outputLink>
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+    <div class="d-flex align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1 text-primary">Gestión de Prestadores de Salud</h1>
+            <p class="text-muted mb-0">Administre altas, ediciones y búsquedas con la misma estética del portal HCEN.</p>
+        </div>
+    </div>
+
+    <h:messages id="globalMessages"
+                globalOnly="true"
+                layout="unorderedList"
+                styleClass="alert-list list-unstyled"
+                infoClass="alert alert-info"
+                warnClass="alert alert-warning"
+                errorClass="alert alert-danger"/>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <h:form id="formCrear" styleClass="card shadow-sm h-100">
+                <div class="card-header bg-white border-0 pb-0">
+                    <h2 class="h5 mb-1">Crear prestador</h2>
+                    <p class="text-muted small mb-0">Complete los campos para habilitar un nuevo prestador dentro del ecosistema HCEN.</p>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h:outputLabel for="nombre" value="Nombre" styleClass="form-label"/>
+                            <h:inputText id="nombre" value="#{prestadorSaludBean.nuevoPrestador.nombre}"
+                                         required="true" styleClass="form-control"/>
+                            <h:message for="nombre" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="rut" value="RUT" styleClass="form-label"/>
+                            <h:inputText id="rut" value="#{prestadorSaludBean.nuevoPrestador.rut}"
+                                         required="true" styleClass="form-control"/>
+                            <h:message for="rut" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="schema" value="Nombre schema" styleClass="form-label"/>
+                            <h:inputText id="schema" value="#{prestadorSaludBean.nuevoPrestador.nombreSchema}"
+                                         styleClass="form-control"/>
+                            <h:message for="schema" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="contacto" value="Correo de contacto" styleClass="form-label"/>
+                            <h:inputText id="contacto" value="#{prestadorSaludBean.nuevoPrestador.contactoMail}"
+                                         styleClass="form-control"/>
+                            <h:message for="contacto" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="tipo" value="Tipo" styleClass="form-label"/>
+                            <h:inputText id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}"
+                                         styleClass="form-control"/>
+                            <h:message for="tipo" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <h:selectBooleanCheckbox id="estado" value="#{prestadorSaludBean.nuevoPrestador.estado}"
+                                                         styleClass="form-check-input"/>
+                                <h:outputLabel for="estado" value="Activo" styleClass="form-check-label ms-2"/>
+                            </div>
+                            <h:message for="estado" styleClass="text-danger small"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <h:commandButton value="Crear prestador" action="#{prestadorSaludBean.crear}"
+                                     styleClass="btn btn-primary">
+                        <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages"/>
+                    </h:commandButton>
+                </div>
+            </h:form>
         </div>
 
-        <h:messages id="globalMessages" globalOnly="true" styleClass="faces-messages"
-                    infoClass="info" errorClass="error" warnClass="warn" />
-
-        <div class="section-grid">
-            <h:form id="formCrear" styleClass="card card-create">
-                <h2>Crear Prestador de Salud</h2>
-                <p class="lead">Complete el formulario para habilitar un nuevo prestador dentro del ecosistema HCEN.</p>
-                <h:panelGrid columns="3" styleClass="form-grid">
-                    <h:outputLabel for="nombre" value="Nombre:" />
-                    <h:inputText id="nombre" value="#{prestadorSaludBean.nuevoPrestador.nombre}" required="true" />
-                    <h:message for="nombre" styleClass="error" />
-
-                    <h:outputLabel for="rut" value="RUT:" />
-                    <h:inputText id="rut" value="#{prestadorSaludBean.nuevoPrestador.rut}" required="true" />
-                    <h:message for="rut" styleClass="error" />
-
-                    <h:outputLabel for="schema" value="Nombre Schema:" />
-                    <h:inputText id="schema" value="#{prestadorSaludBean.nuevoPrestador.nombreSchema}" />
-                    <h:message for="schema" styleClass="error" />
-
-                    <h:outputLabel for="estado" value="Activo:" />
-                    <h:selectBooleanCheckbox id="estado" value="#{prestadorSaludBean.nuevoPrestador.estado}" />
-                    <h:message for="estado" styleClass="error" />
-
-                    <h:outputLabel for="contacto" value="Contacto Mail:" />
-                    <h:inputText id="contacto" value="#{prestadorSaludBean.nuevoPrestador.contactoMail}" />
-                    <h:message for="contacto" styleClass="error" />
-
-                    <h:outputLabel for="tipo" value="Tipo:" />
-                    <h:inputText id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}" />
-                    <h:message for="tipo" styleClass="error" />
-                </h:panelGrid>
-
-                <h:commandButton value="Crear" action="#{prestadorSaludBean.crear}" styleClass="btn btn-primario">
-                    <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages" />
-                </h:commandButton>
+        <div class="col-lg-6">
+            <h:form id="formEditar" styleClass="card shadow-sm h-100">
+                <div class="card-header bg-white border-0 pb-0">
+                    <h2 class="h5 mb-1">Modificar prestador</h2>
+                    <p class="text-muted small mb-0">Seleccione un registro del listado para habilitar la edición.</p>
+                </div>
+                <div class="card-body">
+                    <h:panelGroup layout="block" rendered="#{not prestadorSaludBean.modoEdicion}">
+                        <div class="alert alert-info mb-0">
+                            Seleccione un prestador desde la tabla para editar sus datos.
+                        </div>
+                    </h:panelGroup>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <h:outputLabel for="editNombre" value="Nombre" styleClass="form-label"/>
+                            <h:inputText id="editNombre" value="#{prestadorSaludBean.prestadorEnEdicion.nombre}"
+                                         required="#{prestadorSaludBean.modoEdicion}"
+                                         disabled="#{not prestadorSaludBean.modoEdicion}"
+                                         styleClass="form-control"/>
+                            <h:message for="editNombre" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="editRut" value="RUT" styleClass="form-label"/>
+                            <h:inputText id="editRut" value="#{prestadorSaludBean.prestadorEnEdicion.rut}"
+                                         disabled="true" styleClass="form-control"/>
+                            <h:message for="editRut" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="editSchema" value="Nombre schema" styleClass="form-label"/>
+                            <h:inputText id="editSchema"
+                                         value="#{prestadorSaludBean.prestadorEnEdicion.nombreSchema}"
+                                         disabled="true" styleClass="form-control"/>
+                            <h:message for="editSchema" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="editContacto" value="Correo de contacto" styleClass="form-label"/>
+                            <h:inputText id="editContacto"
+                                         value="#{prestadorSaludBean.prestadorEnEdicion.contactoMail}"
+                                         disabled="#{not prestadorSaludBean.modoEdicion}"
+                                         styleClass="form-control"/>
+                            <h:message for="editContacto" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h:outputLabel for="editTipo" value="Tipo" styleClass="form-label"/>
+                            <h:inputText id="editTipo" value="#{prestadorSaludBean.prestadorEnEdicion.tipo}"
+                                         disabled="#{not prestadorSaludBean.modoEdicion}"
+                                         styleClass="form-control"/>
+                            <h:message for="editTipo" styleClass="text-danger small"/>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <h:selectBooleanCheckbox id="editEstado"
+                                                         value="#{prestadorSaludBean.prestadorEnEdicion.estado}"
+                                                         disabled="#{not prestadorSaludBean.modoEdicion}"
+                                                         styleClass="form-check-input"/>
+                                <h:outputLabel for="editEstado" value="Activo" styleClass="form-check-label ms-2"/>
+                            </div>
+                            <h:message for="editEstado" styleClass="text-danger small"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <h:panelGroup layout="block" styleClass="d-flex flex-wrap gap-2"
+                                  rendered="#{prestadorSaludBean.modoEdicion}">
+                        <h:commandButton value="Guardar cambios" action="#{prestadorSaludBean.actualizar}"
+                                         styleClass="btn btn-primary">
+                            <f:ajax execute="@form" render=":formTabla:tablaContainer :formEditar :globalMessages"/>
+                        </h:commandButton>
+                        <h:commandButton value="Cancelar" action="#{prestadorSaludBean.cancelarEdicion}"
+                                         styleClass="btn btn-outline-secondary">
+                            <f:ajax execute="@this" render=":formEditar"/>
+                        </h:commandButton>
+                    </h:panelGroup>
+                </div>
             </h:form>
+        </div>
+    </div>
 
-            <h:form id="formEditar" styleClass="card card-edit">
-                <h2>Modificar Prestador de Salud</h2>
-                <p class="lead">Actualice los datos del prestador seleccionado o cancele para volver al listado.</p>
-
-                <h:panelGroup layout="block" rendered="#{not prestadorSaludBean.modoEdicion}" styleClass="card-placeholder">
-                    <strong>Seleccione un prestador de salud</strong>
-                    <span>Utilice el listado para elegir un registro y habilitar la edición.</span>
-                </h:panelGroup>
-
-                <h:panelGrid id="editarContainer" columns="3" styleClass="form-grid" rendered="true">
-                    <h:outputLabel for="editNombre" value="Nombre:" />
-                    <h:inputText id="editNombre" value="#{prestadorSaludBean.prestadorEnEdicion.nombre}"
-                                 required="#{prestadorSaludBean.modoEdicion}"
-                                 disabled="#{not prestadorSaludBean.modoEdicion}" />
-                    <h:message for="editNombre" styleClass="error" />
-
-                    <h:outputLabel for="editRut" value="RUT:" />
-                    <h:inputText id="editRut" value="#{prestadorSaludBean.prestadorEnEdicion.rut}" disabled="true" />
-                    <h:message for="editRut" styleClass="error" />
-
-                    <h:outputLabel for="editSchema" value="Nombre Schema:" />
-                    <h:inputText id="editSchema" value="#{prestadorSaludBean.prestadorEnEdicion.nombreSchema}" disabled="true" />
-                    <h:message for="editSchema" styleClass="error" />
-
-                    <h:outputLabel for="editEstado" value="Activo:" />
-                    <h:selectBooleanCheckbox id="editEstado" value="#{prestadorSaludBean.prestadorEnEdicion.estado}"
-                                             disabled="#{not prestadorSaludBean.modoEdicion}" />
-                    <h:message for="editEstado" styleClass="error" />
-
-                    <h:outputLabel for="editContacto" value="Contacto Mail:" />
-                    <h:inputText id="editContacto" value="#{prestadorSaludBean.prestadorEnEdicion.contactoMail}"
-                                 disabled="#{not prestadorSaludBean.modoEdicion}" />
-                    <h:message for="editContacto" styleClass="error" />
-
-                    <h:outputLabel for="editTipo" value="Tipo:" />
-                    <h:inputText id="editTipo" value="#{prestadorSaludBean.prestadorEnEdicion.tipo}"
-                                 disabled="#{not prestadorSaludBean.modoEdicion}" />
-                    <h:message for="editTipo" styleClass="error" />
-                </h:panelGrid>
-
-                <h:panelGroup layout="block" styleClass="card-actions" rendered="#{prestadorSaludBean.modoEdicion}">
-                    <h:commandButton value="Guardar cambios" action="#{prestadorSaludBean.actualizar}"
-                                     styleClass="btn btn-primario">
-                        <f:ajax execute="@form" render=":formTabla:tablaContainer :formEditar :globalMessages" />
+    <h:form id="formBuscar" styleClass="card shadow-sm mb-4">
+        <div class="card-header bg-white border-0 pb-0">
+            <h2 class="h5 mb-1">Buscar prestadores</h2>
+            <p class="text-muted small mb-0">Filtre el listado por RUT o nombre para agilizar la gestión.</p>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <h:outputLabel for="buscarRut" value="Buscar por RUT" styleClass="form-label"/>
+                    <h:inputText id="buscarRut" value="#{prestadorSaludBean.buscarRut}" styleClass="form-control"/>
+                </div>
+                <div class="col-md-4">
+                    <h:outputLabel for="buscarNombre" value="o por Nombre" styleClass="form-label"/>
+                    <h:inputText id="buscarNombre" value="#{prestadorSaludBean.buscarNombre}" styleClass="form-control"/>
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <h:commandButton value="Buscar" action="#{prestadorSaludBean.buscar}"
+                                     styleClass="btn btn-primary flex-grow-1">
+                        <f:ajax execute="@form" render=":formTabla:tablaContainer"/>
                     </h:commandButton>
-                    <h:commandButton value="Cancelar" action="#{prestadorSaludBean.cancelarEdicion}"
-                                     styleClass="btn btn-secundario">
-                        <f:ajax execute="@this" render=":formEditar" />
-                    </h:commandButton>
-                </h:panelGroup>
-            </h:form>
-
-            <h:form id="formBuscar" styleClass="card card-search">
-                <h2>Buscar Prestadores</h2>
-                <p class="lead">Filtre el listado por RUT o por nombre para encontrar prestadores específicos.</p>
-                <h:panelGrid columns="4" styleClass="form-grid">
-                    <h:outputLabel for="buscarRut" value="Buscar por RUT:" />
-                    <h:inputText id="buscarRut" value="#{prestadorSaludBean.buscarRut}" />
-
-                    <h:outputLabel for="buscarNombre" value="o por Nombre:" />
-                    <h:inputText id="buscarNombre" value="#{prestadorSaludBean.buscarNombre}" />
-
-                    <h:commandButton value="Buscar" action="#{prestadorSaludBean.buscar}" styleClass="btn btn-primario">
-                        <f:ajax execute="@form" render=":formTabla:tablaContainer" />
-                    </h:commandButton>
-
                     <h:commandButton value="Limpiar" action="#{prestadorSaludBean.limpiarBusqueda}"
-                                     styleClass="btn btn-secundario">
-                        <f:ajax render=":formTabla:tablaContainer :formBuscar" />
+                                     styleClass="btn btn-outline-secondary flex-grow-1">
+                        <f:ajax render=":formTabla:tablaContainer :formBuscar"/>
                     </h:commandButton>
-                </h:panelGrid>
-            </h:form>
+                </div>
+            </div>
         </div>
+    </h:form>
 
-        <h:form id="formTabla" styleClass="card tabla-card">
-            <h2>Listado de Prestadores</h2>
-            <p class="lead">Revise el estado de los prestadores registrados y gestione acciones rápidas.</p>
-            <h:panelGroup id="tablaContainer" layout="block" styleClass="tabla-scroll">
-                <h:dataTable id="tablaPrestadores" value="#{prestadorSaludBean.prestadoresFiltrados}" var="p"
-                             styleClass="tabla-prestadores">
-
-                    <h:column><f:facet name="header">ID</f:facet>#{p.tenantId}</h:column>
-                    <h:column><f:facet name="header">Schema</f:facet>#{p.nombreSchema}</h:column>
-                    <h:column><f:facet name="header">Nombre</f:facet>#{p.nombre}</h:column>
-                    <h:column><f:facet name="header">RUT</f:facet>#{p.rut}</h:column>
+    <h:form id="formTabla" styleClass="card shadow-sm">
+        <div class="card-header bg-white border-0 pb-0">
+            <h2 class="h5 mb-1">Listado de prestadores</h2>
+            <p class="text-muted small mb-0">Monitoree el estado de los prestadores registrados y ejecute acciones rápidas.</p>
+        </div>
+        <div class="card-body">
+            <h:panelGroup id="tablaContainer" layout="block" styleClass="table-responsive">
+                <h:dataTable id="tablaPrestadores"
+                             value="#{prestadorSaludBean.prestadoresFiltrados}"
+                             var="p"
+                             styleClass="table table-hover align-middle mb-0"
+                             headerClass="table-light"
+                             rowClasses="">
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                        #{p.tenantId}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Schema</f:facet>
+                        #{p.nombreSchema}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Nombre</f:facet>
+                        #{p.nombre}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">RUT</f:facet>
+                        #{p.rut}
+                    </h:column>
                     <h:column>
                         <f:facet name="header">Estado</f:facet>
-                        <h:outputText value="#{p.estado ? 'Activo' : 'Inactivo'}" />
+                        <span class="badge #{p.estado ? 'bg-success' : 'bg-secondary'}">
+                            #{p.estado ? 'Activo' : 'Inactivo'}
+                        </span>
                     </h:column>
-                    <h:column><f:facet name="header">Contacto</f:facet>#{p.contactoMail}</h:column>
-                    <h:column><f:facet name="header">Tipo</f:facet>#{p.tipo}</h:column>
-                    <h:column><f:facet name="header">Creado</f:facet>#{p.fechaCreacion}</h:column>
-                    <h:column><f:facet name="header">Modificado</f:facet>#{p.fechaModificacion}</h:column>
-
+                    <h:column>
+                        <f:facet name="header">Contacto</f:facet>
+                        #{p.contactoMail}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Tipo</f:facet>
+                        #{p.tipo}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Creado</f:facet>
+                        #{p.fechaCreacion}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Modificado</f:facet>
+                        #{p.fechaModificacion}
+                    </h:column>
                     <h:column>
                         <f:facet name="header">Acciones</f:facet>
-                        <h:panelGroup styleClass="acciones-tabla">
+                        <h:panelGroup styleClass="table-actions">
                             <h:commandButton value="Modificar" action="#{prestadorSaludBean.prepararEdicion(p)}"
-                                             styleClass="btn btn-secundario">
-                                <f:ajax execute="@this" render=":formEditar :globalMessages" />
+                                             styleClass="btn btn-sm btn-outline-primary">
+                                <f:ajax execute="@this" render=":formEditar :globalMessages"/>
                             </h:commandButton>
                             <h:commandButton value="Desactivar" action="#{prestadorSaludBean.desactivar(p.rut)}"
-                                             rendered="#{p.estado}" styleClass="btn btn-secundario">
-                                <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
+                                             rendered="#{p.estado}" styleClass="btn btn-sm btn-outline-secondary">
+                                <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages"/>
                             </h:commandButton>
                             <h:commandButton value="Activar" action="#{prestadorSaludBean.activar(p.rut)}"
-                                             rendered="#{not p.estado}" styleClass="btn btn-primario">
-                                <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages" />
+                                             rendered="#{not p.estado}" styleClass="btn btn-sm btn-success">
+                                <f:ajax execute="@form" render=":formTabla:tablaContainer :globalMessages"/>
                             </h:commandButton>
                         </h:panelGroup>
                     </h:column>
-
                     <f:facet name="footer">
-                        <h:outputText value="Sin resultados." rendered="#{empty prestadorSaludBean.prestadoresFiltrados}" />
+                        <h:outputText value="Sin resultados." rendered="#{empty prestadorSaludBean.prestadoresFiltrados}"/>
                     </f:facet>
-
                 </h:dataTable>
             </h:panelGroup>
-        </h:form>
-    </div>
+        </div>
+    </h:form>
+</div>
+
 </h:body>
 </html>
