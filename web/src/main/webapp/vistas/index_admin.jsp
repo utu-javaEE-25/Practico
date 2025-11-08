@@ -1,5 +1,5 @@
 ﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.*, uy.edu.fing.tse.entidades.UsuarioServicioSalud, uy.edu.fing.tse.entidades.AdminHcen" %>
+<%@ page import="java.util.*, uy.edu.fing.tse.entidades.AdminHcen" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,10 +20,7 @@
         return;
     }
 
-    List<UsuarioServicioSalud> usuarios = (List<UsuarioServicioSalud>) request.getAttribute("usuarios");
     List<AdminHcen> administradores = (List<AdminHcen>) request.getAttribute("administradores");
-    Set<String> adminSubs = (Set<String>) request.getAttribute("adminSubs");
-    Set<String> adminEmails = (Set<String>) request.getAttribute("adminEmails");
 
     String success = (String) request.getAttribute("admin_success");
     String error = (String) request.getAttribute("admin_error");
@@ -35,6 +32,9 @@
         <div class="d-flex align-items-center ms-auto text-white gap-3">
             <a href="<%=request.getContextPath()%>/faces/vistas/prestadorSalud.xhtml" class="btn btn-outline-light btn-sm">
                 <i class="bi bi-hospital"></i> Gestionar prestadores
+            </a>
+            <a href="<%=request.getContextPath()%>/tenant_endpoints" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-link-45deg"></i> Endpoints
             </a>
             <a href="<%=request.getContextPath()%>/reportes_admin" class="btn btn-outline-light btn-sm">
                 <i class="bi bi-graph-up"></i> Reportes
@@ -94,54 +94,27 @@
         <div class="col-lg-7 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    Usuarios globales
+                    Alta manual de administradores
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Seleccione un usuario para otorgarle permisos de administrador global.</p>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover align-middle">
-                            <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>CI</th>
-                                <th>Activo</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <% if (usuarios != null && !usuarios.isEmpty()) {
-                                for (UsuarioServicioSalud u : usuarios) {
-                                    boolean yaEsAdmin = (adminSubs != null && u.getSub() != null && adminSubs.contains(u.getSub()))
-                                            || (adminEmails != null && u.getEmail() != null && adminEmails.contains(u.getEmail().toLowerCase()));
-                            %>
-                                <tr>
-                                    <td><%= u.getNombreCompleto() %></td>
-                                    <td><%= u.getEmail() %></td>
-                                    <td><%= u.getCedulaIdentidad() %></td>
-                                    <td>
-                                        <% if (u.isActivo()) { %>
-                                            <span class="badge bg-success">Si</span>
-                                        <% } else { %>
-                                            <span class="badge bg-secondary">No</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <form method="post" action="<%=request.getContextPath()%>/index_admin" class="d-inline">
-                                            <input type="hidden" name="userId" value="<%= u.getId() %>"/>
-                                            <button type="submit" class="btn btn-sm btn-outline-primary" <%= yaEsAdmin ? "disabled" : "" %>>
-                                                <i class="bi bi-person-fill-up"></i> Convertir administrador
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <%      }
-                               } else { %>
-                                <tr><td colspan="5" class="text-center">No hay usuarios registrados.</td></tr>
-                            <% } %>
-                            </tbody>
-                        </table>
-                    </div>
+                    <p class="text-muted">
+                        Ingresa los datos del nuevo administrador HCEN. Debe existir en Gub.uy y usar un email valido.
+                    </p>
+                    <form method="post" action="<%=request.getContextPath()%>/index_admin">
+                        <div class="mb-3">
+                            <label for="gubUyId" class="form-label">Gub.uy ID</label>
+                            <input type="text" class="form-control" id="gubUyId" name="gubUyId" placeholder="urn:fdc:gub.uy:persona:123" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="admin@salud.gub.uy" required>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-person-plus-fill"></i> Registrar administrador
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

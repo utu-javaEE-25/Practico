@@ -7,7 +7,6 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
 import uy.edu.fing.tse.entidades.AdminHcen;
-import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import uy.edu.fing.tse.persistencia.AdminGlobalDAO;
 
 @Stateless
@@ -33,18 +32,24 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     }
 
     @Override
-    public AdminHcen convertirUsuarioEnAdmin(UsuarioServicioSalud usuario) {
-        if (usuario == null) {
-            throw new IllegalArgumentException("El usuario no puede ser nulo.");
+    public AdminHcen crearAdminManual(String gubUyId, String email) {
+        if (gubUyId == null || gubUyId.isBlank()) {
+            throw new IllegalArgumentException("El identificador Gub.uy es obligatorio.");
+        }
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("El email es obligatorio.");
         }
 
-        if (esAdminPorSub(usuario.getSub()) || esAdminPorEmail(usuario.getEmail())) {
-            throw new IllegalStateException("El usuario ya se encuentra registrado como administrador.");
+        if (esAdminPorSub(gubUyId)) {
+            throw new IllegalStateException("Ya existe un administrador con ese identificador Gub.uy.");
+        }
+        if (esAdminPorEmail(email)) {
+            throw new IllegalStateException("Ya existe un administrador con ese email.");
         }
 
         AdminHcen nuevo = new AdminHcen();
-        nuevo.setGubUyId(usuario.getSub());
-        nuevo.setEmail(usuario.getEmail());
+        nuevo.setGubUyId(gubUyId.trim());
+        nuevo.setEmail(email.trim());
         nuevo.setEstado("ACTIVO");
         nuevo.setFechaCreacion(LocalDateTime.now());
 
