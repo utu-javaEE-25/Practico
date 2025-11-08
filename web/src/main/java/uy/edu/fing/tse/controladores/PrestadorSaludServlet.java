@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import uy.edu.fing.tse.api.AuditLogServiceLocal;
 import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
+import uy.edu.fing.tse.audit.AuditHelper;
+import uy.edu.fing.tse.audit.AuditLogConstants;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 
 @WebServlet("/prestadorSalud")
@@ -17,6 +20,8 @@ public class PrestadorSaludServlet extends HttpServlet {
 
     @EJB
     private PrestadorSaludServiceLocal prestadorService;
+    @EJB
+    private AuditLogServiceLocal auditLogService;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -31,7 +36,14 @@ public class PrestadorSaludServlet extends HttpServlet {
         if ("desactivar".equals(accion)) {
             try {
                 String rut = req.getParameter("rut");
+                PrestadorSalud prestador = prestadorService.obtener(rut);
                 prestadorService.desactivar(rut);
+                AuditHelper.registrarEvento(
+                        auditLogService,
+                        req,
+                        AuditLogConstants.Acciones.PRESTADOR_BAJA,
+                        prestador != null ? prestador.getTenantId() : null,
+                        AuditLogConstants.Resultados.SUCCESS);
                 resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
                 return;
             } catch (Exception e) {
@@ -42,7 +54,14 @@ public class PrestadorSaludServlet extends HttpServlet {
         } else if ("activar".equals(accion)) {
             try {
                 String rut = req.getParameter("rut");
+                PrestadorSalud prestador = prestadorService.obtener(rut);
                 prestadorService.activar(rut);
+                AuditHelper.registrarEvento(
+                        auditLogService,
+                        req,
+                        AuditLogConstants.Acciones.PRESTADOR_ACTIVACION,
+                        prestador != null ? prestador.getTenantId() : null,
+                        AuditLogConstants.Resultados.SUCCESS);
                 resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
                 return;
             } catch (Exception e) {
@@ -61,7 +80,13 @@ public class PrestadorSaludServlet extends HttpServlet {
         p.setEstado(Boolean.TRUE);
 
         try {
-            prestadorService.crear(p);
+            PrestadorSalud creado = prestadorService.crear(p);
+            AuditHelper.registrarEvento(
+                    auditLogService,
+                    req,
+                    AuditLogConstants.Acciones.PRESTADOR_ALTA,
+                    creado != null ? creado.getTenantId() : null,
+                    AuditLogConstants.Resultados.SUCCESS);
             resp.sendRedirect(req.getContextPath() + "/prestadorSalud");
         } catch (IllegalArgumentException e) {
             req.setAttribute("error", e.getMessage());

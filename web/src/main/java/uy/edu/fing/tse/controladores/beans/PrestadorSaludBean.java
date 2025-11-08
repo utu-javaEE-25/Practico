@@ -13,7 +13,11 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import uy.edu.fing.tse.api.AuditLogServiceLocal;
 import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
+import uy.edu.fing.tse.audit.AuditHelper;
+import uy.edu.fing.tse.audit.AuditLogConstants;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 
 @Named("prestadorSaludBean")
@@ -25,6 +29,8 @@ public class PrestadorSaludBean implements Serializable {
 
     @EJB
     private PrestadorSaludServiceLocal prestadorService;
+    @EJB
+    private AuditLogServiceLocal auditLogService;
 
     private List<PrestadorSalud> listaCompleta;
     private List<PrestadorSalud> prestadoresFiltrados;
@@ -57,7 +63,10 @@ public class PrestadorSaludBean implements Serializable {
             this.nuevoPrestador.setFechaModificacion(ahora);
             this.nuevoPrestador.setTenantId(null);
 
-            prestadorService.crear(this.nuevoPrestador);
+            PrestadorSalud creado = prestadorService.crear(this.nuevoPrestador);
+            registrarAuditoria(AuditLogConstants.Acciones.PRESTADOR_ALTA,
+                    creado != null ? creado.getTenantId() : null,
+                    AuditLogConstants.Resultados.SUCCESS);
             this.nuevoPrestador = new PrestadorSalud(); // Limpiar el formulario
             this.nuevoPrestador.setEstado(Boolean.TRUE);
             this.cargarListaCompleta();
@@ -103,6 +112,9 @@ public class PrestadorSaludBean implements Serializable {
 
             this.prestadorEnEdicion.setFechaModificacion(LocalDateTime.now());
             prestadorService.actualizar(this.prestadorEnEdicion);
+            registrarAuditoria(AuditLogConstants.Acciones.PRESTADOR_MODIFICACION,
+                    actual.getTenantId(),
+                    AuditLogConstants.Resultados.SUCCESS);
 
             this.cargarListaCompleta();
             this.buscar();
@@ -119,7 +131,11 @@ public class PrestadorSaludBean implements Serializable {
     public void desactivar(String rut) {
         LOGGER.info("--- INTENTANDO DESACTIVAR PRESTADOR CON RUT: " + rut);
         try {
+            PrestadorSalud prestador = prestadorService.obtener(rut);
             prestadorService.desactivar(rut);
+            registrarAuditoria(AuditLogConstants.Acciones.PRESTADOR_BAJA,
+                    prestador != null ? prestador.getTenantId() : null,
+                    AuditLogConstants.Resultados.SUCCESS);
             LOGGER.info("--- PRESTADOR DESACTIVADO EXITOSAMENTE.");
 
             this.cargarListaCompleta();
@@ -138,7 +154,11 @@ public class PrestadorSaludBean implements Serializable {
     public void activar(String rut) {
         LOGGER.info("--- INTENTANDO ACTIVAR PRESTADOR CON RUT: " + rut);
         try {
+            PrestadorSalud prestador = prestadorService.obtener(rut);
             prestadorService.activar(rut);
+            registrarAuditoria(AuditLogConstants.Acciones.PRESTADOR_ACTIVACION,
+                    prestador != null ? prestador.getTenantId() : null,
+                    AuditLogConstants.Resultados.SUCCESS);
             LOGGER.info("--- PRESTADOR ACTIVADO EXITOSAMENTE.");
 
             this.cargarListaCompleta();
@@ -189,6 +209,18 @@ public class PrestadorSaludBean implements Serializable {
 
     private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
+    }
+
+    private void registrarAuditoria(String accion, Long recursoId, String resultado) {
+        HttpServletRequest request = obtenerRequestActual();
+        AuditHelper.registrarEvento(auditLogService, request, accion, recursoId, resultado);
+    }
+
+    private HttpServletRequest obtenerRequestActual() {
+        FacesContext contexto = FacesContext.getCurrentInstance();
+        return contexto != null
+                ? (HttpServletRequest) contexto.getExternalContext().getRequest()
+                : null;
     }
 
     // --- Getters y Setters ---

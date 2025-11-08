@@ -13,8 +13,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import uy.edu.fing.tse.api.AuditLogServiceLocal;
 import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
 import uy.edu.fing.tse.api.TenantEndpointServiceLocal;
+import uy.edu.fing.tse.audit.AuditHelper;
+import uy.edu.fing.tse.audit.AuditLogConstants;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.entidades.TenantEndpoint;
 
@@ -29,6 +32,8 @@ public class TenantEndpointServlet extends HttpServlet {
 
     @EJB
     private TenantEndpointServiceLocal endpointService;
+    @EJB
+    private AuditLogServiceLocal auditService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -115,6 +120,12 @@ public class TenantEndpointServlet extends HttpServlet {
         String hashCliente = req.getParameter("hashCliente");
 
         endpointService.crear(tenantId, uriBase, tipoAuth, hashCliente);
+        AuditHelper.registrarEvento(
+                auditService,
+                req,
+                AuditLogConstants.Acciones.ENDPOINT_ALTA,
+                tenantId,
+                AuditLogConstants.Resultados.SUCCESS);
 
         String nombrePrestador = obtenerNombrePrestador(tenantId);
         session.setAttribute("endpoint_success", "Endpoint creado para " + nombrePrestador + ".");
@@ -133,6 +144,12 @@ public class TenantEndpointServlet extends HttpServlet {
         boolean activo = req.getParameter("activo") != null;
 
         endpointService.actualizar(tenantId, uriBase, tipoAuth, hashCliente, activo);
+        AuditHelper.registrarEvento(
+                auditService,
+                req,
+                AuditLogConstants.Acciones.ENDPOINT_MODIFICACION,
+                tenantId,
+                AuditLogConstants.Resultados.SUCCESS);
 
         String nombrePrestador = obtenerNombrePrestador(tenantId);
         session.setAttribute("endpoint_success", "Endpoint actualizado para " + nombrePrestador + ".");
@@ -146,6 +163,12 @@ public class TenantEndpointServlet extends HttpServlet {
         }
 
         endpointService.desactivar(tenantId);
+        AuditHelper.registrarEvento(
+                auditService,
+                req,
+                AuditLogConstants.Acciones.ENDPOINT_BAJA,
+                tenantId,
+                AuditLogConstants.Resultados.SUCCESS);
 
         String nombrePrestador = obtenerNombrePrestador(tenantId);
         session.setAttribute("endpoint_success", "Endpoint desactivado para " + nombrePrestador + ".");
