@@ -1,9 +1,7 @@
 package uy.edu.fing.tse.controladores;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
@@ -14,8 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
 import uy.edu.fing.tse.entidades.AdminHcen;
-import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
-import uy.edu.fing.tse.persistencia.UsuarioDAO;
 
 @WebServlet("/index_admin")
 public class AdminDashboardServlet extends HttpServlet {
@@ -23,9 +19,6 @@ public class AdminDashboardServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private static final String DASHBOARD_JSP = "/vistas/index_admin.jsp";
-
-    @EJB
-    private UsuarioDAO usuarioDAO;
 
     @EJB
     private AdminGlobalServiceLocal adminService;
@@ -38,24 +31,9 @@ public class AdminDashboardServlet extends HttpServlet {
             return;
         }
 
-        List<UsuarioServicioSalud> usuarios = usuarioDAO.listarTodos();
         List<AdminHcen> administradores = adminService.listarAdministradores();
 
-        Set<String> adminSubs = new HashSet<>();
-        Set<String> adminEmails = new HashSet<>();
-        administradores.forEach(a -> {
-            if (a.getGubUyId() != null) {
-                adminSubs.add(a.getGubUyId());
-            }
-            if (a.getEmail() != null) {
-                adminEmails.add(a.getEmail().toLowerCase());
-            }
-        });
-
-        req.setAttribute("usuarios", usuarios);
         req.setAttribute("administradores", administradores);
-        req.setAttribute("adminSubs", adminSubs);
-        req.setAttribute("adminEmails", adminEmails);
 
         transferirMensaje(session, req, "admin_success");
         transferirMensaje(session, req, "admin_error");
@@ -71,24 +49,12 @@ public class AdminDashboardServlet extends HttpServlet {
             return;
         }
 
-        String idParam = req.getParameter("userId");
-        if (idParam == null || idParam.isBlank()) {
-            session.setAttribute("admin_error", "Debe seleccionar un usuario válido.");
-            resp.sendRedirect(req.getContextPath() + "/index_admin");
-            return;
-        }
+        String gubUyId = req.getParameter("gubUyId");
+        String email = req.getParameter("email");
 
         try {
-            Long userId = Long.parseLong(idParam);
-            UsuarioServicioSalud usuario = usuarioDAO.buscarPorId(userId);
-            if (usuario == null) {
-                session.setAttribute("admin_error", "No se encontró el usuario indicado.");
-            } else {
-                adminService.convertirUsuarioEnAdmin(usuario);
-                session.setAttribute("admin_success", "El usuario " + usuario.getEmail() + " fue promovido a administrador.");
-            }
-        } catch (NumberFormatException e) {
-            session.setAttribute("admin_error", "Identificador de usuario inválido.");
+            AdminHcen nuevo = adminService.crearAdminManual(gubUyId, email);
+            session.setAttribute("admin_success", "Se registro al administrador " + nuevo.getEmail() + ".");
         } catch (Exception e) {
             session.setAttribute("admin_error", e.getMessage());
         }

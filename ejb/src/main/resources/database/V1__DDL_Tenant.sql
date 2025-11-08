@@ -30,7 +30,8 @@ CREATE TABLE paciente (
     sexo VARCHAR(50),
     fecha_nacimiento DATE,
     fecha_creacion TIMESTAMP,
-    fecha_modificacion TIMESTAMP
+    fecha_modificacion TIMESTAMP,
+    estado BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE documento_clinico (

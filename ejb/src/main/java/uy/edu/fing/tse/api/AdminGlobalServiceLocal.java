@@ -13,7 +13,7 @@ public interface AdminGlobalServiceLocal {
 
     boolean esAdminPorEmail(String email);
 
-    AdminHcen convertirUsuarioEnAdmin(UsuarioServicioSalud usuario);
+    AdminHcen crearAdminManual(String gubUyId, String email);
 
     List<AdminHcen> listarAdministradores();
 }
