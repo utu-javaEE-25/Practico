@@ -18,7 +18,7 @@ SET search_path TO central;
 
 CREATE TABLE tenant (
     tenant_id BIGSERIAL PRIMARY KEY,
-    nombre_schema VARCHAR(15) UNIQUE NOT NULL,
+    nombre_schema VARCHAR(15) UNIQUE,
     nombre VARCHAR(50) UNIQUE NOT NULL,
     rut VARCHAR(11) UNIQUE NOT NULL,
     estado BOOLEAN NOT NULL,
@@ -41,7 +41,8 @@ CREATE TABLE admin_global (
     gubuy_id VARCHAR(100),
     email VARCHAR(50) UNIQUE NOT NULL,
     estado VARCHAR(50),
-    fecha_creacion TIMESTAMP
+    fecha_creacion TIMESTAMP,
+    ci VARCHAR(11) UNIQUE
 );
 
 CREATE TABLE usuario_global (
