@@ -3,11 +3,11 @@ package uy.edu.fing.tse.persistencia;
 import java.util.*;
 import jakarta.ejb.Singleton;
 import uy.edu.fing.tse.api.DocumentoClinicoPerLocal;
-import uy.edu.fing.tse.api.DocumentoClinicoPerRemote;
 import uy.edu.fing.tse.entidades.DocumentoClinico;
 
 @Singleton
-public class DocumentoClinicoPerBean implements DocumentoClinicoPerLocal, DocumentoClinicoPerRemote {
+public class DocumentoClinicoPerBean implements DocumentoClinicoPerLocal {
+
 
     private final Map<Long, DocumentoClinico> data = new LinkedHashMap<>();
     private long sequence = 1L;

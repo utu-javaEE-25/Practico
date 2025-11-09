@@ -17,6 +17,13 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
     @PersistenceContext(unitName = "PU_CENTRAL")
     private EntityManager em;
 
+    public PrestadorSalud obtenerPorId(Long id) {
+        if (id == null) {
+            return null;
+        }
+        return em.find(PrestadorSalud.class, id);
+    }
+    
     @Override
     public PrestadorSalud crear(PrestadorSalud prestadorSalud) {
         if (prestadorSalud == null) {
