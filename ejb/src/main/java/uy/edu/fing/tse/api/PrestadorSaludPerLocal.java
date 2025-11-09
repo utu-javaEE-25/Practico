@@ -9,11 +9,11 @@ import uy.edu.fing.tse.entidades.PrestadorSalud;
 public interface PrestadorSaludPerLocal {
     PrestadorSalud crear(PrestadorSalud prestador);
     PrestadorSalud obtener(String rut);
+    PrestadorSalud obtenerPorId(Long id);
     void actualizar(PrestadorSalud prestador);
     void eliminar(String rut);
     void actualizarEstado(String rut, boolean activo);
     List<PrestadorSalud> listar();
     PrestadorSalud obtenerPorRut(String rut);
     boolean existeRut(String rut);
-
 }
