@@ -16,8 +16,8 @@ public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private static final String LOGOUT_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/logout";
-    //private static final String POST_LOGOUT_REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/logout";
-    private static final String POST_LOGOUT_REDIRECT_URI = "http://localhost:8080/Laboratorio/logout";
+    private static final String POST_LOGOUT_REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/logout";
+    //private static final String POST_LOGOUT_REDIRECT_URI = "http://localhost:8080/Laboratorio/logout";
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
