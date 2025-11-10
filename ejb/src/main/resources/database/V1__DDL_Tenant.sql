@@ -5,7 +5,7 @@ CREATE TABLE admin_tenant (
     nombre VARCHAR(50),
     apellido VARCHAR(50),
     email VARCHAR(50),
-    estado VARCHAR(30)
+    estado VARCHAR(30),
 );
 
 CREATE TABLE profesional (
@@ -30,25 +30,21 @@ CREATE TABLE paciente (
     sexo VARCHAR(50),
     fecha_nacimiento DATE,
     fecha_creacion TIMESTAMP,
-    fecha_modificacion TIMESTAMP
+    fecha_modificacion TIMESTAMP,
+    estado BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE documento_clinico (
     doc_id BIGSERIAL PRIMARY KEY,
     paciente_id BIGINT NOT NULL,
-    paciente_id BIGINT NOT NULL,
     profesional_id BIGINT NOT NULL,
-    profesional_id BIGINT NOT NULL,
-    id_externa_doc VARCHAR(120) UNIQUE,
     id_externa_doc VARCHAR(255) UNIQUE,
     tipo VARCHAR(30),
     instancia_medica TEXT,
     estado VARCHAR(30),
     lugar VARCHAR(255),
     fecha_atencion_inicio TIMESTAMP,
-    fecha_creacion TIMESTAMP,
     fecha_atencion_fin TIMESTAMP,
-    CONSTRAINT fk_doc_paciente
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     motivos JSONB,
     diagnosticos JSONB,

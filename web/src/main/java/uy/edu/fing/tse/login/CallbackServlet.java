@@ -18,6 +18,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
+import uy.edu.fing.tse.api.AuditLogServiceLocal;
+import uy.edu.fing.tse.audit.AuditHelper;
+import uy.edu.fing.tse.audit.AuditLogConstants;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import uy.edu.fing.tse.persistencia.UsuarioDAO;
 
@@ -30,13 +33,15 @@ public class CallbackServlet extends HttpServlet {
     private static final String CLIENT_SECRET = "457d52f181bf11804a3365b49ae4d29a2e03bbabe74997a2f510b179";
     private static final String TOKEN_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/token";
 
-    //private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
-    private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
+    private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
+   // private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
 
     @EJB
     private UsuarioDAO usuarioDAO;
     @EJB
     private AdminGlobalServiceLocal adminService;
+    @EJB
+    private AuditLogServiceLocal auditLogService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -44,6 +49,7 @@ public class CallbackServlet extends HttpServlet {
 
         String code = req.getParameter("code");
         if (code == null || code.isBlank()) {
+            registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
             resp.getWriter().println("<p>Error: missing authorization code.</p>");
             return;
         }
@@ -51,12 +57,14 @@ public class CallbackServlet extends HttpServlet {
         String returnedState = req.getParameter("state");
         HttpSession session = req.getSession(false);
         if (session == null) {
+            registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
             resp.getWriter().println("<p>Error: session not found when validating state.</p>");
             return;
         }
 
         String originalState = (String) session.getAttribute("oauth_state");
         if (!Objects.equals(returnedState, originalState)) {
+            registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
             resp.getWriter().println("<p>Error: state parameter does not match the stored value.</p>");
             return;
         }
@@ -80,6 +88,7 @@ public class CallbackServlet extends HttpServlet {
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
+                registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
                 resp.getWriter().println("<pre>OIDC token endpoint error (" + response.statusCode() + "):\n" + response.body() + "</pre>");
                 return;
             }
@@ -87,6 +96,7 @@ public class CallbackServlet extends HttpServlet {
             JSONObject json = new JSONObject(response.body());
             String idToken = json.optString("id_token", null);
             if (idToken == null) {
+                registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
                 resp.getWriter().println("<p>Error: the token endpoint response is missing id_token.</p>");
                 return;
             }
@@ -122,14 +132,26 @@ public class CallbackServlet extends HttpServlet {
             session.setAttribute("isAdmin", esAdmin);
             session.setAttribute("rol", esAdmin ? "ADMIN" : "USUARIO");
 
+            registrarLogin(req, guardado != null ? guardado.getId() : null, AuditLogConstants.Resultados.SUCCESS);
             String destino = esAdmin ? "/index_admin" : "/index.jsp";
             resp.sendRedirect(req.getContextPath() + destino);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
             resp.getWriter().println("<p>Callback aborted while contacting the identity provider.</p>");
         } catch (Exception e) {
+            registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
             resp.getWriter().println("<pre>Error processing callback:\n" + e.getMessage() + "</pre>");
             e.printStackTrace(resp.getWriter());
         }
+    }
+
+    private void registrarLogin(HttpServletRequest req, Long recursoId, String resultado) {
+        AuditHelper.registrarEvento(
+                auditLogService,
+                req,
+                AuditLogConstants.Acciones.LOGIN,
+                recursoId,
+                resultado);
     }
 }
