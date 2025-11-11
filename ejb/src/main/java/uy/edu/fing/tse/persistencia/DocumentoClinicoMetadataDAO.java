@@ -21,4 +21,11 @@ public class DocumentoClinicoMetadataDAO {
                 .setParameter("userId", userId)
                 .getResultList();
     }
+
+     public void guardar(DocumentoClinicoMetadata metadata) {
+        if (metadata == null) {
+            throw new IllegalArgumentException("El objeto de metadatos no puede ser nulo.");
+        }
+        em.persist(metadata);
+    }
 }
