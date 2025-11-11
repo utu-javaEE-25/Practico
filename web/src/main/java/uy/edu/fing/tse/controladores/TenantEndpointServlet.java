@@ -20,6 +20,7 @@ import uy.edu.fing.tse.audit.AuditHelper;
 import uy.edu.fing.tse.audit.AuditLogConstants;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.entidades.TenantEndpoint;
+import uy.edu.fing.tse.servicios.TenantEndpointServiceBean;
 
 @WebServlet("/tenant_endpoints")
 public class TenantEndpointServlet extends HttpServlet {
@@ -73,6 +74,8 @@ public class TenantEndpointServlet extends HttpServlet {
         req.setAttribute("endpointsPorTenant", endpointsPorTenant);
         req.setAttribute("endpointEnEdicion", endpointEnEdicion);
         req.setAttribute("prestadorEnEdicion", prestadorEnEdicion);
+        req.setAttribute("multiUriPrefix", TenantEndpointServiceBean.MULTITENANT_URI_PREFIX);
+        req.setAttribute("multiSuffixEnEdicion", obtenerSufijoMultitenant(endpointEnEdicion));
 
         transferirMensaje(session, req, "endpoint_success");
         transferirMensaje(session, req, "endpoint_error");
@@ -115,11 +118,12 @@ public class TenantEndpointServlet extends HttpServlet {
             return;
         }
 
-        String uriBase = req.getParameter("uriBase");
+        boolean esMultitenant = esMultitenant(req);
+        String uriBase = obtenerValorUri(req, esMultitenant);
         String tipoAuth = req.getParameter("tipoAuth");
-        String hashCliente = req.getParameter("hashCliente");
+        String hashCliente = obtenerHashCliente(req, esMultitenant);
 
-        endpointService.crear(tenantId, uriBase, tipoAuth, hashCliente);
+        endpointService.crear(tenantId, esMultitenant, uriBase, tipoAuth, hashCliente);
         AuditHelper.registrarEvento(
                 auditService,
                 req,
@@ -138,12 +142,13 @@ public class TenantEndpointServlet extends HttpServlet {
             return;
         }
 
-        String uriBase = req.getParameter("uriBase");
+        boolean esMultitenant = esMultitenant(req);
+        String uriBase = obtenerValorUri(req, esMultitenant);
         String tipoAuth = req.getParameter("tipoAuth");
-        String hashCliente = req.getParameter("hashCliente");
+        String hashCliente = obtenerHashCliente(req, esMultitenant);
         boolean activo = req.getParameter("activo") != null;
 
-        endpointService.actualizar(tenantId, uriBase, tipoAuth, hashCliente, activo);
+        endpointService.actualizar(tenantId, esMultitenant, uriBase, tipoAuth, hashCliente, activo);
         AuditHelper.registrarEvento(
                 auditService,
                 req,
@@ -193,6 +198,19 @@ public class TenantEndpointServlet extends HttpServlet {
         }
     }
 
+    private boolean esMultitenant(HttpServletRequest req) {
+        String flag = req.getParameter("esMultitenant");
+        return flag != null && (flag.equalsIgnoreCase("on") || flag.equalsIgnoreCase("true"));
+    }
+
+    private String obtenerValorUri(HttpServletRequest req, boolean esMultitenant) {
+        return esMultitenant ? req.getParameter("uriMultiSuffix") : req.getParameter("uriBase");
+    }
+
+    private String obtenerHashCliente(HttpServletRequest req, boolean esMultitenant) {
+        return esMultitenant ? null : req.getParameter("hashCliente");
+    }
+
     private PrestadorSalud buscarPrestadorPorId(List<PrestadorSalud> prestadores, Long tenantId) {
         if (prestadores == null || tenantId == null) {
             return null;
@@ -224,5 +242,24 @@ public class TenantEndpointServlet extends HttpServlet {
         } catch (NumberFormatException ex) {
             return null;
         }
+    }
+
+    private String obtenerSufijoMultitenant(TenantEndpoint endpoint) {
+        if (endpoint == null || !endpoint.isEsMultitenant()) {
+            return "";
+        }
+        String base = endpoint.getUriBase();
+        String prefijo = TenantEndpointServiceBean.MULTITENANT_URI_PREFIX;
+        if (base == null || !base.startsWith(prefijo)) {
+            return "";
+        }
+        String resto = base.substring(prefijo.length());
+        if (resto.startsWith("/")) {
+            resto = resto.substring(1);
+        }
+        if (resto.endsWith("/")) {
+            resto = resto.substring(0, resto.length() - 1);
+        }
+        return resto;
     }
 }

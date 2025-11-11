@@ -5,7 +5,7 @@ CREATE TABLE admin_tenant (
     nombre VARCHAR(50),
     apellido VARCHAR(50),
     email VARCHAR(50),
-    estado VARCHAR(30),
+    estado VARCHAR(30)
 );
 
 CREATE TABLE profesional (

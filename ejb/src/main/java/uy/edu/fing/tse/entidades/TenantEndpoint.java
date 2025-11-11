@@ -25,6 +25,9 @@ public class TenantEndpoint {
     @Column(name = "activo")
     private boolean activo;
 
+    @Column(name = "es_multitenant", nullable = false)
+    private boolean esMultitenant;
+
     public Long getTenantId() {
         return tenantId;
     }
@@ -63,5 +66,13 @@ public class TenantEndpoint {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public boolean isEsMultitenant() {
+        return esMultitenant;
+    }
+
+    public void setEsMultitenant(boolean esMultitenant) {
+        this.esMultitenant = esMultitenant;
     }
 }

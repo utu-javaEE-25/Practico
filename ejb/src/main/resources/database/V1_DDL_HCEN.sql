@@ -33,7 +33,8 @@ CREATE TABLE tenant_endpoint (
     uri_base VARCHAR(255) NOT NULL,
     tipo_auth VARCHAR(50),
     hash_cliente VARCHAR(255),
-    activo BOOLEAN NOT NULL
+    activo BOOLEAN NOT NULL,
+    es_multitenant BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE admin_global (

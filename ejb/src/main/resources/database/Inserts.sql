@@ -26,26 +26,28 @@ SET estado = EXCLUDED.estado,
 -- 3) Endpoints (busca el ID real por nombre_schema, NO hardcodees 1/2)
 
 -- Clínica del Sol
-INSERT INTO tenant_endpoint (tenant_id, uri_base, tipo_auth, hash_cliente, activo)
-SELECT t.tenant_id, 'https://api.clinicasol.uy', 'API_KEY', 'hashkey123', TRUE
+INSERT INTO tenant_endpoint (tenant_id, uri_base, tipo_auth, hash_cliente, activo, es_multitenant)
+SELECT t.tenant_id, 'https://api.clinicasol.uy', 'API_KEY', 'hashkey123', TRUE, FALSE
 FROM tenant t
 WHERE t.nombre_schema = 'tenant_clinica1'
 ON CONFLICT (tenant_id) DO UPDATE
 SET uri_base = EXCLUDED.uri_base,
     tipo_auth = EXCLUDED.tipo_auth,
     hash_cliente = EXCLUDED.hash_cliente,
-    activo    = EXCLUDED.activo;
+    activo    = EXCLUDED.activo,
+    es_multitenant = EXCLUDED.es_multitenant;
 
 -- Laboratorio Norte
-INSERT INTO tenant_endpoint (tenant_id, uri_base, tipo_auth, hash_cliente, activo)
-SELECT t.tenant_id, 'https://api.labnorte.uy', 'MTLS', 'hashkey456', TRUE
+INSERT INTO tenant_endpoint (tenant_id, uri_base, tipo_auth, hash_cliente, activo, es_multitenant)
+SELECT t.tenant_id, 'https://api.labnorte.uy', 'MTLS', 'hashkey456', TRUE, FALSE
 FROM tenant t
 WHERE t.nombre_schema = 'tenant_clinica2'
 ON CONFLICT (tenant_id) DO UPDATE
 SET uri_base = EXCLUDED.uri_base,
     tipo_auth = EXCLUDED.tipo_auth,
     hash_cliente = EXCLUDED.hash_cliente,
-    activo    = EXCLUDED.activo;
+    activo    = EXCLUDED.activo,
+    es_multitenant = EXCLUDED.es_multitenant;
 
 -- 4) Usuarios globales
 INSERT INTO usuario_global (gubuy_id, email, estado, fecha_creacion, fecha_modificacion)

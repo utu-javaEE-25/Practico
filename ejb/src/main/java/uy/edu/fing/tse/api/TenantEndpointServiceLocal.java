@@ -12,9 +12,9 @@ public interface TenantEndpointServiceLocal {
 
     TenantEndpoint obtenerPorTenant(Long tenantId);
 
-    TenantEndpoint crear(Long tenantId, String uriBase, String tipoAuth, String hashCliente);
+    TenantEndpoint crear(Long tenantId, boolean esMultitenant, String uriBaseInput, String tipoAuth, String hashCliente);
 
-    TenantEndpoint actualizar(Long tenantId, String uriBase, String tipoAuth, String hashCliente, boolean activo);
+    TenantEndpoint actualizar(Long tenantId, boolean esMultitenant, String uriBaseInput, String tipoAuth, String hashCliente, boolean activo);
 
     void desactivar(Long tenantId);
 }
