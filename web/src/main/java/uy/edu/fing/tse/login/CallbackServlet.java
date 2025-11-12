@@ -116,17 +116,8 @@ public class CallbackServlet extends HttpServlet {
             String sub = claims.optString("sub");
 
             //Verificar si es mayor de edad
-            if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) return;
-
-            UsuarioServicioSalud usuario = new UsuarioServicioSalud();
-            usuario.setSub(sub);
-            usuario.setNombre(nombre);
-            usuario.setApellido(apellido);
-            usuario.setEmail(email);
-            usuario.setCedulaIdentidad(cedulaIdentidad);
-            UsuarioServicioSalud guardado = usuarioDAO.guardar(usuario);
-            if (guardado == null) {
-                guardado = usuarioDAO.buscarPorSub(sub);
+            if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) {
+                return;
             }
 
             if ("admin".equalsIgnoreCase(loginType)) {
@@ -139,7 +130,6 @@ public class CallbackServlet extends HttpServlet {
 
                 //Actualizar el GubUyId si no lo tiene asignado
                 AdminHcen adminActualizado = adminService.actualizarGubUyIdPorCI(cedulaIdentidad, sub);
-
 
                 session.setAttribute("nombre", nombre);
                 session.setAttribute("apellido", apellido);
