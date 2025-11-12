@@ -24,6 +24,7 @@ import uy.edu.fing.tse.audit.AuditLogConstants;
 import uy.edu.fing.tse.entidades.AdminHcen;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import uy.edu.fing.tse.persistencia.UsuarioDAO;
+import uy.edu.fing.tse.servicios.VerificacionEdadService;
 
 @WebServlet("/callback")
 public class CallbackServlet extends HttpServlet {
@@ -43,6 +44,8 @@ public class CallbackServlet extends HttpServlet {
     private AdminGlobalServiceLocal adminService;
     @EJB
     private AuditLogServiceLocal auditLogService;
+    @EJB
+    private VerificacionEdadService verificacionEdadService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -71,7 +74,7 @@ public class CallbackServlet extends HttpServlet {
         }
 
         String loginType = (String) session.getAttribute("login_type");
-        
+
         try {
             session.removeAttribute("oauth_state");
             session.removeAttribute("oauth_nonce");
@@ -112,7 +115,25 @@ public class CallbackServlet extends HttpServlet {
             String cedulaIdentidad = claims.optString("numero_documento");
             String sub = claims.optString("sub");
 
-            
+            //Verificar si es mayor de edad
+            if (!verificacionEdadService.esMayorDeEdad(cedulaIdentidad)) {
+                //pintar un error y retornar al login
+                registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
+                resp.getWriter().println("<p>Error: El usuario debe ser mayor de edad para acceder al sistema.</p>");
+                return;
+            }
+
+            UsuarioServicioSalud usuario = new UsuarioServicioSalud();
+            usuario.setSub(sub);
+            usuario.setNombre(nombre);
+            usuario.setApellido(apellido);
+            usuario.setEmail(email);
+            usuario.setCedulaIdentidad(cedulaIdentidad);
+            UsuarioServicioSalud guardado = usuarioDAO.guardar(usuario);
+            if (guardado == null) {
+                guardado = usuarioDAO.buscarPorSub(sub);
+            }
+
             if ("admin".equalsIgnoreCase(loginType)) {
                  //Verificar si es un admin registrado por CI
                 boolean esAdmin = adminService != null && adminService.esAdminPorCi(cedulaIdentidad);
@@ -158,7 +179,7 @@ public class CallbackServlet extends HttpServlet {
                 }
                 resp.sendRedirect(req.getContextPath() + "/vistas/index_user.jsp");
             }
-            
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
