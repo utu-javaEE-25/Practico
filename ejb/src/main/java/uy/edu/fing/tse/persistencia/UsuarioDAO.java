@@ -80,4 +80,19 @@ public class UsuarioDAO {
                         UsuarioServicioSalud.class)
                 .getResultList();
     }
+
+    //Obtener Usuario por CI
+    public UsuarioServicioSalud buscarPorCI(String ci) {
+        if (ci == null || ci.isBlank()) {
+            return null;
+        }
+        return em.createQuery(
+                        "SELECT u FROM UsuarioServicioSalud u WHERE u.ci = :ci",
+                        UsuarioServicioSalud.class)
+                .setParameter("ci", ci.trim())
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+    }
 }
