@@ -23,6 +23,7 @@ import uy.edu.fing.tse.audit.AuditHelper;
 import uy.edu.fing.tse.audit.AuditLogConstants;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import uy.edu.fing.tse.persistencia.UsuarioDAO;
+import uy.edu.fing.tse.servicios.VerificacionEdadService;
 
 @WebServlet("/callback")
 public class CallbackServlet extends HttpServlet {
@@ -42,6 +43,8 @@ public class CallbackServlet extends HttpServlet {
     private AdminGlobalServiceLocal adminService;
     @EJB
     private AuditLogServiceLocal auditLogService;
+    @EJB
+    private VerificacionEdadService verificacionEdadService;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -107,6 +110,14 @@ public class CallbackServlet extends HttpServlet {
             String email = claims.optString("email");
             String cedulaIdentidad = claims.optString("numero_documento");
             String sub = claims.optString("sub");
+
+            //Verificar si es mayor de edad
+            if (!verificacionEdadService.esMayorDeEdad(cedulaIdentidad)) {
+                //pintar un error y retornar al login
+                registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
+                resp.getWriter().println("<p>Error: El usuario debe ser mayor de edad para acceder al sistema.</p>");
+                return;
+            }
 
             UsuarioServicioSalud usuario = new UsuarioServicioSalud();
             usuario.setSub(sub);
