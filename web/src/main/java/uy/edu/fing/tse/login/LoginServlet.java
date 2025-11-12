@@ -18,16 +18,19 @@ public class LoginServlet extends HttpServlet {
 
     private static final String CLIENT_ID = "890192";
     private static final String AUTH_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize";
-    private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
+    //private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
+    private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String state = UUID.randomUUID().toString();
         String nonce = UUID.randomUUID().toString();
+        String type = req.getParameter("type");
 
         HttpSession session = req.getSession(true);
         session.setAttribute("oauth_state", state);
         session.setAttribute("oauth_nonce", nonce);
+        session.setAttribute("login_type", type != null ? type : "user");
 
         String scope = "openid email profile personal_info document";
 

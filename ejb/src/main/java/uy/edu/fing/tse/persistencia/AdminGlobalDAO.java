@@ -67,6 +67,35 @@ public class AdminGlobalDAO {
                 .orElse(null);
     }
 
+    public AdminHcen buscarPorCI(String ci) {
+        if (ci == null || ci.isBlank()) {
+            return null;
+        }
+    
+        return em.createQuery(
+                        "SELECT a FROM AdminHcen a WHERE a.ci = :ci",
+                        AdminHcen.class)
+                .setParameter("ci", ci)
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    public AdminHcen actualizarGubUyIdPorCI(String ci, String gubUyId) {
+        if (ci == null || ci.isBlank() || gubUyId == null || gubUyId.isBlank()) {
+            return null;
+        }
+
+        AdminHcen admin = buscarPorCI(ci);
+        if (admin == null) {
+            return null;
+        }
+
+        admin.setGubUyId(gubUyId);
+        return em.merge(admin);
+    }
+    
     public List<AdminHcen> listarTodos() {
         return em.createQuery(
                         "SELECT a FROM AdminHcen a ORDER BY a.fechaCreacion DESC",

@@ -7,6 +7,12 @@
     <title>Panel de Administrador</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .navbar {
+        background-color: #8b3a55;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body class="bg-light">
 <%
@@ -29,7 +35,7 @@
     String error = (String) request.getAttribute("admin_error");
 %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="<%=request.getContextPath()%>/index_admin">HCEN Admin</a>
         <div class="d-flex align-items-center ms-auto text-white gap-3">
@@ -40,7 +46,7 @@
                 <i class="bi bi-graph-up"></i> Reportes
             </a>
             <span class="me-3">Admin: <strong><%= nombre != null ? nombre : "" %> <%= apellido != null ? apellido : "" %></strong></span>
-            <a href="<%=request.getContextPath()%>/logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
+            <a href="<%=request.getContextPath()%>/logout?login_type=admin" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
         </div>
     </div>
 </nav>
