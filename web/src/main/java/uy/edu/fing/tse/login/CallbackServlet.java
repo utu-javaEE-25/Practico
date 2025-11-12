@@ -116,12 +116,7 @@ public class CallbackServlet extends HttpServlet {
             String sub = claims.optString("sub");
 
             //Verificar si es mayor de edad
-            if (!verificacionEdadService.esMayorDeEdad(cedulaIdentidad)) {
-                //pintar un error y retornar al login
-                registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-                resp.getWriter().println("<p>Error: El usuario debe ser mayor de edad para acceder al sistema.</p>");
-                return;
-            }
+            if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) return;
 
             UsuarioServicioSalud usuario = new UsuarioServicioSalud();
             usuario.setSub(sub);
@@ -189,6 +184,20 @@ public class CallbackServlet extends HttpServlet {
             resp.getWriter().println("<pre>Error processing callback:\n" + e.getMessage() + "</pre>");
             e.printStackTrace(resp.getWriter());
         }
+    }
+
+    private boolean verificarEsMayorDeEdad(HttpServletRequest req, HttpServletResponse resp, String cedulaIdentidad) {
+        try {
+            if (!verificacionEdadService.esMayorDeEdad(cedulaIdentidad)) {
+                //pintar un error y retornar al login
+                registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
+                resp.getWriter().println("<p>Error: El usuario debe ser mayor de edad para acceder al sistema.</p>");
+                return true;
+            }
+        }catch (Exception e) {
+            //si hay un error en la verificacion de edad, se deja pasar al usuario
+        }
+        return false;
     }
 
     private void registrarLogin(HttpServletRequest req, Long recursoId, String resultado) {
