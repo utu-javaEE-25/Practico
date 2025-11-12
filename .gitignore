@@ -66,3 +66,6 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 keycloak/
 .vscode/
+
+# Otros archivos temporales
+ejb/src/main/resources/*.json

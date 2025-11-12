@@ -16,9 +16,15 @@ public class ServletContextListener {
 
     public void initializeFirebase() {
 
+        String credentialsPath = System.getProperty("FIREBASE_ADMIN_CREDENTIALS_PATH");
+        if (credentialsPath == null || credentialsPath.isEmpty()) {
+            LOGGER.warning("La ruta de las credenciales de Firebase no está configurada.");
+            return;
+        }
+
         try {
             FileInputStream serviceAccount =
-                    new FileInputStream("src/main/resources/serviceAccountKey.json");
+                    new FileInputStream(credentialsPath);
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
