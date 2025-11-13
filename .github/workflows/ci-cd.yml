@@ -3,10 +3,10 @@ name: CI/CD - Compile, SonarCloud & Deploy
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   # Job 1: Compilar y analizar en SonarCloud
@@ -51,11 +51,11 @@ jobs:
           path: ear/target/*.ear
           retention-days: 5
 
-  # Job 2: Despliegue en WildFly (solo en push a master)
+  # Job 2: Despliegue en WildFly (solo en push a main o master)
   deploy:
     needs: build-and-sonar
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     
     steps:
       - name: 📥 Clonar repositorio

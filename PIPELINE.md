@@ -8,7 +8,7 @@ Este pipeline automatiza la compilación, análisis de calidad y despliegue de t
 
 ## 📋 ¿Qué hace?
 
-### En cada PUSH a `master`:
+### En cada PUSH a `main` o `master`:
 
 ```
 1. 🔨 Compilación
