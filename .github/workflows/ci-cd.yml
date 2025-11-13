@@ -30,22 +30,44 @@ jobs:
           cache: maven
       
       - name: 🔨 Compilar proyecto (Maven)
-        run: ./mvnw clean package -DskipTests -B
+        run: |
+          # Usar mvnw si está presente y completo, si no usar mv
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            chmod +x mvnw || true
+            ./mvnw clean package -DskipTests -B
+          else
+            mvn clean package -DskipTests -B
+          fi
       
       - name: 📊 Análisis en SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./mvnw sonar:sonar \
-            -Dsonar.projectKey=Practico \
-            -Dsonar.organization=utu-javaEE-25 \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -B
+          # Ejecutar Sonar usando mvnw si existe, sino mvn
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            ./mvnw sonar:sonar \
+              -Dsonar.projectKey=Practico \
+              -Dsonar.organization=utu-javaEE-25 \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+              -B
+          else
+            mvn sonar:sonar \
+              -Dsonar.projectKey=Practico \
+              -Dsonar.organization=utu-javaEE-25 \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+              -B
+          fi
       
       - name: ✅ Ejecutar pruebas
-        run: ./mvnw test -B
+        run: |
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            ./mvnw test -B
+          else
+            mvn test -B
+          fi
       
       - name: 📦 Guardar artefactos
         uses: actions/upload-artifact@v4
@@ -75,7 +97,13 @@ jobs:
           cache: maven
       
       - name: 🔨 Compilar para despliegue
-        run: ./mvnw clean package -DskipTests -B
+        run: |
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            chmod +x mvnw || true
+            ./mvnw clean package -DskipTests -B
+          else
+            mvn clean package -DskipTests -B
+          fi
       
       - name: 📥 Descargar artefacto EAR
         uses: actions/download-artifact@v4
@@ -90,13 +118,23 @@ jobs:
           WILDFLY_USER: ${{ secrets.WILDFLY_USER }}
           WILDFLY_PASSWORD: ${{ secrets.WILDFLY_PASSWORD }}
         run: |
-          ./mvnw wildfly:deploy \
-            -Dwildfly.hostname=${{ env.WILDFLY_HOST }} \
-            -Dwildfly.port=${{ env.WILDFLY_PORT }} \
-            -Dwildfly.username=${{ env.WILDFLY_USER }} \
-            -Dwildfly.password=${{ env.WILDFLY_PASSWORD }} \
-            -DskipTests \
-            -B
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            ./mvnw wildfly:deploy \
+              -Dwildfly.hostname=${{ env.WILDFLY_HOST }} \
+              -Dwildfly.port=${{ env.WILDFLY_PORT }} \
+              -Dwildfly.username=${{ env.WILDFLY_USER }} \
+              -Dwildfly.password=${{ env.WILDFLY_PASSWORD }} \
+              -DskipTests \
+              -B
+          else
+            mvn wildfly:deploy \
+              -Dwildfly.hostname=${{ env.WILDFLY_HOST }} \
+              -Dwildfly.port=${{ env.WILDFLY_PORT }} \
+              -Dwildfly.username=${{ env.WILDFLY_USER }} \
+              -Dwildfly.password=${{ env.WILDFLY_PASSWORD }} \
+              -DskipTests \
+              -B
+          fi
       
       - name: 📢 Notificar despliegue exitoso
         if: success()
