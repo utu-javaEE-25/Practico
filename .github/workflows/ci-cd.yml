@@ -123,21 +123,31 @@ jobs:
           # Extract hostname without protocol (remove https:// or http://)
           WILDFLY_HOSTNAME="${WILDFLY_HOST#*://}"
           
+          # Locate the generated EAR file
+          EAR_FILE=$(find ear/target -name "*.ear" -type f | head -1)
+          
+          if [ -z "$EAR_FILE" ]; then
+            echo "❌ Error: No EAR file found in ear/target/"
+            exit 1
+          fi
+          
+          echo "📦 Deploying EAR: $EAR_FILE"
+          
           if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
-            ./mvnw -pl ear wildfly:deploy \
+            ./mvnw wildfly:deploy-artifact \
               -Dwildfly.hostname="$WILDFLY_HOSTNAME" \
               -Dwildfly.port=$WILDFLY_PORT \
               -Dwildfly.username=$WILDFLY_USER \
               -Dwildfly.password=$WILDFLY_PASSWORD \
-              -DskipTests \
+              -Dwildfly.artifact="$EAR_FILE" \
               -B
           else
-            mvn -pl ear wildfly:deploy \
+            mvn wildfly:deploy-artifact \
               -Dwildfly.hostname="$WILDFLY_HOSTNAME" \
               -Dwildfly.port=$WILDFLY_PORT \
               -Dwildfly.username=$WILDFLY_USER \
               -Dwildfly.password=$WILDFLY_PASSWORD \
-              -DskipTests \
+              -Dwildfly.artifact="$EAR_FILE" \
               -B
           fi
       
