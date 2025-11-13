@@ -47,7 +47,7 @@ jobs:
           # Ejecutar Sonar usando mvnw si existe, sino mvn
           if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
             ./mvnw sonar:sonar \
-              -Dsonar.projectKey=Laboratorio \
+              -Dsonar.projectKey=Proyecto \
               -Dsonar.organization=utu-javaEE-25 \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
@@ -55,7 +55,7 @@ jobs:
               -B
           else
             mvn sonar:sonar \
-              -Dsonar.projectKey=Laboratorio \
+              -Dsonar.projectKey=Proyecto \
               -Dsonar.organization=utu-javaEE-25 \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
