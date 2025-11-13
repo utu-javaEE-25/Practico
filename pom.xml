@@ -31,7 +31,7 @@
        <!-- SonarCloud Configuration -->
        <!-- Project key is provided at analysis time to avoid duplicate module keys
            in multi-module Maven projects. See CI workflow for -Dsonar.projectKey. -->
-       <sonar.organization>utu-javaEE-25</sonar.organization>
+    <sonar.organization>utu-javaee-25</sonar.organization>
        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
