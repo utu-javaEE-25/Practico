@@ -48,7 +48,7 @@ jobs:
           if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
             ./mvnw sonar:sonar \
               -Dsonar.projectKey=Proyecto \
-              -Dsonar.organization=utu-javaEE-25 \
+              -Dsonar.organization=utu-javaee-25 \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
               -Dsonar.branch.name=${{ github.ref_name }} \
@@ -56,7 +56,7 @@ jobs:
           else
             mvn sonar:sonar \
               -Dsonar.projectKey=Proyecto \
-              -Dsonar.organization=utu-javaEE-25 \
+              -Dsonar.organization=utu-javaee-25 \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
               -Dsonar.branch.name=${{ github.ref_name }} \
