@@ -8,7 +8,7 @@ Este pipeline automatiza la compilación, análisis de calidad y despliegue de t
 
 ## 📋 ¿Qué hace?
 
-### En cada PUSH a `main` o `master`:
+### En cada PUSH a `main`:
 
 ```
 1. 🔨 Compilación
@@ -54,7 +54,7 @@ Debes agregar estos **5 secrets** en GitHub (Settings → Secrets and variables 
 
 ## 📊 Monitoreo
 
-- **GitHub Actions**: https://github.com/utu-javaEE-25/Laboratorio/actions
+- **GitHub Actions**: https://github.com/utu-javaEE-25/Practico/actions
 - **SonarCloud**: https://sonarcloud.io/projects
 - **WildFly Console**: https://hcenuy.web.elasticloud.uy:4848/console/index.html
 
@@ -63,7 +63,7 @@ Debes agregar estos **5 secrets** en GitHub (Settings → Secrets and variables 
 ## 🎯 Próximos Pasos
 
 1. Agregar los 5 secrets a GitHub
-2. Hacer push a `master`
+2. Hacer push a `main` (o `master` si lo usas)
 3. Ver el pipeline en acción en GitHub Actions
 
 ¡Listo! Cada futura compilación será automática. 🎉
