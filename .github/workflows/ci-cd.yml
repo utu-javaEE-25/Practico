@@ -98,16 +98,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       
-      - name: 🔨 Compilar para despliegue
-        run: |
-          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
-            chmod +x mvnw || true
-            ./mvnw clean package -DskipTests -B
-          else
-            mvn clean package -DskipTests -B
-          fi
-      
-      - name: 📥 Descargar artefacto EAR
+      - name:  Descargar artefacto EAR
         uses: actions/download-artifact@v4
         with:
           name: ear-file
@@ -123,11 +114,11 @@ jobs:
           # Extract hostname without protocol (remove https:// or http://)
           WILDFLY_HOSTNAME="${WILDFLY_HOST#*://}"
           
-          # Locate the generated EAR file
-          EAR_FILE=$(find ear/target -name "*.ear" -type f | head -1)
+          # Use the EAR file downloaded from build-and-sonar job
+          EAR_FILE=$(find ear-deploy -name "*.ear" -type f | head -1)
           
           if [ -z "$EAR_FILE" ]; then
-            echo "❌ Error: No EAR file found in ear/target/"
+            echo "❌ Error: No EAR file found in ear-deploy/"
             exit 1
           fi
           
