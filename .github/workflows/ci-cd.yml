@@ -18,6 +18,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Necesario para análisis completo de SonarCloud
+
+      - name: ⚙️ Hacer mvnw ejecutable
+        run: chmod +x mvnw
       
       - name: ☕ Configurar JDK 21
         uses: actions/setup-java@v4
@@ -60,6 +63,9 @@ jobs:
     steps:
       - name: 📥 Clonar repositorio
         uses: actions/checkout@v4
+
+      - name: ⚙️ Hacer mvnw ejecutable
+        run: chmod +x mvnw
       
       - name: ☕ Configurar JDK 21
         uses: actions/setup-java@v4
@@ -77,7 +83,7 @@ jobs:
           name: ear-file
           path: ear-deploy
       
-      - name: �🚀 Desplegar en WildFly
+      - name: 🚀 Desplegar en WildFly
         env:
           WILDFLY_HOST: ${{ secrets.WILDFLY_HOST }}
           WILDFLY_PORT: ${{ secrets.WILDFLY_PORT }}
