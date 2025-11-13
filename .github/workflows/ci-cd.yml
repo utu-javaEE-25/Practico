@@ -122,16 +122,14 @@ jobs:
         run: |
           if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
             ./mvnw wildfly:deploy \
-              -Dwildfly.hostname=${{ env.WILDFLY_HOST }} \
-              -Dwildfly.port=${{ env.WILDFLY_PORT }} \
+              -Dwildfly.managementUrl=${{ env.WILDFLY_HOST }}:${{ env.WILDFLY_PORT }} \
               -Dwildfly.username=${{ env.WILDFLY_USER }} \
               -Dwildfly.password=${{ env.WILDFLY_PASSWORD }} \
               -DskipTests \
               -B
           else
             mvn wildfly:deploy \
-              -Dwildfly.hostname=${{ env.WILDFLY_HOST }} \
-              -Dwildfly.port=${{ env.WILDFLY_PORT }} \
+              -Dwildfly.managementUrl=${{ env.WILDFLY_HOST }}:${{ env.WILDFLY_PORT }} \
               -Dwildfly.username=${{ env.WILDFLY_USER }} \
               -Dwildfly.password=${{ env.WILDFLY_PASSWORD }} \
               -DskipTests \

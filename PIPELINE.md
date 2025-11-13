@@ -54,7 +54,7 @@ Debes agregar estos **5 secrets** en GitHub (Settings → Secrets and variables 
 
 ## 📊 Monitoreo
 
-- **GitHub Actions**: https://github.com/utu-javaEE-25/Practico/actions
+- **GitHub Actions**: https://github.com/utu-javaee-25/Practico/actions
 - **SonarCloud**: https://sonarcloud.io/projects
 - **WildFly Console**: https://hcenuy.web.elasticloud.uy:4848/console/index.html
 
