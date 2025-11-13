@@ -37,8 +37,8 @@ Debes agregar estos **5 secrets** en GitHub (Settings → Secrets and variables 
 | Secret | Valor |
 |--------|-------|
 | `SONAR_TOKEN` | Token de tu cuenta SonarCloud |
-| `WILDFLY_HOST` | `hcenuy.web.elasticloud.uy` |
-| `WILDFLY_PORT` | `9990` |
+| `WILDFLY_HOST` | `https://hcenuy.web.elasticloud.uy` |
+| `WILDFLY_PORT` | `4848` |
 | `WILDFLY_USER` | Tu usuario de WildFly |
 | `WILDFLY_PASSWORD` | Tu contraseña de WildFly |
 
