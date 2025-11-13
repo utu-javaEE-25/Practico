@@ -28,10 +28,11 @@
         <version.junit>5.10.2</version.junit>
         <jakartaee.version>10.0.0</jakartaee.version>
         <arquillian.junit5.version>1.7.0.Alpha12</arquillian.junit5.version>
-    <!-- SonarCloud Configuration -->
-    <sonar.projectKey>Practico</sonar.projectKey>
-    <sonar.organization>utu-javaEE-25</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+       <!-- SonarCloud Configuration -->
+       <!-- Project key is provided at analysis time to avoid duplicate module keys
+           in multi-module Maven projects. See CI workflow for -Dsonar.projectKey. -->
+       <sonar.organization>utu-javaEE-25</sonar.organization>
+       <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
