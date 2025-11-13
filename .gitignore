@@ -67,5 +67,5 @@ target/
 keycloak/
 .vscode/
 
-# Otros archivos temporales
-ejb/src/main/resources/*.json
+# Archivos de credenciales de servicio (NO deben ser versionados)
+ejb/src/main/resources/serviceAccountKey.json
