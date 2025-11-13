@@ -120,18 +120,23 @@ jobs:
           WILDFLY_USER: ${{ secrets.WILDFLY_USER }}
           WILDFLY_PASSWORD: ${{ secrets.WILDFLY_PASSWORD }}
         run: |
+          # Extract hostname without protocol (remove https:// or http://)
+          WILDFLY_HOSTNAME="${WILDFLY_HOST#*://}"
+          
           if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
-            ./mvnw wildfly:deploy \
-              -Dwildfly.managementUrl=${{ env.WILDFLY_HOST }}:${{ env.WILDFLY_PORT }} \
-              -Dwildfly.username=${{ env.WILDFLY_USER }} \
-              -Dwildfly.password=${{ env.WILDFLY_PASSWORD }} \
+            ./mvnw -pl ear wildfly:deploy \
+              -Dwildfly.hostname="$WILDFLY_HOSTNAME" \
+              -Dwildfly.port=$WILDFLY_PORT \
+              -Dwildfly.username=$WILDFLY_USER \
+              -Dwildfly.password=$WILDFLY_PASSWORD \
               -DskipTests \
               -B
           else
-            mvn wildfly:deploy \
-              -Dwildfly.managementUrl=${{ env.WILDFLY_HOST }}:${{ env.WILDFLY_PORT }} \
-              -Dwildfly.username=${{ env.WILDFLY_USER }} \
-              -Dwildfly.password=${{ env.WILDFLY_PASSWORD }} \
+            mvn -pl ear wildfly:deploy \
+              -Dwildfly.hostname="$WILDFLY_HOSTNAME" \
+              -Dwildfly.port=$WILDFLY_PORT \
+              -Dwildfly.username=$WILDFLY_USER \
+              -Dwildfly.password=$WILDFLY_PASSWORD \
               -DskipTests \
               -B
           fi
