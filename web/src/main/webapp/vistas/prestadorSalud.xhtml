@@ -51,6 +51,14 @@
                 warnClass="alert alert-warning"
                 errorClass="alert alert-danger"/>
 
+    <div class="d-flex justify-content-end flex-wrap gap-2 mb-4">
+        <h:outputLink value="#{facesContext.externalContext.requestContextPath}/tenant_endpoints"
+                      styleClass="btn btn-outline-primary btn-sm d-flex align-items-center">
+            <i class="bi bi-link-45deg me-1"></i>
+            Endpoints
+        </h:outputLink>
+    </div>
+
     <div class="row g-4 mb-4">
         <div class="col-lg-6">
             <h:form id="formCrear" styleClass="card shadow-sm h-100">
