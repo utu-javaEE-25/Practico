@@ -16,9 +16,6 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     @EJB
     private AdminGlobalDAO adminDAO;
 
-    @EJB
-    private UsuarioServicioSaludServiceBean usuarioServicioSaludService;
-
     @Override
     public boolean esAdminPorSub(String sub) {
         if (sub == null || sub.isBlank()) {
