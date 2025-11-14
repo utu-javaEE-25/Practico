@@ -23,6 +23,8 @@ public class AdminDashboardServlet extends HttpServlet {
     @EJB
     private AdminGlobalServiceLocal adminService;
 
+    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
