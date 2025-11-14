@@ -113,38 +113,87 @@ jobs:
         run: |
           # Localiza el archivo EAR descargado desde el job build-and-sonar
           EAR_FILE=$(find ear-deploy -name "*.ear" -type f | head -1)
-          
+
           if [ -z "$EAR_FILE" ]; then
             echo "❌ Error: No se encontró ningún EAR en ear-deploy/"
             exit 1
           fi
-          
+
           echo "📦 Desplegando EAR: $EAR_FILE"
-          
+
           # Extrae el nombre del archivo (sin la ruta)
           EAR_FILENAME=$(basename "$EAR_FILE")
-          
+
           # Construye la URL de gestión (WILDFLY_HOST debe incluir el protocolo)
           MGMT_URL="$WILDFLY_HOST:$WILDFLY_PORT"
-          
+
           echo "🔗 URL de gestión: $MGMT_URL"
           echo "📄 Nombre del EAR: $EAR_FILENAME"
-          
-          # Despliega usando curl a la API de gestión de WildFly con autenticación Digest
-          # Usamos --digest porque ManagementRealm puede requerir autenticación Digest
-          HTTP_CODE=$(curl -k --digest -s -o deploy.log -w "%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
+
+          # 1) Subir contenido (add-content) y capturar la respuesta JSON y el código HTTP
+          # Usamos -w para obtener el código HTTP en la última línea y -s para silencio
+          RAW_RESP=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
             -F "file=@$EAR_FILE" \
             "$MGMT_URL/management/add-content")
 
-          echo "Código HTTP de respuesta: $HTTP_CODE"
-          if [ "$HTTP_CODE" -ne 200 ] && [ "$HTTP_CODE" -ne 201 ]; then
-            echo "❌ El despliegue falló con código HTTP $HTTP_CODE"
-            cat deploy.log
+          # Separar cuerpo y código HTTP
+          HTTP_CODE=$(echo "$RAW_RESP" | tail -n1)
+          BODY=$(echo "$RAW_RESP" | sed '$d')
+
+          echo "add-content HTTP code: $HTTP_CODE"
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "❌ add-content devolvió error HTTP $HTTP_CODE"
+            echo "Cuerpo de la respuesta:"
+            echo "$BODY"
             exit 1
           fi
 
-          echo "✅ EAR subido a la API de gestión de WildFly (HTTP $HTTP_CODE)"
-          cat deploy.log
+          echo "add-content body: $BODY"
+
+          # 2) Extraer hash (preferimos SHA-1, caemos a SHA-256 si no existe)
+          HASH=$(echo "$BODY" | jq -r '.result[0].hash."SHA-1" // .result[0].hash."SHA-256" // empty')
+
+          if [ -z "$HASH" ]; then
+            echo "❌ No se pudo extraer el hash de add-content. Salida completa:"
+            echo "$BODY"
+            exit 1
+          fi
+
+          echo "Hash del contenido: $HASH"
+
+          # 3) Registrar el deployment (add) y activarlo usando el hash
+          APP_NAME="$EAR_FILENAME"
+          DEPLOY_JSON=$(jq -n --arg name "$APP_NAME" --arg alg "SHA-1" --arg hash "$HASH" \
+            '{address:[{deployment:$name}], operation:"add", content:[{hash:{algorithm:$alg,hash:$hash}}], enabled:true}')
+
+          echo "JSON de deploy: $DEPLOY_JSON"
+
+          # 4) Ejecutar la operación de add (registro) del deployment y comprobar resultado
+          DEPLOY_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$DEPLOY_JSON" \
+            "$MGMT_URL/management")
+
+          DEPLOY_HTTP=$(echo "$DEPLOY_RAW" | tail -n1)
+          DEPLOY_BODY=$(echo "$DEPLOY_RAW" | sed '$d')
+
+          echo "deploy HTTP code: $DEPLOY_HTTP"
+          echo "deploy body: $DEPLOY_BODY"
+
+          if [ "$DEPLOY_HTTP" -ge 400 ]; then
+            echo "❌ La operación de deploy devolvió HTTP $DEPLOY_HTTP"
+            echo "$DEPLOY_BODY"
+            exit 1
+          fi
+
+          OUTCOME=$(echo "$DEPLOY_BODY" | jq -r '.outcome // empty')
+          if [ "$OUTCOME" != "success" ]; then
+            echo "❌ La operación de deploy no fue exitosa. Resultado:"
+            echo "$DEPLOY_BODY"
+            exit 1
+          fi
+
+          echo "✅ Despliegue registrado y activado correctamente"
       
       - name: 📢 Notificar despliegue exitoso
         if: success()
