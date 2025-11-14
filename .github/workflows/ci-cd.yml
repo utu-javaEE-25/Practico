@@ -217,7 +217,75 @@ jobs:
           if [ "$DEPLOY_HTTP" -ge 400 ]; then
             echo "❌ La operación de deploy devolvió HTTP $DEPLOY_HTTP"
             echo "$DEPLOY_BODY"
-            # Intentar full-replace-deployment si el add falló (por ejemplo despliegue ya existe)
+
+            # Si la falla fue por recurso duplicado, intentar full-replace-deployment
+            if echo "$DEPLOY_BODY" | grep -q -e 'Duplicate resource' -e 'WFLYCTL0212'; then
+              echo "Detectado recurso duplicado; intentando full-replace-deployment..."
+
+              if [ "$CONTENT_TYPE" = "hash" ]; then
+                REPLACE_JSON=$(jq -n --arg name "$APP_NAME" --arg alg "$ALG" --arg hash "$HASH" \
+                  '{address:[{deployment:$name}], operation:"full-replace-deployment", content:[{hash:{algorithm:$alg,hash:$hash}}], enabled:true}')
+              else
+                REPLACE_JSON=$(jq -n --arg name "$APP_NAME" --arg bytes "$BYTES_VALUE" \
+                  '{address:[{deployment:$name}], operation:"full-replace-deployment", content:[{bytes:$bytes}], enabled:true}')
+              fi
+
+              echo "JSON de replace: $REPLACE_JSON"
+              REPLACE_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" -H "Content-Type: application/json" -d "$REPLACE_JSON" "$MGMT_URL/management")
+              REPLACE_HTTP=$(echo "$REPLACE_RAW" | tail -n1)
+              REPLACE_BODY=$(echo "$REPLACE_RAW" | sed '$d')
+
+              echo "replace HTTP: $REPLACE_HTTP"
+              echo "replace body: $REPLACE_BODY"
+              if [ "$REPLACE_HTTP" -lt 400 ]; then
+                REPLACE_OUTCOME=$(echo "$REPLACE_BODY" | jq -r '.outcome // empty')
+                if [ "$REPLACE_OUTCOME" = "success" ]; then
+                  echo "✅ Despliegue reemplazado y activado correctamente"
+                else
+                  echo "⚠️ full-replace-deployment no devolvió success (outcome: $REPLACE_OUTCOME). Intentando remove + add como fallback..."
+                  # Intentar remove y luego add
+                  REMOVE_JSON=$(jq -n --arg name "$APP_NAME" '{address:[{deployment:$name}], operation:"remove"}')
+                  echo "JSON remove: $REMOVE_JSON"
+                  REMOVE_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" -H "Content-Type: application/json" -d "$REMOVE_JSON" "$MGMT_URL/management")
+                  REMOVE_HTTP=$(echo "$REMOVE_RAW" | tail -n1)
+                  REMOVE_BODY=$(echo "$REMOVE_RAW" | sed '$d')
+                  echo "remove HTTP: $REMOVE_HTTP"
+                  echo "remove body: $REMOVE_BODY"
+                  if [ "$REMOVE_HTTP" -ge 400 ]; then
+                    echo "❌ remove falló con HTTP $REMOVE_HTTP"
+                    echo "$REMOVE_BODY"
+                    exit 1
+                  fi
+                  # Reintentar add
+                  ADD_AFTER_REMOVE_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" -H "Content-Type: application/json" -d "$DEPLOY_JSON" "$MGMT_URL/management")
+                  ADD_AFTER_REMOVE_HTTP=$(echo "$ADD_AFTER_REMOVE_RAW" | tail -n1)
+                  ADD_AFTER_REMOVE_BODY=$(echo "$ADD_AFTER_REMOVE_RAW" | sed '$d')
+                  echo "add(after remove) HTTP: $ADD_AFTER_REMOVE_HTTP"
+                  echo "add(after remove) body: $ADD_AFTER_REMOVE_BODY"
+                  if [ "$ADD_AFTER_REMOVE_HTTP" -ge 400 ]; then
+                    echo "❌ add(after remove) devolvió HTTP $ADD_AFTER_REMOVE_HTTP"
+                    echo "$ADD_AFTER_REMOVE_BODY"
+                    exit 1
+                  fi
+                  ADD_AFTER_REMOVE_OUTCOME=$(echo "$ADD_AFTER_REMOVE_BODY" | jq -r '.outcome // empty')
+                  if [ "$ADD_AFTER_REMOVE_OUTCOME" != "success" ]; then
+                    echo "❌ add(after remove) no fue exitosa:" 
+                    echo "$ADD_AFTER_REMOVE_BODY"
+                    exit 1
+                  fi
+                  echo "✅ Despliegue removido y agregado correctamente"
+                fi
+              else
+                echo "❌ full-replace-deployment devolvió HTTP $REPLACE_HTTP"
+                echo "$REPLACE_BODY"
+                exit 1
+              fi
+            else
+              # Si no es recurso duplicado, fallamos inmediatamente
+              echo "❌ add devolvió error no relacionado con recurso duplicado. Salida completa:" 
+              echo "$DEPLOY_BODY"
+              exit 1
+            fi
           else
             OUTCOME=$(echo "$DEPLOY_BODY" | jq -r '.outcome // empty')
             if [ "$OUTCOME" != "success" ]; then
