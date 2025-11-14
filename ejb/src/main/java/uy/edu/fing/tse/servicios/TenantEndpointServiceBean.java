@@ -87,32 +87,9 @@ public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
 
     private String resolverUriBase(String valor, boolean esMultitenant) {
         if (esMultitenant) {
-            return construirUriMultitenant(valor);
+            return MULTITENANT_URI_PREFIX;
         }
         return normalizarUri(valor);
-    }
-
-    private String construirUriMultitenant(String sufijo) {
-        String limpio = normalizarTexto(sufijo);
-        if (limpio == null) {
-            throw new IllegalArgumentException("Debe indicar el sufijo para construir la URI multitenant.");
-        }
-        limpio = limpiarSlashes(limpio);
-        if (limpio.isEmpty()) {
-            throw new IllegalArgumentException("El sufijo para la URI multitenant no puede quedar vacio.");
-        }
-        return MULTITENANT_URI_PREFIX + limpio + "/";
-    }
-
-    private String limpiarSlashes(String valor) {
-        String resultado = valor;
-        while (resultado.startsWith("/")) {
-            resultado = resultado.substring(1);
-        }
-        while (resultado.endsWith("/")) {
-            resultado = resultado.substring(0, resultado.length() - 1);
-        }
-        return resultado;
     }
 
     private String resolverHash(String hashCliente, boolean esMultitenant) {

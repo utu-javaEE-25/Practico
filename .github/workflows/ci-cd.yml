@@ -111,39 +111,39 @@ jobs:
           WILDFLY_USER: ${{ secrets.WILDFLY_USER }}
           WILDFLY_PASSWORD: ${{ secrets.WILDFLY_PASSWORD }}
         run: |
-          # Locate the EAR file downloaded from build-and-sonar job
+          # Localiza el archivo EAR descargado desde el job build-and-sonar
           EAR_FILE=$(find ear-deploy -name "*.ear" -type f | head -1)
           
           if [ -z "$EAR_FILE" ]; then
-            echo "❌ Error: No EAR file found in ear-deploy/"
+            echo "❌ Error: No se encontró ningún EAR en ear-deploy/"
             exit 1
           fi
           
-          echo "📦 Deploying EAR: $EAR_FILE"
+          echo "📦 Desplegando EAR: $EAR_FILE"
           
-          # Extract filename (without path)
+          # Extrae el nombre del archivo (sin la ruta)
           EAR_FILENAME=$(basename "$EAR_FILE")
           
-          # Build management URL (WILDFLY_HOST should include protocol)
+          # Construye la URL de gestión (WILDFLY_HOST debe incluir el protocolo)
           MGMT_URL="$WILDFLY_HOST:$WILDFLY_PORT"
           
-          echo "🔗 Management URL: $MGMT_URL"
-          echo "📄 EAR filename: $EAR_FILENAME"
+          echo "🔗 URL de gestión: $MGMT_URL"
+          echo "📄 Nombre del EAR: $EAR_FILENAME"
           
-          # Deploy using curl to WildFly management API
-          # This bypasses Maven plugin issues and gives us control over HTTPS
-          curl -k -v -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
+          # Despliega usando curl a la API de gestión de WildFly con autenticación Digest
+          # Usamos --digest porque ManagementRealm puede requerir autenticación Digest
+          HTTP_CODE=$(curl -k --digest -s -o deploy.log -w "%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
             -F "file=@$EAR_FILE" \
-            "$MGMT_URL/management/add-content" \
-            --output deploy.log \
-            --show-error \
-            || {
-              echo "❌ Deployment failed. Response:"
-              cat deploy.log
-              exit 1
-            }
-          
-          echo "✅ EAR uploaded to WildFly management API"
+            "$MGMT_URL/management/add-content")
+
+          echo "Código HTTP de respuesta: $HTTP_CODE"
+          if [ "$HTTP_CODE" -ne 200 ] && [ "$HTTP_CODE" -ne 201 ]; then
+            echo "❌ El despliegue falló con código HTTP $HTTP_CODE"
+            cat deploy.log
+            exit 1
+          fi
+
+          echo "✅ EAR subido a la API de gestión de WildFly (HTTP $HTTP_CODE)"
           cat deploy.log
       
       - name: 📢 Notificar despliegue exitoso

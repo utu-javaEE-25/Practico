@@ -74,8 +74,7 @@ public class TenantEndpointServlet extends HttpServlet {
         req.setAttribute("endpointsPorTenant", endpointsPorTenant);
         req.setAttribute("endpointEnEdicion", endpointEnEdicion);
         req.setAttribute("prestadorEnEdicion", prestadorEnEdicion);
-        req.setAttribute("multiUriPrefix", TenantEndpointServiceBean.MULTITENANT_URI_PREFIX);
-        req.setAttribute("multiSuffixEnEdicion", obtenerSufijoMultitenant(endpointEnEdicion));
+        req.setAttribute("multiTenantFixedUri", TenantEndpointServiceBean.MULTITENANT_URI_PREFIX);
 
         transferirMensaje(session, req, "endpoint_success");
         transferirMensaje(session, req, "endpoint_error");
@@ -204,7 +203,7 @@ public class TenantEndpointServlet extends HttpServlet {
     }
 
     private String obtenerValorUri(HttpServletRequest req, boolean esMultitenant) {
-        return esMultitenant ? req.getParameter("uriMultiSuffix") : req.getParameter("uriBase");
+        return esMultitenant ? TenantEndpointServiceBean.MULTITENANT_URI_PREFIX : req.getParameter("uriBase");
     }
 
     private String obtenerHashCliente(HttpServletRequest req, boolean esMultitenant) {
@@ -244,22 +243,4 @@ public class TenantEndpointServlet extends HttpServlet {
         }
     }
 
-    private String obtenerSufijoMultitenant(TenantEndpoint endpoint) {
-        if (endpoint == null || !endpoint.isEsMultitenant()) {
-            return "";
-        }
-        String base = endpoint.getUriBase();
-        String prefijo = TenantEndpointServiceBean.MULTITENANT_URI_PREFIX;
-        if (base == null || !base.startsWith(prefijo)) {
-            return "";
-        }
-        String resto = base.substring(prefijo.length());
-        if (resto.startsWith("/")) {
-            resto = resto.substring(1);
-        }
-        if (resto.endsWith("/")) {
-            resto = resto.substring(0, resto.length() - 1);
-        }
-        return resto;
-    }
 }

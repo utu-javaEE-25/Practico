@@ -20,8 +20,7 @@
     String ctx = request.getContextPath();
     String nombre = (String) session.getAttribute("nombre");
     String apellido = (String) session.getAttribute("apellido");
-    String multiUriPrefix = (String) request.getAttribute("multiUriPrefix");
-    String multiSuffixEnEdicion = (String) request.getAttribute("multiSuffixEnEdicion");
+    String multiTenantUri = (String) request.getAttribute("multiTenantFixedUri");
     long activos = 0;
     if (endpointsPorTenant != null) {
         for (TenantEndpoint te : endpointsPorTenant.values()) {
@@ -85,12 +84,11 @@
                                 <label class="form-check-label" for="editEsMultitenant">Endpoint multitenant</label>
                             </div>
                             <div class="mb-3 js-multitenant-field <%= endpointEsMulti ? "" : "d-none" %>">
-                                <label class="form-label">Sufijo de la URI multitenant</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><%= multiUriPrefix != null ? multiUriPrefix : "" %></span>
-                                    <input type="text" name="uriMultiSuffix" class="form-control" value="<%= multiSuffixEnEdicion != null ? multiSuffixEnEdicion : "" %>" <%= endpointEsMulti ? "" : "disabled" %>>
+                                <label class="form-label">URI multitenant</label>
+                                <div class="form-control-plaintext border rounded bg-light px-3 py-2">
+                                    <%= multiTenantUri != null ? multiTenantUri : "http://pruebamulti.web.elasticloud.uy/" %>
                                 </div>
-                                <div class="form-text">El prefijo fijo se concatenara con este valor y se cerrara automaticamente con '/'.</div>
+                                <div class="form-text">La URL es fija para los endpoints multitenant.</div>
                             </div>
                             <div class="mb-3 js-custom-field <%= endpointEsMulti ? "d-none" : "" %>">
                                 <label class="form-label">URI base</label>
@@ -147,12 +145,11 @@
                                 <div class="form-text">Selecciona esta opcion si el prestador usa el portal compartido.</div>
                             </div>
                             <div class="mb-3 js-multitenant-field d-none">
-                                <label class="form-label">Sufijo de la URI multitenant</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><%= multiUriPrefix != null ? multiUriPrefix : "" %></span>
-                                    <input type="text" name="uriMultiSuffix" class="form-control" disabled/>
+                                <label class="form-label">URI multitenant</label>
+                                <div class="form-control-plaintext border rounded bg-light px-3 py-2">
+                                    <%= multiTenantUri != null ? multiTenantUri : "http://pruebamulti.web.elasticloud.uy/" %>
                                 </div>
-                                <div class="form-text">Solo ingresa el sufijo (por ejemplo, el nombre del schema del tenant).</div>
+                                <div class="form-text">Se asignará automáticamente esta URL compartida.</div>
                             </div>
                             <div class="mb-3 js-custom-field">
                                 <label class="form-label">URI base</label>
@@ -278,11 +275,6 @@
         form.querySelectorAll('.js-custom-field').forEach(function(el) {
             el.classList.toggle('d-none', esMulti);
         });
-        var sufijo = form.querySelector('input[name="uriMultiSuffix"]');
-        if (sufijo) {
-            sufijo.disabled = !esMulti;
-            sufijo.required = esMulti;
-        }
         var uriBase = form.querySelector('input[name="uriBase"]');
         if (uriBase) {
             uriBase.disabled = esMulti;
