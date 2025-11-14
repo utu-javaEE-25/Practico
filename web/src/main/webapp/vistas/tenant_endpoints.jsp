@@ -20,6 +20,8 @@
     String ctx = request.getContextPath();
     String nombre = (String) session.getAttribute("nombre");
     String apellido = (String) session.getAttribute("apellido");
+    String multiUriPrefix = (String) request.getAttribute("multiUriPrefix");
+    String multiSuffixEnEdicion = (String) request.getAttribute("multiSuffixEnEdicion");
     long activos = 0;
     if (endpointsPorTenant != null) {
         for (TenantEndpoint te : endpointsPorTenant.values()) {
@@ -60,7 +62,7 @@
     <% } %>
 
     <div class="row">
-        <div class="col-lg-4 mb-4">
+        <div class="col-12 col-xl-3 col-lg-4 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">
                     <% if (endpointEnEdicion != null && prestadorEnEdicion != null) { %>
@@ -72,20 +74,41 @@
                 <div class="card-body">
                     <% if (endpointEnEdicion != null && prestadorEnEdicion != null) { %>
                         <p class="text-muted">Configurando endpoint para <strong><%= prestadorEnEdicion.getNombre() %></strong></p>
-                        <form method="post" action="<%=ctx%>/tenant_endpoints">
+                        <%
+                            boolean endpointEsMulti = endpointEnEdicion.isEsMultitenant();
+                        %>
+                        <form method="post" action="<%=ctx%>/tenant_endpoints" data-multitenant-form="true">
                             <input type="hidden" name="accion" value="actualizar"/>
                             <input type="hidden" name="tenantId" value="<%= endpointEnEdicion.getTenantId() %>"/>
-                            <div class="mb-3">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input js-multitenant-toggle" type="checkbox" role="switch" id="editEsMultitenant" name="esMultitenant" <%= endpointEsMulti ? "checked" : "" %>>
+                                <label class="form-check-label" for="editEsMultitenant">Endpoint multitenant</label>
+                            </div>
+                            <div class="mb-3 js-multitenant-field <%= endpointEsMulti ? "" : "d-none" %>">
+                                <label class="form-label">Sufijo de la URI multitenant</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><%= multiUriPrefix != null ? multiUriPrefix : "" %></span>
+                                    <input type="text" name="uriMultiSuffix" class="form-control" value="<%= multiSuffixEnEdicion != null ? multiSuffixEnEdicion : "" %>" <%= endpointEsMulti ? "" : "disabled" %>>
+                                </div>
+                                <div class="form-text">El prefijo fijo se concatenara con este valor y se cerrara automaticamente con '/'.</div>
+                            </div>
+                            <div class="mb-3 js-custom-field <%= endpointEsMulti ? "d-none" : "" %>">
                                 <label class="form-label">URI base</label>
-                                <input type="text" name="uriBase" class="form-control" value="<%= endpointEnEdicion.getUriBase() %>" required/>
+                                <input type="text" name="uriBase" class="form-control" value="<%= endpointEnEdicion.getUriBase() %>" <%= endpointEsMulti ? "disabled" : "required" %>/>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Tipo de autenticación</label>
+                                <label class="form-label">Tipo de autenticacion</label>
                                 <input type="text" name="tipoAuth" class="form-control" value="<%= endpointEnEdicion.getTipoAuth() != null ? endpointEnEdicion.getTipoAuth() : "" %>"/>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 js-custom-field <%= endpointEsMulti ? "d-none" : "" %>">
                                 <label class="form-label">Hash / secreto cliente</label>
-                                <input type="text" name="hashCliente" class="form-control" value="<%= endpointEnEdicion.getHashCliente() != null ? endpointEnEdicion.getHashCliente() : "" %>"/>
+                                <input type="text" name="hashCliente" class="form-control" value="<%= endpointEnEdicion.getHashCliente() != null ? endpointEnEdicion.getHashCliente() : "" %>" <%= endpointEsMulti ? "disabled" : "required" %>/>
+                            </div>
+                            <div class="mb-3 js-multitenant-field <%= endpointEsMulti ? "" : "d-none" %>">
+                                <label class="form-label">Hash / secreto cliente</label>
+                                <div class="form-control-plaintext border rounded bg-light px-3 py-2">
+                                    Se utilizara el secreto compartido configurado en el periferico.
+                                </div>
                             </div>
                             <div class="form-check form-switch mb-3">
                                 <input class="form-check-input" type="checkbox" role="switch" id="activoSwitch" name="activo" <%= endpointEnEdicion.isActivo() ? "checked" : "" %>>
@@ -102,7 +125,7 @@
                         </form>
                     <% } else { %>
                         <p class="text-muted">Asocia un endpoint al tenant seleccionado. Solo se permite uno por tenant.</p>
-                        <form method="post" action="<%=ctx%>/tenant_endpoints">
+                        <form method="post" action="<%=ctx%>/tenant_endpoints" data-multitenant-form="true">
                             <input type="hidden" name="accion" value="crear"/>
                             <div class="mb-3">
                                 <label class="form-label">Tenant</label>
@@ -118,17 +141,36 @@
                                     <small class="text-muted">Todos los tenants ya cuentan con un endpoint configurado.</small>
                                 <% } %>
                             </div>
-                            <div class="mb-3">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input js-multitenant-toggle" type="checkbox" role="switch" id="createEsMultitenant" name="esMultitenant">
+                                <label class="form-check-label" for="createEsMultitenant">Endpoint multitenant</label>
+                                <div class="form-text">Selecciona esta opcion si el prestador usa el portal compartido.</div>
+                            </div>
+                            <div class="mb-3 js-multitenant-field d-none">
+                                <label class="form-label">Sufijo de la URI multitenant</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><%= multiUriPrefix != null ? multiUriPrefix : "" %></span>
+                                    <input type="text" name="uriMultiSuffix" class="form-control" disabled/>
+                                </div>
+                                <div class="form-text">Solo ingresa el sufijo (por ejemplo, el nombre del schema del tenant).</div>
+                            </div>
+                            <div class="mb-3 js-custom-field">
                                 <label class="form-label">URI base</label>
                                 <input type="text" name="uriBase" class="form-control" placeholder="https://api.prestador.com/" required/>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Tipo de autenticación</label>
+                                <label class="form-label">Tipo de autenticacion</label>
                                 <input type="text" name="tipoAuth" class="form-control" placeholder="API_KEY, OAuth2, etc."/>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 js-custom-field">
                                 <label class="form-label">Hash / secreto cliente</label>
-                                <input type="text" name="hashCliente" class="form-control" placeholder="Valor sensible provisto por el tenant"/>
+                                <input type="text" name="hashCliente" class="form-control" placeholder="Valor sensible provisto por el prestador" required/>
+                            </div>
+                            <div class="mb-3 js-multitenant-field d-none">
+                                <label class="form-label">Hash / secreto cliente</label>
+                                <div class="form-control-plaintext border rounded bg-light px-3 py-2">
+                                    Se reutilizara el secreto compartido configurado en el periferico.
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-success w-100" <%= (prestadoresSinEndpoint == null || prestadoresSinEndpoint.isEmpty()) ? "disabled" : "" %>>
                                 <i class="bi bi-plus-circle"></i> Crear endpoint
@@ -139,7 +181,7 @@
             </div>
         </div>
 
-        <div class="col-lg-8 mb-4">
+        <div class="col-12 col-xl-9 col-lg-8 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <span>Tenants y endpoints configurados</span>
@@ -155,6 +197,7 @@
                                 <th>Tenant</th>
                                 <th>RUT</th>
                                 <th>URI base</th>
+                                <th>Tipo</th>
                                 <th>Tipo auth</th>
                                 <th>Estado</th>
                                 <th class="text-end">Acciones</th>
@@ -172,6 +215,15 @@
                                     </td>
                                     <td><%= p.getRut() %></td>
                                     <td><%= endpoint != null ? endpoint.getUriBase() : "Sin configurar" %></td>
+                                    <td>
+                                        <% if (endpoint == null) { %>
+                                            <span class="badge bg-secondary">Sin definir</span>
+                                        <% } else if (endpoint.isEsMultitenant()) { %>
+                                            <span class="badge bg-info text-dark">Multitenant</span>
+                                        <% } else { %>
+                                            <span class="badge bg-dark">Portal propio</span>
+                                        <% } %>
+                                    </td>
                                     <td><%= endpoint != null && endpoint.getTipoAuth() != null ? endpoint.getTipoAuth() : "-" %></td>
                                     <td>
                                         <% if (endpoint == null) { %>
@@ -202,7 +254,7 @@
                             <%       }
                                    } else { %>
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted">No hay prestadores registrados.</td>
+                                    <td colspan="7" class="text-center text-muted">No hay prestadores registrados.</td>
                                 </tr>
                             <% } %>
                             </tbody>
@@ -213,5 +265,45 @@
         </div>
     </div>
 </div>
+
+<script>
+(function() {
+    function actualizar(form) {
+        var toggle = form.querySelector('.js-multitenant-toggle');
+        if (!toggle) { return; }
+        var esMulti = toggle.checked;
+        form.querySelectorAll('.js-multitenant-field').forEach(function(el) {
+            el.classList.toggle('d-none', !esMulti);
+        });
+        form.querySelectorAll('.js-custom-field').forEach(function(el) {
+            el.classList.toggle('d-none', esMulti);
+        });
+        var sufijo = form.querySelector('input[name="uriMultiSuffix"]');
+        if (sufijo) {
+            sufijo.disabled = !esMulti;
+            sufijo.required = esMulti;
+        }
+        var uriBase = form.querySelector('input[name="uriBase"]');
+        if (uriBase) {
+            uriBase.disabled = esMulti;
+            uriBase.required = !esMulti;
+        }
+        var hash = form.querySelector('input[name="hashCliente"]');
+        if (hash) {
+            hash.disabled = esMulti;
+            hash.required = !esMulti;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-multitenant-form="true"]').forEach(function(form) {
+            var toggle = form.querySelector('.js-multitenant-toggle');
+            if (!toggle) { return; }
+            toggle.addEventListener('change', function() { actualizar(form); });
+            actualizar(form);
+        });
+    });
+})();
+</script>
 </body>
 </html>
+

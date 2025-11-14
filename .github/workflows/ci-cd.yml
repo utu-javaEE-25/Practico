@@ -1,0 +1,156 @@
+name: CI/CD - Compile, SonarCloud & Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Job 1: Compilar y analizar en SonarCloud
+  build-and-sonar:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necesario para análisis completo de SonarCloud
+
+      - name: ⚙️ Hacer mvnw ejecutable
+        run: chmod +x mvnw
+      
+      - name: ☕ Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      
+      - name: 🔨 Compilar proyecto (Maven)
+        run: |
+          # Usar mvnw si está presente y completo, si no usar mv
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            chmod +x mvnw || true
+            ./mvnw clean install -DskipTests -B
+          else
+            mvn clean install -DskipTests -B
+          fi
+      
+      - name: 📊 Análisis en SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Ejecutar Sonar usando mvnw si existe, sino mvn
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            ./mvnw sonar:sonar \
+              -Dsonar.projectKey=Proyecto \
+              -Dsonar.organization=utu-javaee-25 \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+              -Dsonar.branch.name=${{ github.ref_name }} \
+              -B
+          else
+            mvn sonar:sonar \
+              -Dsonar.projectKey=Proyecto \
+              -Dsonar.organization=utu-javaee-25 \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+              -Dsonar.branch.name=${{ github.ref_name }} \
+              -B
+          fi
+      
+      - name: ✅ Ejecutar pruebas
+        run: |
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            ./mvnw test -B
+          else
+            mvn test -B
+          fi
+      
+      - name: 📦 Guardar artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: ear-file
+          path: ear/target/*.ear
+          retention-days: 5
+
+  # Job 2: Despliegue en WildFly (solo en push a main o master)
+  deploy:
+    needs: build-and-sonar
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Hacer mvnw ejecutable
+        run: chmod +x mvnw
+      
+      - name: ☕ Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      
+      - name:  Descargar artefacto EAR
+        uses: actions/download-artifact@v4
+        with:
+          name: ear-file
+          path: ear-deploy
+      
+      - name: 🚀 Desplegar en WildFly
+        env:
+          WILDFLY_HOST: ${{ secrets.WILDFLY_HOST }}
+          WILDFLY_PORT: ${{ secrets.WILDFLY_PORT }}
+          WILDFLY_USER: ${{ secrets.WILDFLY_USER }}
+          WILDFLY_PASSWORD: ${{ secrets.WILDFLY_PASSWORD }}
+        run: |
+          # Locate the EAR file downloaded from build-and-sonar job
+          EAR_FILE=$(find ear-deploy -name "*.ear" -type f | head -1)
+          
+          if [ -z "$EAR_FILE" ]; then
+            echo "❌ Error: No EAR file found in ear-deploy/"
+            exit 1
+          fi
+          
+          echo "📦 Deploying EAR: $EAR_FILE"
+          
+          # Extract filename (without path)
+          EAR_FILENAME=$(basename "$EAR_FILE")
+          
+          # Build management URL (WILDFLY_HOST should include protocol)
+          MGMT_URL="$WILDFLY_HOST:$WILDFLY_PORT"
+          
+          echo "🔗 Management URL: $MGMT_URL"
+          echo "📄 EAR filename: $EAR_FILENAME"
+          
+          # Deploy using curl to WildFly management API
+          # This bypasses Maven plugin issues and gives us control over HTTPS
+          curl -k -v -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
+            -F "file=@$EAR_FILE" \
+            "$MGMT_URL/management/add-content" \
+            --output deploy.log \
+            --show-error \
+            || {
+              echo "❌ Deployment failed. Response:"
+              cat deploy.log
+              exit 1
+            }
+          
+          echo "✅ EAR uploaded to WildFly management API"
+          cat deploy.log
+      
+      - name: 📢 Notificar despliegue exitoso
+        if: success()
+        run: echo "✅ Despliegue completado exitosamente en WildFly"
+      
+      - name: ⚠️ Notificar error de despliegue
+        if: failure()
+        run: echo "❌ Error en el despliegue - revisar logs"
+        continue-on-error: true

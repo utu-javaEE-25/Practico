@@ -2,7 +2,7 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "sonarlint.connectedMode.project": {
         "connectionId": "utu-javaee-25",
-        "projectKey": "utu-javaEE-25_Practico"
+        "projectKey": "Proyecto"
     },
     "chatgpt.openOnStartup": true
 }

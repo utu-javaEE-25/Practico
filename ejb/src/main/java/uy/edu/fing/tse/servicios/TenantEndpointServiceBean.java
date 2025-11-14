@@ -14,6 +14,9 @@ import uy.edu.fing.tse.entidades.TenantEndpoint;
 @Stateless
 public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
 
+    public static final String MULTITENANT_URI_PREFIX = "http://pruebamulti.web.elasticloud.uy/";
+    private static final String MULTITENANT_SHARED_SECRET = "UnSecretoMuyLargoSeguroYComplejoQueNadieDebeAdivinarParaElComponentePeriferico12345";
+
     @PersistenceContext(unitName = "PU_CENTRAL")
     private EntityManager em;
 
@@ -34,7 +37,7 @@ public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
     }
 
     @Override
-    public TenantEndpoint crear(Long tenantId, String uriBase, String tipoAuth, String hashCliente) {
+    public TenantEndpoint crear(Long tenantId, boolean esMultitenant, String uriBaseInput, String tipoAuth, String hashCliente) {
         if (tenantId == null) {
             throw new IllegalArgumentException("Debe indicar el tenant.");
         }
@@ -44,14 +47,14 @@ public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
 
         TenantEndpoint endpoint = new TenantEndpoint();
         endpoint.setTenantId(tenantId);
-        actualizarValores(endpoint, uriBase, tipoAuth, hashCliente, true);
+        actualizarValores(endpoint, esMultitenant, uriBaseInput, tipoAuth, hashCliente, true);
 
         em.persist(endpoint);
         return endpoint;
     }
 
     @Override
-    public TenantEndpoint actualizar(Long tenantId, String uriBase, String tipoAuth, String hashCliente, boolean activo) {
+    public TenantEndpoint actualizar(Long tenantId, boolean esMultitenant, String uriBaseInput, String tipoAuth, String hashCliente, boolean activo) {
         if (tenantId == null) {
             throw new IllegalArgumentException("Debe indicar el tenant.");
         }
@@ -61,7 +64,7 @@ public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
             throw new IllegalArgumentException("No existe un endpoint configurado para el tenant.");
         }
 
-        actualizarValores(existente, uriBase, tipoAuth, hashCliente, activo);
+        actualizarValores(existente, esMultitenant, uriBaseInput, tipoAuth, hashCliente, activo);
         return existente;
     }
 
@@ -74,11 +77,53 @@ public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
         endpoint.setActivo(false);
     }
 
-    private void actualizarValores(TenantEndpoint endpoint, String uriBase, String tipoAuth, String hashCliente, boolean activo) {
-        endpoint.setUriBase(normalizarUri(uriBase));
+    private void actualizarValores(TenantEndpoint endpoint, boolean esMultitenant, String uriInput, String tipoAuth, String hashCliente, boolean activo) {
+        endpoint.setEsMultitenant(esMultitenant);
+        endpoint.setUriBase(resolverUriBase(uriInput, esMultitenant));
         endpoint.setTipoAuth(normalizarTexto(tipoAuth));
-        endpoint.setHashCliente(normalizarTexto(hashCliente));
+        endpoint.setHashCliente(resolverHash(hashCliente, esMultitenant));
         endpoint.setActivo(activo);
+    }
+
+    private String resolverUriBase(String valor, boolean esMultitenant) {
+        if (esMultitenant) {
+            return construirUriMultitenant(valor);
+        }
+        return normalizarUri(valor);
+    }
+
+    private String construirUriMultitenant(String sufijo) {
+        String limpio = normalizarTexto(sufijo);
+        if (limpio == null) {
+            throw new IllegalArgumentException("Debe indicar el sufijo para construir la URI multitenant.");
+        }
+        limpio = limpiarSlashes(limpio);
+        if (limpio.isEmpty()) {
+            throw new IllegalArgumentException("El sufijo para la URI multitenant no puede quedar vacio.");
+        }
+        return MULTITENANT_URI_PREFIX + limpio + "/";
+    }
+
+    private String limpiarSlashes(String valor) {
+        String resultado = valor;
+        while (resultado.startsWith("/")) {
+            resultado = resultado.substring(1);
+        }
+        while (resultado.endsWith("/")) {
+            resultado = resultado.substring(0, resultado.length() - 1);
+        }
+        return resultado;
+    }
+
+    private String resolverHash(String hashCliente, boolean esMultitenant) {
+        if (esMultitenant) {
+            return MULTITENANT_SHARED_SECRET;
+        }
+        String valor = normalizarTexto(hashCliente);
+        if (valor == null) {
+            throw new IllegalArgumentException("Debe indicar el hash/secreto del cliente para endpoints externos.");
+        }
+        return valor;
     }
 
     private String normalizarUri(String uriBase) {
