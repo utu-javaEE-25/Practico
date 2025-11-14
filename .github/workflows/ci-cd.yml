@@ -34,9 +34,9 @@ jobs:
           # Usar mvnw si está presente y completo, si no usar mv
           if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
             chmod +x mvnw || true
-            ./mvnw clean package -DskipTests -B
+            ./mvnw clean install -DskipTests -B
           else
-            mvn clean package -DskipTests -B
+            mvn clean install -DskipTests -B
           fi
       
       - name: 📊 Análisis en SonarCloud
