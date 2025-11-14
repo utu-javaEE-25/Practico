@@ -125,6 +125,13 @@
         </div>
 
         <div class="card p-4">
+            <i class="bi bi-bell-fill"></i>
+            <h5 class="card-title">Notificaciones y Permisos</h5>
+            <p class="card-text text-muted">Gestione las solicitudes de acceso a sus documentos clínicos.</p>
+            <a href="${pageContext.request.contextPath}/notificaciones" class="btn btn-primary">Gestionar</a>
+        </div>
+
+        <div class="card p-4">
             <i class="bi bi-shield-lock"></i>
             <h5 class="card-title">Gestion de politicas de acceso</h5>
             <p class="card-text text-muted">Administre quien puede acceder a su historia clinica y configure permisos.</p>

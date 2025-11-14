@@ -11,6 +11,10 @@ import uy.edu.fing.tse.entidades.DocumentoClinicoMetadata;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
 import uy.edu.fing.tse.persistencia.DocumentoClinicoMetadataDAO;
+import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
+import uy.edu.fing.tse.persistencia.UsuarioDAO; 
+import uy.edu.fing.tse.persistencia.PoliticaAccesoDAO;
+import uy.edu.fing.tse.entidades.PoliticaAcceso;
 //import uy.edu.fing.tse.persistencia.PrestadorSaludPerBean;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,22 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
     @EJB private DocumentoClinicoMetadataDAO metadataDAO;
     @EJB private PrestadorSaludPerLocal prestadorDAO;
     @EJB private PerifericoApiClient apiClient;
+    @EJB private UsuarioDAO usuarioDAO;
+    @EJB private PoliticaAccesoDAO politicaDAO;
+
+    @Override
+    public List<DocumentoMetadataDTO> getHistoriaMetadataPorCedula(String cedula) {
+        // 1. Buscar el usuario en la base de datos central por su cédula
+        UsuarioServicioSalud usuario = usuarioDAO.buscarPorCI(cedula); // Asumimos que este método existe
+        if (usuario == null) {
+            // Si el usuario no existe en HCEN, no tiene historia clínica.
+            System.out.println("Solicitud de historia para CI " + cedula + ", pero el usuario no existe en HCEN.");
+            return new ArrayList<>();
+        }
+
+        // 2. Reutilizar la lógica existente para obtener los metadatos con el ID del usuario
+        return getHistoriaMetadata(usuario.getId());
+    }
 
     @Override
     public List<DocumentoMetadataDTO> getHistoriaMetadata(Long usuarioId) {
@@ -35,7 +55,13 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
             dto.setIdCustodio(metaEntity.getTenantId());
             dto.setTipoDocumento(metaEntity.getTipo());
             dto.setFechaCreacion(metaEntity.getFechaCreacion());
-            dto.setNombrePrestador(p != null ? p.getNombre() : "Prestador Desconocido");
+            if (p != null) {
+                dto.setNombrePrestador(p.getNombre());
+                dto.setSchemaCustodio(p.getNombreSchema());
+            } else {
+                dto.setNombrePrestador("Prestador Desconocido");
+                dto.setSchemaCustodio("desconocido");
+            }
             dtos.add(dto);
         }
         return dtos;
@@ -49,6 +75,27 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
         } catch (Exception e) {
             throw new RuntimeException("No se pudo obtener el documento del prestador: " + e.getMessage(), e);
         }
+    }
+
+     @Override
+    public DocumentoDetalleDTO verificarYObtenerDocumento(String cedulaPaciente, String idExternaDoc, Long idTenantSolicitante) {
+        UsuarioServicioSalud paciente = usuarioDAO.buscarPorCI(cedulaPaciente);
+        if (paciente == null) throw new IllegalArgumentException("Paciente no encontrado.");
+
+        // 1. VERIFICAR PERMISO EN PoliticaAcceso
+        PoliticaAcceso politica = politicaDAO.findPoliticaActiva(paciente.getId(), idTenantSolicitante);
+        
+        if (politica == null) {
+            // Si no hay política, lanzamos la excepción específica.
+            throw new AccesoNoAutorizadoException("Acceso no permitido por política del usuario. Debe solicitar permiso.");
+        }
+
+        // 2. SI HAY PERMISO, OBTENER EL DOCUMENTO
+        // Buscamos el ID del tenant custodio a partir del documento
+        DocumentoClinicoMetadata metadata = metadataDAO.findByIdExternaDoc(idExternaDoc); // Necesitarás este método en el DAO
+        if (metadata == null) throw new IllegalArgumentException("Metadatos del documento no encontrados.");
+        
+        return getDocumentoDetalle(idExternaDoc, metadata.getTenantId());
     }
     
     private DocumentoDetalleDTO mapApiDtoToViewDto(DocumentoClinicoApiDTO apiDto) {

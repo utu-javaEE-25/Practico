@@ -10,6 +10,7 @@ public class DocumentoMetadataDTO implements Serializable {
     private String tipoDocumento;
     private LocalDateTime fechaCreacion;
     private String nombrePrestador;
+    private String schemaCustodio;
 
     // Getters y Setters
     public String getIdExternaDoc() { return idExternaDoc; }
@@ -22,4 +23,6 @@ public class DocumentoMetadataDTO implements Serializable {
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
     public String getNombrePrestador() { return nombrePrestador; }
     public void setNombrePrestador(String nombrePrestador) { this.nombrePrestador = nombrePrestador; }
+    public String getSchemaCustodio() { return schemaCustodio; }
+    public void setSchemaCustodio(String schemaCustodio) { this.schemaCustodio = schemaCustodio; }
 }

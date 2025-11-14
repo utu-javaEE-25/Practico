@@ -3,6 +3,7 @@ package uy.edu.fing.tse.persistencia;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.NoResultException;
 import uy.edu.fing.tse.entidades.DocumentoClinicoMetadata;
 import java.util.Collections;
 import java.util.List;
@@ -27,5 +28,21 @@ public class DocumentoClinicoMetadataDAO {
             throw new IllegalArgumentException("El objeto de metadatos no puede ser nulo.");
         }
         em.persist(metadata);
+    }
+
+     public DocumentoClinicoMetadata findByIdExternaDoc(String idExternaDoc) {
+        if (idExternaDoc == null || idExternaDoc.isBlank()) {
+            return null;
+        }
+        try {
+            return em.createQuery(
+                "SELECT m FROM DocumentoClinicoMetadata m WHERE m.idExternaDoc = :idExternaDoc", 
+                DocumentoClinicoMetadata.class)
+                .setParameter("idExternaDoc", idExternaDoc)
+                .getSingleResult();
+        } catch (NoResultException e) {
+            // Esto es normal y significa que no se encontró ningún documento con ese ID.
+            return null;
+        }
     }
 }
