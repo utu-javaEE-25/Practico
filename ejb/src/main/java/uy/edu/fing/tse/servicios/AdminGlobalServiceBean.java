@@ -8,12 +8,16 @@ import jakarta.ejb.Stateless;
 import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
 import uy.edu.fing.tse.entidades.AdminHcen;
 import uy.edu.fing.tse.persistencia.AdminGlobalDAO;
+import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 
 @Stateless
 public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
 
     @EJB
     private AdminGlobalDAO adminDAO;
+
+    @EJB
+    private UsuarioServicioSaludServiceBean usuarioServicioSaludService;
 
     @Override
     public boolean esAdminPorSub(String sub) {
@@ -47,16 +51,20 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("El email es obligatorio.");
         }
-        
-    public boolean esAdminPorCi(String ci) {
-        if (ci == null || ci.isBlank()) {
-            return false;
+        if (adminDAO.buscarPorCi(ci) != null) {
+            throw new IllegalStateException("Ya existe un administrador con esa cedula.");
         }
-        return adminDAO.buscarPorCI(ci) != null;
+        
+        return adminDAO.guardar(new AdminHcen(ci.trim(), email.trim(), LocalDateTime.now()));
+        
     }
 
     @Override
     public AdminHcen convertirUsuarioEnAdmin(UsuarioServicioSalud usuario) {
+
+        String email = usuario.getEmail();
+        String ci = usuario.getCi();
+
         if (usuario == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo.");
         }

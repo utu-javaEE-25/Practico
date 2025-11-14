@@ -87,7 +87,7 @@ public class AdminGlobalDAO {
             return null;
         }
 
-        AdminHcen admin = buscarPorCI(ci);
+        AdminHcen admin = buscarPorCi(ci);
         if (admin == null) {
             return null;
         }
