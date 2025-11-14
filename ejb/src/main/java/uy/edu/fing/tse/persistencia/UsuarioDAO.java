@@ -80,4 +80,19 @@ public class UsuarioDAO {
                         UsuarioServicioSalud.class)
                 .getResultList();
     }
+
+    public UsuarioServicioSalud buscarPorCI(String cedulaIdentidad) {
+    if (cedulaIdentidad == null || cedulaIdentidad.isBlank()) {
+        return null;
+    }
+    try {
+        return em.createQuery(
+                        "SELECT u FROM UsuarioServicioSalud u WHERE u.cedulaIdentidad = :ci", UsuarioServicioSalud.class)
+                .setParameter("ci", cedulaIdentidad)
+                .getSingleResult();
+    } catch (jakarta.persistence.NoResultException e) {
+        return null;
+    }
+    }
+
 }

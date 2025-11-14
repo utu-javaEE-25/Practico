@@ -24,6 +24,12 @@ public class PoliticaAcceso {
     @Column(name = "tenant_id")
     private Long tenantId;
 
+    @Column(name = "id_profesional_autorizado")
+    private Long idProfesionalAutorizado;
+
+    @Column(name = "doc_metadata_id")
+    private Long docMetadataId;
+
     @Column(name = "accion")
     private String accion;
 
@@ -33,51 +39,20 @@ public class PoliticaAcceso {
     @Column(name = "ventana_hasta")
     private LocalDateTime ventanaHasta;
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public Long getTenantId() {
-        return tenantId;
-    }
-
-    public String getAccion() {
-        return accion;
-    }
-
-    public LocalDateTime getVentanaDesde() {
-        return ventanaDesde;
-    }
-
-    public LocalDateTime getVentanaHasta() {
-        return ventanaHasta;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public void setTenantId(Long tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public void setAccion(String accion) {
-        this.accion = accion;
-    }
-
-    public void setVentanaDesde(LocalDateTime ventanaDesde) {
-        this.ventanaDesde = ventanaDesde;
-    }
-
-    public void setVentanaHasta(LocalDateTime ventanaHasta) {
-        this.ventanaHasta = ventanaHasta;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+    public Long getTenantId() { return tenantId; }
+    public void setTenantId(Long tenantId) { this.tenantId = tenantId; }
+    public Long getIdProfesionalAutorizado() { return idProfesionalAutorizado; }
+    public void setIdProfesionalAutorizado(Long idProfesionalAutorizado) { this.idProfesionalAutorizado = idProfesionalAutorizado; }
+    public Long getDocMetadataId() { return docMetadataId; }
+    public void setDocMetadataId(Long docMetadataId) { this.docMetadataId = docMetadataId; }
+    public String getAccion() { return accion; }
+    public void setAccion(String accion) { this.accion = accion; }
+    public LocalDateTime getVentanaDesde() { return ventanaDesde; }
+    public void setVentanaDesde(LocalDateTime ventanaDesde) { this.ventanaDesde = ventanaDesde; }
+    public LocalDateTime getVentanaHasta() { return ventanaHasta; }
+    public void setVentanaHasta(LocalDateTime ventanaHasta) { this.ventanaHasta = ventanaHasta; }
 }

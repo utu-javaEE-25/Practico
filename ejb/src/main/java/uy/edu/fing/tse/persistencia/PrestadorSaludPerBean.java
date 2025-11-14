@@ -110,4 +110,18 @@ public class PrestadorSaludPerBean implements PrestadorSaludPerLocal {
         administrado.setEstado(activo);
         administrado.setFechaModificacion(LocalDateTime.now());
     }
+
+    @Override
+    public PrestadorSalud obtenerPorSchema(String schema) {
+        if (schema == null || schema.isBlank()) {
+            return null;
+        }
+        try {
+            return em.createQuery("SELECT p FROM PrestadorSalud p WHERE p.nombreSchema = :schema", PrestadorSalud.class)
+                     .setParameter("schema", schema)
+                     .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
