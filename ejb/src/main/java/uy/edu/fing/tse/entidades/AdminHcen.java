@@ -33,8 +33,14 @@ public class AdminHcen {
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 
-    @Column(name= "ci")
-    private String ci;
+    public AdminHcen() {
+    }
+
+    public AdminHcen(String ci, String email, LocalDateTime fechaCreacion) {
+        this.ci = ci;
+        this.email = email;
+        this.fechaCreacion = fechaCreacion;
+    }
 
     public Long getId() {
         return id;
@@ -42,10 +48,6 @@ public class AdminHcen {
 
     public String getGubUyId() {
         return gubUyId;
-    }
-
-    public String getCi() {
-        return ci;
     }
 
     public String getEmail() {
@@ -66,10 +68,6 @@ public class AdminHcen {
 
     public void setGubUyId(String gubUyId) {
         this.gubUyId = gubUyId;
-    }
-
-    public void setCi(String ci) {
-        this.ci = ci;
     }
 
     public void setEmail(String email) {
