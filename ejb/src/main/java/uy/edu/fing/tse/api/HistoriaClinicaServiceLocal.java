@@ -10,5 +10,5 @@ public interface HistoriaClinicaServiceLocal {
     List<DocumentoMetadataDTO> getHistoriaMetadata(Long usuarioId);
     DocumentoDetalleDTO getDocumentoDetalle(String idExternaDoc, Long tenantCustodioId);
     List<DocumentoMetadataDTO> getHistoriaMetadataPorCedula(String cedula);
-    DocumentoDetalleDTO verificarYObtenerDocumento(String cedulaPaciente, String idExternaDoc, Long idTenantSolicitante);
+    DocumentoDetalleDTO verificarYObtenerDocumento(String cedulaPaciente, String idExternaDoc, Long idTenantSolicitante, Long idProfesional, Long docMetadataId);
 }

@@ -21,6 +21,12 @@ public class SolicitudAcceso {
     @Column(name = "requester_tenant_id")
     private Long requesterTenantId;
 
+    @Column(name = "id_profesional_solicitante")
+    private Long idProfesionalSolicitante;
+
+    @Column(name = "nombre_profesional_solicitante") 
+    private String nombreProfesionalSolicitante;
+
     @Column(name = "target_user_id")
     private Long targetUserId;
 
@@ -36,59 +42,22 @@ public class SolicitudAcceso {
     @Column(name = "fecha_solicitud")
     private LocalDateTime fechaSolicitud;
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getRequesterTenantId() {
-        return requesterTenantId;
-    }
-
-    public Long getTargetUserId() {
-        return targetUserId;
-    }
-
-    public Long getDocId() {
-        return docId;
-    }
-
-    public String getMotivo() {
-        return motivo;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public LocalDateTime getFechaSolicitud() {
-        return fechaSolicitud;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setRequesterTenantId(Long requesterTenantId) {
-        this.requesterTenantId = requesterTenantId;
-    }
-
-    public void setTargetUserId(Long targetUserId) {
-        this.targetUserId = targetUserId;
-    }
-
-    public void setDocId(Long docId) {
-        this.docId = docId;
-    }
-
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public void setFechaSolicitud(LocalDateTime fechaSolicitud) {
-        this.fechaSolicitud = fechaSolicitud;
-    }
+    public Long getId() {return id;}
+    public Long getRequesterTenantId() {return requesterTenantId;}
+    public Long getTargetUserId() {return targetUserId;}
+    public Long getDocId() {return docId;}
+    public String getMotivo() { return motivo;}
+    public String getEstado() {  return estado;}
+    public LocalDateTime getFechaSolicitud() {return fechaSolicitud;}
+    public void setId(Long id) {this.id = id;}
+    public void setRequesterTenantId(Long requesterTenantId) {this.requesterTenantId = requesterTenantId;}
+    public void setTargetUserId(Long targetUserId) {this.targetUserId = targetUserId;}
+    public void setDocId(Long docId) { this.docId = docId;}
+    public void setMotivo(String motivo) {this.motivo = motivo;}
+    public void setEstado(String estado) {this.estado = estado;}
+    public void setFechaSolicitud(LocalDateTime fechaSolicitud) {this.fechaSolicitud = fechaSolicitud;}
+    public Long getIdProfesionalSolicitante() { return idProfesionalSolicitante; }
+    public void setIdProfesionalSolicitante(Long idProfesionalSolicitante) { this.idProfesionalSolicitante = idProfesionalSolicitante; }
+    public String getNombreProfesionalSolicitante() { return nombreProfesionalSolicitante; }
+    public void setNombreProfesionalSolicitante(String nombreProfesionalSolicitante) { this.nombreProfesionalSolicitante = nombreProfesionalSolicitante; }
 }

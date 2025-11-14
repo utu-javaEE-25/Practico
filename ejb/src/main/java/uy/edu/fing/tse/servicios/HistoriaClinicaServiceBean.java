@@ -78,12 +78,12 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
     }
 
      @Override
-    public DocumentoDetalleDTO verificarYObtenerDocumento(String cedulaPaciente, String idExternaDoc, Long idTenantSolicitante) {
+    public DocumentoDetalleDTO verificarYObtenerDocumento(String cedulaPaciente, String idExternaDoc, Long idTenantSolicitante, Long idProfesional, Long docMetadataId) {
         UsuarioServicioSalud paciente = usuarioDAO.buscarPorCI(cedulaPaciente);
         if (paciente == null) throw new IllegalArgumentException("Paciente no encontrado.");
 
         // 1. VERIFICAR PERMISO EN PoliticaAcceso
-        PoliticaAcceso politica = politicaDAO.findPoliticaActiva(paciente.getId(), idTenantSolicitante);
+        PoliticaAcceso politica = politicaDAO.findPoliticaActiva(paciente.getId(), idTenantSolicitante, idProfesional, docMetadataId);
         
         if (politica == null) {
             // Si no hay política, lanzamos la excepción específica.

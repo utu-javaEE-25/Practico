@@ -37,9 +37,11 @@ public class GestionPermisosService {
         PoliticaAcceso politica = new PoliticaAcceso();
         politica.setUserId(userIdPropietario);
         politica.setTenantId(solicitud.getRequesterTenantId());
-        politica.setAccion("permitir"); // Se concede el permiso
+        politica.setAccion("permitir"); 
         politica.setVentanaDesde(LocalDateTime.now());
         politica.setVentanaHasta(LocalDateTime.now().plusDays(diasDeVigencia));
+        politica.setIdProfesionalAutorizado(solicitud.getIdProfesionalSolicitante());
+        politica.setDocMetadataId(solicitud.getDocId());
 
         politicaDAO.guardar(politica);
     }

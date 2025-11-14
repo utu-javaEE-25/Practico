@@ -10,19 +10,22 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import uy.edu.fing.tse.api.HistoriaClinicaServiceLocal;
 import uy.edu.fing.tse.dto.DocumentoMetadataDTO;
+import uy.edu.fing.tse.entidades.DocumentoClinicoMetadata;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
+import uy.edu.fing.tse.persistencia.DocumentoClinicoMetadataDAO;
 import uy.edu.fing.tse.servicios.AccesoNoAutorizadoException;
 import uy.edu.fing.tse.servicios.AccesoNoAutorizadoException;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
+
 
 import java.util.List;
 
 @Path("/historia-clinica")
 public class HistoriaClinicaResource {
 
-    @EJB
-    private HistoriaClinicaServiceLocal historiaService;
+    @EJB private HistoriaClinicaServiceLocal historiaService;
     @EJB private PrestadorSaludPerLocal prestadorDAO;
+    @EJB private DocumentoClinicoMetadataDAO metadataDAO;
 
     @GET
     @Path("/{cedula}")
@@ -42,15 +45,23 @@ public class HistoriaClinicaResource {
     public Response getDocumentoExterno(
             @QueryParam("docId") String docId,
             @QueryParam("cedulaPaciente") String cedulaPaciente,
-            @QueryParam("schemaSolicitante") String schemaSolicitante) {
+            @QueryParam("schemaSolicitante") String schemaSolicitante,
+            @QueryParam("idProfesional") Long idProfesional) {
         
         try {
+            if (idProfesional == null) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("El ID del profesional es obligatorio.").build();
+            }
+            
             PrestadorSalud solicitante = prestadorDAO.obtenerPorSchema(schemaSolicitante);
             if (solicitante == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("Tenant solicitante no válido.").build();
             }
 
-            Object documento = historiaService.verificarYObtenerDocumento(cedulaPaciente, docId, solicitante.getTenantId());
+            DocumentoClinicoMetadata metadata = metadataDAO.findByIdExternaDoc(docId);
+            if (metadata == null) return Response.status(Response.Status.NOT_FOUND).entity("Documento no encontrado en el índice.").build();
+
+            Object documento = historiaService.verificarYObtenerDocumento(cedulaPaciente, docId, solicitante.getTenantId(), idProfesional, metadata.getDocId());
             return Response.ok(documento).build();
 
         } catch (AccesoNoAutorizadoException e) {

@@ -16,28 +16,43 @@ public class AccesoServiceBean {
     @EJB private NotificacionDAO notificacionDAO;
     @EJB private UsuarioDAO usuarioDAO;
     @EJB private PrestadorSaludPerLocal prestadorDAO;
+    @EJB private DocumentoClinicoMetadataDAO metadataDAO; 
     
     @Transactional
     public void crearSolicitudDeAcceso(SolicitudAccesoRequestDTO dto) {
-        // 1. Validar y encontrar las entidades
+       
         UsuarioServicioSalud paciente = usuarioDAO.buscarPorCI(dto.getCedulaPaciente());
         if (paciente == null) throw new IllegalArgumentException("Paciente no encontrado.");
 
         PrestadorSalud solicitante = prestadorDAO.obtenerPorSchema(dto.getSchemaTenantSolicitante());
         if (solicitante == null) throw new IllegalArgumentException("Tenant solicitante no encontrado.");
 
-        // 2. Crear la Solicitud de Acceso
+        if (dto.getIdProfesionalSolicitante() == null) {
+        throw new IllegalArgumentException("El ID del profesional solicitante es obligatorio.");
+        }   
+       
         SolicitudAcceso solicitud = new SolicitudAcceso();
         solicitud.setRequesterTenantId(solicitante.getTenantId());
         solicitud.setTargetUserId(paciente.getId());
         solicitud.setMotivo(dto.getMotivo());
         solicitud.setEstado("PENDIENTE");
         solicitud.setFechaSolicitud(LocalDateTime.now());
-        // En una versión futura, buscaríamos el docId a partir del idExternaDoc
+        solicitud.setIdProfesionalSolicitante(dto.getIdProfesionalSolicitante());
+        solicitud.setNombreProfesionalSolicitante(dto.getNombreProfesionalSolicitante());
         
+        if (dto.getIdExternaDoc() != null && !dto.getIdExternaDoc().isBlank()) {
+            DocumentoClinicoMetadata meta = metadataDAO.findByIdExternaDoc(dto.getIdExternaDoc());
+            
+            if (meta != null) {
+                solicitud.setDocId(meta.getDocId());
+            } else {
+                System.err.println("Advertencia: Se solicitó acceso a un documento no indexado: " + dto.getIdExternaDoc());
+            }
+        }
+
         solicitudDAO.guardar(solicitud);
         
-        // 3. Crear la Notificación para el Paciente
+      
         Notificacion notificacion = new Notificacion();
         notificacion.setUserId(paciente.getId());
         notificacion.setSolicitudId(solicitud.getId());

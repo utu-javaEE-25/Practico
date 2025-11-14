@@ -35,7 +35,7 @@
                         <c:forEach var="solicitud" items="${solicitudesPendientes}">
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 <div>
-                                    <p class="mb-1">El prestador <strong>(Nombre Prestador Aquí)</strong> solicita acceso a su documento.</p>
+                                    <p class="mb-1">El profesional <strong>${solicitud.nombreProfesionalSolicitante}</strong> del prestador <strong>(Nombre Prestador Aquí)</strong> solicita acceso a su documento.</p>
                                     <small class="text-muted">Motivo: "${solicitud.motivo}"</small>
                                 </div>
                                 <form method="post" action="${pageContext.request.contextPath}/notificaciones" class="d-flex align-items-center gap-2 mt-2 mt-md-0">
