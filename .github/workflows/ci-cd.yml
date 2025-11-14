@@ -111,10 +111,7 @@ jobs:
           WILDFLY_USER: ${{ secrets.WILDFLY_USER }}
           WILDFLY_PASSWORD: ${{ secrets.WILDFLY_PASSWORD }}
         run: |
-          # Extract hostname without protocol (remove https:// or http://)
-          WILDFLY_HOSTNAME="${WILDFLY_HOST#*://}"
-          
-          # Use the EAR file downloaded from build-and-sonar job
+          # Locate the EAR file downloaded from build-and-sonar job
           EAR_FILE=$(find ear-deploy -name "*.ear" -type f | head -1)
           
           if [ -z "$EAR_FILE" ]; then
@@ -124,23 +121,30 @@ jobs:
           
           echo "📦 Deploying EAR: $EAR_FILE"
           
-          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
-            ./mvnw wildfly:deploy-artifact \
-              -Dwildfly.hostname="$WILDFLY_HOSTNAME" \
-              -Dwildfly.port=$WILDFLY_PORT \
-              -Dwildfly.username=$WILDFLY_USER \
-              -Dwildfly.password=$WILDFLY_PASSWORD \
-              -Dwildfly.artifact="$EAR_FILE" \
-              -B
-          else
-            mvn wildfly:deploy-artifact \
-              -Dwildfly.hostname="$WILDFLY_HOSTNAME" \
-              -Dwildfly.port=$WILDFLY_PORT \
-              -Dwildfly.username=$WILDFLY_USER \
-              -Dwildfly.password=$WILDFLY_PASSWORD \
-              -Dwildfly.artifact="$EAR_FILE" \
-              -B
-          fi
+          # Extract filename (without path)
+          EAR_FILENAME=$(basename "$EAR_FILE")
+          
+          # Build management URL (WILDFLY_HOST should include protocol)
+          MGMT_URL="$WILDFLY_HOST:$WILDFLY_PORT"
+          
+          echo "🔗 Management URL: $MGMT_URL"
+          echo "📄 EAR filename: $EAR_FILENAME"
+          
+          # Deploy using curl to WildFly management API
+          # This bypasses Maven plugin issues and gives us control over HTTPS
+          curl -k -v -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
+            -F "file=@$EAR_FILE" \
+            "$MGMT_URL/management/add-content" \
+            --output deploy.log \
+            --show-error \
+            || {
+              echo "❌ Deployment failed. Response:"
+              cat deploy.log
+              exit 1
+            }
+          
+          echo "✅ EAR uploaded to WildFly management API"
+          cat deploy.log
       
       - name: 📢 Notificar despliegue exitoso
         if: success()
