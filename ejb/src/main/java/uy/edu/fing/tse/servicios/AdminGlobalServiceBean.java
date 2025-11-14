@@ -56,18 +56,18 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
         }
         
         return adminDAO.guardar(new AdminHcen(ci.trim(), email.trim(), LocalDateTime.now()));
-        
+
     }
 
     @Override
     public AdminHcen convertirUsuarioEnAdmin(UsuarioServicioSalud usuario) {
 
-        String email = usuario.getEmail();
-        String ci = usuario.getCi();
-
         if (usuario == null) {
             throw new IllegalArgumentException("El usuario no puede ser nulo.");
         }
+
+        String email = usuario.getEmail();
+        String ci = usuario.getCedulaIdentidad();
 
         if (adminDAO.buscarPorCi(ci) != null) {
             throw new IllegalStateException("Ya existe un administrador con esa cedula.");
