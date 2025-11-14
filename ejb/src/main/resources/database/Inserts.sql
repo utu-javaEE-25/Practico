@@ -6,10 +6,10 @@ select * from Tenant;
 -- -- Solo si aún existe la FK mal definida:
 -- ALTER TABLE tenant DROP CONSTRAINT IF EXISTS fk_admin_tenant;
 -- 1) Admins globales
-INSERT INTO admin_global (gubuy_id, email, estado, fecha_creacion)
+INSERT INTO admin_global (ci, email, fecha_creacion)
 VALUES 
-('gubuy_admin1', 'admin1@hcen.uy', , NOW()),
-('gubuy_admin2', 'admin2@hcen.uy', 'ACTIVO', NOW())
+('45012345', 'admin1@hcen.uy', NOW()),
+('48098765', 'admin2@hcen.uy', NOW())
 ON CONFLICT (email) DO NOTHING;
 
 -- 2) Tenants (usa claves únicas: nombre_schema, nombre, rut)

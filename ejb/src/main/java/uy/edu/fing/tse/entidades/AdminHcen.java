@@ -21,6 +21,9 @@ public class AdminHcen {
     @Column(name = "gubuy_id")
     private String gubUyId;
 
+    @Column(name = "ci")
+    private String ci;
+
     @Column(name = "email")
     private String email;
 
@@ -36,6 +39,10 @@ public class AdminHcen {
 
     public String getGubUyId() {
         return gubUyId;
+    }
+
+    public String getCi() {
+        return ci;
     }
 
     public String getEmail() {
@@ -56,6 +63,10 @@ public class AdminHcen {
 
     public void setGubUyId(String gubUyId) {
         this.gubUyId = gubUyId;
+    }
+
+    public void setCi(String ci) {
+        this.ci = ci;
     }
 
     public void setEmail(String email) {

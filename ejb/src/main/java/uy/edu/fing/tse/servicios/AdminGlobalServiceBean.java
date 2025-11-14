@@ -24,6 +24,14 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     }
 
     @Override
+    public boolean esAdminPorCi(String ci) {
+        if (ci == null || ci.isBlank()) {
+            return false;
+        }
+        return adminDAO.buscarPorCi(ci) != null;
+    }
+
+    @Override
     public boolean esAdminPorEmail(String email) {
         if (email == null || email.isBlank()) {
             return false;
@@ -32,25 +40,24 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     }
 
     @Override
-    public AdminHcen crearAdminManual(String gubUyId, String email) {
-        if (gubUyId == null || gubUyId.isBlank()) {
-            throw new IllegalArgumentException("El identificador Gub.uy es obligatorio.");
+    public AdminHcen crearAdminManual(String ci, String email) {
+        if (ci == null || ci.isBlank()) {
+            throw new IllegalArgumentException("La cedula de identidad es obligatoria.");
         }
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("El email es obligatorio.");
         }
 
-        if (esAdminPorSub(gubUyId)) {
-            throw new IllegalStateException("Ya existe un administrador con ese identificador Gub.uy.");
+        if (adminDAO.buscarPorCi(ci) != null) {
+            throw new IllegalStateException("Ya existe un administrador con esa cedula.");
         }
         if (esAdminPorEmail(email)) {
             throw new IllegalStateException("Ya existe un administrador con ese email.");
         }
 
         AdminHcen nuevo = new AdminHcen();
-        nuevo.setGubUyId(gubUyId.trim());
+        nuevo.setCi(ci.trim());
         nuevo.setEmail(email.trim());
-        nuevo.setEstado("ACTIVO");
         nuevo.setFechaCreacion(LocalDateTime.now());
 
         return adminDAO.guardar(nuevo);

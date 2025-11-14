@@ -67,6 +67,21 @@ public class AdminGlobalDAO {
                 .orElse(null);
     }
 
+    public AdminHcen buscarPorCi(String ci) {
+        if (ci == null || ci.isBlank()) {
+            return null;
+        }
+
+        return em.createQuery(
+                        "SELECT a FROM AdminHcen a WHERE a.ci = :ci",
+                        AdminHcen.class)
+                .setParameter("ci", ci.trim())
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+    }
+
     public List<AdminHcen> listarTodos() {
         return em.createQuery(
                         "SELECT a FROM AdminHcen a ORDER BY a.fechaCreacion DESC",

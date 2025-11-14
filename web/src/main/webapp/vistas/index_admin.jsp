@@ -66,7 +66,7 @@
                             <thead>
                             <tr>
                                 <th>Email</th>
-                                <th>Gub.Uy ID</th>
+                                <th>Cédula</th>
                                 <th>Estado</th>
                                 <th>Alta</th>
                             </tr>
@@ -76,8 +76,12 @@
                                 for (AdminHcen admin : administradores) { %>
                                     <tr>
                                         <td><%= admin.getEmail() %></td>
-                                        <td><%= admin.getGubUyId() %></td>
-                                        <td><span class="badge bg-success"><%= admin.getEstado() %></span></td>
+                                        <td><%= admin.getCi() %></td>
+                                        <td>
+                                            <span class="badge <%= (admin.getEstado() != null && !admin.getEstado().trim().isEmpty()) ? "bg-success" : "bg-secondary" %>">
+                                                <%= admin.getEstado() != null ? admin.getEstado() : "N/D" %>
+                                            </span>
+                                        </td>
                                         <td><%= admin.getFechaCreacion() %></td>
                                     </tr>
                             <%      }
@@ -98,12 +102,12 @@
                 </div>
                 <div class="card-body">
                     <p class="text-muted">
-                        Ingresa los datos del nuevo administrador HCEN. Debe existir en Gub.uy y usar un email valido.
+                        Ingresa la cédula y el correo del nuevo administrador HCEN. Los demás datos se completarán luego.
                     </p>
                     <form method="post" action="<%=request.getContextPath()%>/index_admin">
                         <div class="mb-3">
-                            <label for="gubUyId" class="form-label">Gub.uy ID</label>
-                            <input type="text" class="form-control" id="gubUyId" name="gubUyId" placeholder="urn:fdc:gub.uy:persona:123" required>
+                            <label for="ci" class="form-label">Cédula</label>
+                            <input type="text" class="form-control" id="ci" name="ci" placeholder="45012345" required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>

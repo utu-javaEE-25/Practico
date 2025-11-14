@@ -49,11 +49,11 @@ public class AdminDashboardServlet extends HttpServlet {
             return;
         }
 
-        String gubUyId = req.getParameter("gubUyId");
+        String ci = req.getParameter("ci");
         String email = req.getParameter("email");
 
         try {
-            AdminHcen nuevo = adminService.crearAdminManual(gubUyId, email);
+            AdminHcen nuevo = adminService.crearAdminManual(ci, email);
             session.setAttribute("admin_success", "Se registro al administrador " + nuevo.getEmail() + ".");
         } catch (Exception e) {
             session.setAttribute("admin_error", e.getMessage());
