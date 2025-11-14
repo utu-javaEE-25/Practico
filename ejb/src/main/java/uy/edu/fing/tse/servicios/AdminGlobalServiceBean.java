@@ -47,6 +47,19 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("El email es obligatorio.");
         }
+        
+    public boolean esAdminPorCi(String ci) {
+        if (ci == null || ci.isBlank()) {
+            return false;
+        }
+        return adminDAO.buscarPorCI(ci) != null;
+    }
+
+    @Override
+    public AdminHcen convertirUsuarioEnAdmin(UsuarioServicioSalud usuario) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("El usuario no puede ser nulo.");
+        }
 
         if (adminDAO.buscarPorCi(ci) != null) {
             throw new IllegalStateException("Ya existe un administrador con esa cedula.");
@@ -66,5 +79,10 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     @Override
     public List<AdminHcen> listarAdministradores() {
         return adminDAO.listarTodos();
+    }
+
+    @Override
+    public AdminHcen actualizarGubUyIdPorCI(String ci, String gubUyId) {
+        return adminDAO.actualizarGubUyIdPorCI(ci, gubUyId);
     }
 }

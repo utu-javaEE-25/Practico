@@ -33,6 +33,9 @@ public class AdminHcen {
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 
+    @Column(name= "ci")
+    private String ci;
+
     public Long getId() {
         return id;
     }
@@ -79,6 +82,14 @@ public class AdminHcen {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public String getCi() {
+        return ci;
+    }
+
+    public void setCi(String ci) {
+        this.ci = ci;
     }
 
 }
