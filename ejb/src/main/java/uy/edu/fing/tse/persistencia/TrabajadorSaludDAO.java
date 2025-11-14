@@ -2,7 +2,6 @@ package uy.edu.fing.tse.persistencia;
 
 import uy.edu.fing.tse.entidades.TrabajadorSalud;
 import uy.edu.fing.tse.api.TrabajadorSaludPerLocal;
-import uy.edu.fing.tse.api.TrabajadorSaludPerRemote;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +12,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Stateless;
 
 @Stateless 
-public class TrabajadorSaludDAO implements TrabajadorSaludPerLocal, TrabajadorSaludPerRemote {
+public class TrabajadorSaludDAO implements TrabajadorSaludPerLocal {
 
     private List<TrabajadorSalud> trabajadores;
     private final AtomicLong sequence = new AtomicLong(1);
