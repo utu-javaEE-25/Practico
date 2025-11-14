@@ -150,21 +150,34 @@ jobs:
 
           echo "add-content body: $BODY"
 
-          # 2) Extraer hash (preferimos SHA-1, caemos a SHA-256 si no existe)
-          HASH=$(echo "$BODY" | jq -r '.result[0].hash."SHA-1" // .result[0].hash."SHA-256" // empty')
+          # 2) Extraer hash o valor bytes según la forma que devuelva el servidor
+          # WildFly puede devolver distintos formatos: .result[0].hash, .result.hash, o .result.BYTES_VALUE
+          HASH=$(echo "$BODY" | jq -r '.result[0].hash."SHA-1" // .result[0].hash."SHA-256" // .result.hash."SHA-1" // .result.hash."SHA-256" // empty')
+          BYTES_VALUE=$(echo "$BODY" | jq -r '.result[0].BYTES_VALUE // .result.BYTES_VALUE // empty')
 
-          if [ -z "$HASH" ]; then
-            echo "❌ No se pudo extraer el hash de add-content. Salida completa:"
+          if [ -n "$HASH" ]; then
+            echo "Hash del contenido: $HASH"
+            CONTENT_TYPE="hash"
+          elif [ -n "$BYTES_VALUE" ]; then
+            echo "Valor BYTES_VALUE detectado (base64)"
+            CONTENT_TYPE="bytes"
+          else
+            echo "❌ No se pudo extraer ni hash ni BYTES_VALUE de add-content. Salida completa:"
             echo "$BODY"
             exit 1
           fi
 
-          echo "Hash del contenido: $HASH"
-
           # 3) Registrar el deployment (add) y activarlo usando el hash
           APP_NAME="$EAR_FILENAME"
-          DEPLOY_JSON=$(jq -n --arg name "$APP_NAME" --arg alg "SHA-1" --arg hash "$HASH" \
-            '{address:[{deployment:$name}], operation:"add", content:[{hash:{algorithm:$alg,hash:$hash}}], enabled:true}')
+          if [ "$CONTENT_TYPE" = "hash" ]; then
+            # Usar el hash retornado por add-content
+            DEPLOY_JSON=$(jq -n --arg name "$APP_NAME" --arg alg "SHA-1" --arg hash "$HASH" \
+              '{address:[{deployment:$name}], operation:"add", content:[{hash:{algorithm:$alg,hash:$hash}}], enabled:true}')
+          else
+            # Si el servidor devolvió BYTES_VALUE (base64), registramos el deployment usando "bytes"
+            DEPLOY_JSON=$(jq -n --arg name "$APP_NAME" --arg bytes "$BYTES_VALUE" \
+              '{address:[{deployment:$name}], operation:"add", content:[{bytes:$bytes}], enabled:true}')
+          fi
 
           echo "JSON de deploy: $DEPLOY_JSON"
 
