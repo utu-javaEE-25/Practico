@@ -88,7 +88,7 @@
         <i class="bi bi-file-medical"></i>
         <h5 class="card-title">Visualización de historia clínica</h5>
         <p class="card-text text-muted">Consulte su historia clínica y los registros médicos asociados.</p>
-        <a href="#" class="btn btn-primary">Acceder</a>
+        <a href="${pageContext.request.contextPath}/historia" class="btn btn-primary">Acceder</a>
     </div>
 
     <div class="card p-4">

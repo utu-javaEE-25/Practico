@@ -2,6 +2,7 @@ package uy.edu.fing.tse.servicios;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import uy.edu.fing.tse.api.AuditLogServiceLocal;
 import uy.edu.fing.tse.api.HistoriaClinicaServiceLocal;
 import uy.edu.fing.tse.dto.DocumentoDetalleDTO;
 import uy.edu.fing.tse.dto.DiagnosticoDTO;
@@ -28,6 +29,7 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
     @EJB private PerifericoApiClient apiClient;
     @EJB private UsuarioDAO usuarioDAO;
     @EJB private PoliticaAccesoDAO politicaDAO;
+    @EJB private AuditLogServiceLocal auditLogService;
 
     @Override
     public List<DocumentoMetadataDTO> getHistoriaMetadataPorCedula(String cedula) {
@@ -82,20 +84,26 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
         UsuarioServicioSalud paciente = usuarioDAO.buscarPorCI(cedulaPaciente);
         if (paciente == null) throw new IllegalArgumentException("Paciente no encontrado.");
 
-        // 1. VERIFICAR PERMISO EN PoliticaAcceso
+        
         PoliticaAcceso politica = politicaDAO.findPoliticaActiva(paciente.getId(), idTenantSolicitante, idProfesional, docMetadataId);
         
         if (politica == null) {
-            // Si no hay política, lanzamos la excepción específica.
+            
+            auditLogService.registrarEvento("PROFESIONAL", idProfesional, "VISUALIZAR_DOCUMENTO_EXTERNO", docMetadataId, "FAILURE - NO_PERMISSION", null);
             throw new AccesoNoAutorizadoException("Acceso no permitido por política del usuario. Debe solicitar permiso.");
         }
 
-        // 2. SI HAY PERMISO, OBTENER EL DOCUMENTO
-        // Buscamos el ID del tenant custodio a partir del documento
-        DocumentoClinicoMetadata metadata = metadataDAO.findByIdExternaDoc(idExternaDoc); // Necesitarás este método en el DAO
-        if (metadata == null) throw new IllegalArgumentException("Metadatos del documento no encontrados.");
         
-        return getDocumentoDetalle(idExternaDoc, metadata.getTenantId());
+        DocumentoClinicoMetadata metadata = metadataDAO.findById(docMetadataId); 
+        if (metadata == null) {
+             throw new IllegalArgumentException("Metadatos del documento no encontrados con ID: " + docMetadataId);
+        }
+
+        DocumentoDetalleDTO documento = getDocumentoDetalle(idExternaDoc, metadata.getTenantId());
+
+        auditLogService.registrarEvento("PROFESIONAL", idProfesional, "VISUALIZAR_DOCUMENTO_EXTERNO", docMetadataId, "SUCCESS", null);
+        
+        return documento;
     }
     
     private DocumentoDetalleDTO mapApiDtoToViewDto(DocumentoClinicoApiDTO apiDto) {

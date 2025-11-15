@@ -14,6 +14,14 @@ public class DocumentoClinicoMetadataDAO {
     @PersistenceContext(unitName = "PU_CENTRAL")
     private EntityManager em;
 
+
+    public DocumentoClinicoMetadata findById(Long docId) {
+        if (docId == null) {
+            return null;
+        }
+        return em.find(DocumentoClinicoMetadata.class, docId);
+    }
+
     public List<DocumentoClinicoMetadata> findByUserId(Long userId) {
         if (userId == null) {
             return Collections.emptyList();

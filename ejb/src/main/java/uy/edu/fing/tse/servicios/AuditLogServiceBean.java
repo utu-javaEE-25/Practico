@@ -3,6 +3,8 @@ package uy.edu.fing.tse.servicios;
 import java.time.LocalDateTime;
 
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute; 
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import uy.edu.fing.tse.api.AuditLogServiceLocal;
@@ -16,6 +18,7 @@ public class AuditLogServiceBean implements AuditLogServiceLocal {
     private EntityManager em;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void registrarEvento(String tipoActor, Long actorId, String accion, Long recursoId, String resultado, String ip) {
         if (accion == null || accion.isBlank()) {
             throw new IllegalArgumentException("La accion de auditoria es obligatoria.");
