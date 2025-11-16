@@ -60,7 +60,7 @@ CREATE TABLE tenant_config (
     nombre_visible VARCHAR(120),
     color_principal VARCHAR(40),
     color_fondo VARCHAR(40),
-    logourl TYPE TEXT,
+    logourl TEXT,
     email_contacto VARCHAR(150),
     fecha_creacion TIMESTAMP,
     fecha_modificacion TIMESTAMP

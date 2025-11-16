@@ -41,21 +41,28 @@ public class TenantProvisioningBean {
             st.executeUpdate("REVOKE ALL ON SCHEMA " + schema + " FROM PUBLIC");
             st.executeUpdate("GRANT USAGE ON SCHEMA " + schema + " TO hcen_tenant");
             st.executeUpdate("GRANT CREATE ON SCHEMA " + schema + " TO hcen_tenant");
-            st.executeUpdate("GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA " + schema + " TO hcen_tenant");
-            st.executeUpdate("GRANT ALL ON ALL SEQUENCES IN SCHEMA " + schema + " TO hcen_tenant");
             st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " "
                 + "GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO hcen_tenant");
             st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " "
                 + "GRANT ALL ON SEQUENCES TO hcen_tenant");
         }
+    }
 
+    private void asegurarPrivilegiosTenant(String schema) throws Exception {
         try (Connection c = dsTenant.getConnection();
              Statement st = c.createStatement()) {
-            st.executeUpdate("SET search_path TO " + schema);
-            st.executeUpdate("INSERT INTO " + schema + ".admin_tenant (nombre_usuario, password_hash, nombre, apellido, email, estado)\r\n" + //
-                                "VALUES ('admin', '$2a$10$Ws4d3QITf3d4gZMFiRIu8.PF2th8.6O516MvVn09Il35lM9lulc0G', 'Admin', 'Tenant', 'admin@tenant', 'ACTIVE');");
+            st.executeUpdate("GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA " + schema + " TO hcen_tenant");
+            st.executeUpdate("GRANT ALL ON ALL SEQUENCES IN SCHEMA " + schema + " TO hcen_tenant");
         }
-  }
+    }
+
+    private void crearAdminTenantPorDefecto(String schema) throws Exception {
+        try (Connection c = dsTenant.getConnection();
+             Statement st = c.createStatement()) {
+            st.executeUpdate("INSERT INTO " + schema + ".admin_tenant (nombre_usuario, password_hash, nombre, apellido, email, estado)\r\n" + //
+                "VALUES ('admin', '$2a$10$Ws4d3QITf3d4gZMFiRIu8.PF2th8.6O516MvVn09Il35lM9lulc0G', 'Admin', 'Tenant', 'admin@tenant', 'ACTIVE');");
+        }
+    }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void migrarSchemaTenant(String schema) {
@@ -75,11 +82,12 @@ public class TenantProvisioningBean {
     public void provisionarTenant(String nombreEsquema) {
         try {
             crearSchemaTenant(nombreEsquema);
+            migrarSchemaTenant(nombreEsquema);
+            asegurarPrivilegiosTenant(nombreEsquema);
+            crearAdminTenantPorDefecto(nombreEsquema);
         } catch (Exception e) {
             throw new IllegalStateException("Error al crear el schema del tenant", e);
         }
-
-        migrarSchemaTenant(nombreEsquema);
-  }
+    }
 
 }
