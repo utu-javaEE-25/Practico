@@ -19,6 +19,10 @@
                           styleClass="btn btn-outline-light btn-sm">
                 <i class="bi bi-speedometer2 me-1"></i>Panel principal
             </h:outputLink>
+            <h:outputLink value="#{facesContext.externalContext.requestContextPath}/tenant_endpoints"
+                          styleClass="btn btn-outline-light btn-sm">
+                <i class="bi bi-link-45deg me-1"></i>Endpoints
+            </h:outputLink>
             <h:outputLink value="#{facesContext.externalContext.requestContextPath}/reportes_admin"
                           styleClass="btn btn-outline-light btn-sm">
                 <i class="bi bi-bar-chart-line me-1"></i>Reportes
@@ -46,6 +50,14 @@
                 infoClass="alert alert-info"
                 warnClass="alert alert-warning"
                 errorClass="alert alert-danger"/>
+
+    <div class="d-flex justify-content-end flex-wrap gap-2 mb-4">
+        <h:outputLink value="#{facesContext.externalContext.requestContextPath}/tenant_endpoints"
+                      styleClass="btn btn-outline-primary btn-sm d-flex align-items-center">
+            <i class="bi bi-link-45deg me-1"></i>
+            Endpoints
+        </h:outputLink>
+    </div>
 
     <div class="row g-4 mb-4">
         <div class="col-lg-6">

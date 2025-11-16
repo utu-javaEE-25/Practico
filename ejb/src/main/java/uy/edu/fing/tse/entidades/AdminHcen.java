@@ -21,6 +21,9 @@ public class AdminHcen {
     @Column(name = "gubuy_id")
     private String gubUyId;
 
+    @Column(name = "ci")
+    private String ci;
+
     @Column(name = "email")
     private String email;
 
@@ -29,6 +32,15 @@ public class AdminHcen {
 
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
+
+    public AdminHcen() {
+    }
+
+    public AdminHcen(String ci, String email, LocalDateTime fechaCreacion) {
+        this.ci = ci;
+        this.email = email;
+        this.fechaCreacion = fechaCreacion;
+    }
 
     public Long getId() {
         return id;
@@ -68,6 +80,14 @@ public class AdminHcen {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public String getCi() {
+        return ci;
+    }
+
+    public void setCi(String ci) {
+        this.ci = ci;
     }
 
 }

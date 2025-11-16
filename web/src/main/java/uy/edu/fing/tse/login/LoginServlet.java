@@ -24,10 +24,12 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String state = UUID.randomUUID().toString();
         String nonce = UUID.randomUUID().toString();
+        String type = req.getParameter("type");
 
         HttpSession session = req.getSession(true);
         session.setAttribute("oauth_state", state);
         session.setAttribute("oauth_nonce", nonce);
+        session.setAttribute("login_type", type != null ? type : "user");
 
         String scope = "openid email profile personal_info document";
 

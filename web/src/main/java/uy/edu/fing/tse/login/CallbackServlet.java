@@ -21,6 +21,7 @@ import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
 import uy.edu.fing.tse.api.AuditLogServiceLocal;
 import uy.edu.fing.tse.audit.AuditHelper;
 import uy.edu.fing.tse.audit.AuditLogConstants;
+import uy.edu.fing.tse.entidades.AdminHcen;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import uy.edu.fing.tse.persistencia.UsuarioDAO;
 
@@ -69,9 +70,12 @@ public class CallbackServlet extends HttpServlet {
             return;
         }
 
+        String loginType = (String) session.getAttribute("login_type");
+        
         try {
             session.removeAttribute("oauth_state");
             session.removeAttribute("oauth_nonce");
+            //session.removeAttribute("login_type");
 
             String body = "code=" + URLEncoder.encode(code, StandardCharsets.UTF_8)
                     + "&client_id=" + CLIENT_ID
@@ -108,33 +112,53 @@ public class CallbackServlet extends HttpServlet {
             String cedulaIdentidad = claims.optString("numero_documento");
             String sub = claims.optString("sub");
 
-            UsuarioServicioSalud usuario = new UsuarioServicioSalud();
-            usuario.setSub(sub);
-            usuario.setNombre(nombre);
-            usuario.setApellido(apellido);
-            usuario.setEmail(email);
-            usuario.setCedulaIdentidad(cedulaIdentidad);
-            UsuarioServicioSalud guardado = usuarioDAO.guardar(usuario);
-            if (guardado == null) {
-                guardado = usuarioDAO.buscarPorSub(sub);
+            
+            if ("admin".equalsIgnoreCase(loginType)) {
+                 //Verificar si es un admin registrado por CI
+                boolean esAdmin = adminService != null && adminService.esAdminPorCi(cedulaIdentidad);
+                if (!esAdmin) {
+                    resp.getWriter().println("<p>Acceso denegado: el usuario no es un administrador registrado.</p>");
+                    return;
+                }
+
+                //Actualizar el GubUyId si no lo tiene asignado
+                AdminHcen adminActualizado = adminService.actualizarGubUyIdPorCI(cedulaIdentidad, sub);
+
+
+                session.setAttribute("nombre", nombre);
+                session.setAttribute("apellido", apellido);
+                session.setAttribute("email", email);
+                session.setAttribute("sub", sub);
+                session.setAttribute("id_token", idToken);
+                session.setAttribute("rol", "ADMIN");
+                session.setAttribute("isAdmin", true);
+                session.setAttribute("admin_id", adminActualizado != null ? adminActualizado.getId() : null);
+
+                resp.sendRedirect(req.getContextPath() + "/index_admin");
+            } else {
+                UsuarioServicioSalud usuario = new UsuarioServicioSalud();
+                usuario.setSub(sub);
+                usuario.setNombre(nombre);
+                usuario.setApellido(apellido);
+                usuario.setEmail(email);
+                usuario.setCedulaIdentidad(cedulaIdentidad);
+                UsuarioServicioSalud guardado = usuarioDAO.guardar(usuario);
+                if (guardado == null) {
+                    guardado = usuarioDAO.buscarPorSub(sub);
+                }
+
+                session.setAttribute("nombre", nombre);
+                session.setAttribute("apellido", apellido);
+                session.setAttribute("email", email);
+                session.setAttribute("sub", sub);
+                session.setAttribute("cedulaIdentidad", cedulaIdentidad);
+                session.setAttribute("id_token", idToken);
+                if (guardado != null) {
+                    session.setAttribute("usuario_id", guardado.getId());
+                }
+                resp.sendRedirect(req.getContextPath() + "/vistas/index_user.jsp");
             }
-
-            session.setAttribute("nombre", nombre);
-            session.setAttribute("apellido", apellido);
-            session.setAttribute("email", email);
-            session.setAttribute("sub", sub);
-            session.setAttribute("id_token", idToken);
-            if (guardado != null) {
-                session.setAttribute("usuario_id", guardado.getId());
-            }
-
-            boolean esAdmin = adminService != null && adminService.esAdminPorSub(sub);
-            session.setAttribute("isAdmin", esAdmin);
-            session.setAttribute("rol", esAdmin ? "ADMIN" : "USUARIO");
-
-            registrarLogin(req, guardado != null ? guardado.getId() : null, AuditLogConstants.Resultados.SUCCESS);
-            String destino = esAdmin ? "/index_admin" : "/index.jsp";
-            resp.sendRedirect(req.getContextPath() + destino);
+            
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);

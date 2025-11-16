@@ -7,6 +7,12 @@
     <title>Panel de Administrador</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .navbar {
+        background-color: #8b3a55;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body class="bg-light">
 <%
@@ -26,7 +32,7 @@
     String error = (String) request.getAttribute("admin_error");
 %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="<%=request.getContextPath()%>/index_admin">HCEN Admin</a>
         <div class="d-flex align-items-center ms-auto text-white gap-3">
@@ -40,7 +46,7 @@
                 <i class="bi bi-graph-up"></i> Reportes
             </a>
             <span class="me-3">Admin: <strong><%= nombre != null ? nombre : "" %> <%= apellido != null ? apellido : "" %></strong></span>
-            <a href="<%=request.getContextPath()%>/logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
+            <a href="<%=request.getContextPath()%>/logout?login_type=admin" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
         </div>
     </div>
 </nav>
@@ -66,7 +72,7 @@
                             <thead>
                             <tr>
                                 <th>Email</th>
-                                <th>Gub.Uy ID</th>
+                                <th>Cédula</th>
                                 <th>Estado</th>
                                 <th>Alta</th>
                             </tr>
@@ -76,8 +82,12 @@
                                 for (AdminHcen admin : administradores) { %>
                                     <tr>
                                         <td><%= admin.getEmail() %></td>
-                                        <td><%= admin.getGubUyId() %></td>
-                                        <td><span class="badge bg-success"><%= admin.getEstado() %></span></td>
+                                        <td><%= admin.getCi() %></td>
+                                        <td>
+                                            <span class="badge <%= (admin.getEstado() != null && !admin.getEstado().trim().isEmpty()) ? "bg-success" : "bg-secondary" %>">
+                                                <%= admin.getEstado() != null ? admin.getEstado() : "N/D" %>
+                                            </span>
+                                        </td>
                                         <td><%= admin.getFechaCreacion() %></td>
                                     </tr>
                             <%      }
@@ -98,12 +108,12 @@
                 </div>
                 <div class="card-body">
                     <p class="text-muted">
-                        Ingresa los datos del nuevo administrador HCEN. Debe existir en Gub.uy y usar un email valido.
+                        Ingresa la cédula y el correo del nuevo administrador HCEN. Los demás datos se completarán luego.
                     </p>
                     <form method="post" action="<%=request.getContextPath()%>/index_admin">
                         <div class="mb-3">
-                            <label for="gubUyId" class="form-label">Gub.uy ID</label>
-                            <input type="text" class="form-control" id="gubUyId" name="gubUyId" placeholder="urn:fdc:gub.uy:persona:123" required>
+                            <label for="ci" class="form-label">Cédula</label>
+                            <input type="text" class="form-control" id="ci" name="ci" placeholder="45012345" required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>

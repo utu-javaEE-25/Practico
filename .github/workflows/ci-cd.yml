@@ -1,0 +1,320 @@
+name: CI/CD - Compile, SonarCloud & Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Job 1: Compilar y analizar en SonarCloud
+  build-and-sonar:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necesario para análisis completo de SonarCloud
+
+      - name: ⚙️ Hacer mvnw ejecutable
+        run: chmod +x mvnw
+      
+      - name: ☕ Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      
+      - name: 🔨 Compilar proyecto (Maven)
+        run: |
+          # Usar mvnw si está presente y completo, si no usar mv
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            chmod +x mvnw || true
+            ./mvnw clean install -DskipTests -B
+          else
+            mvn clean install -DskipTests -B
+          fi
+      
+      - name: 📊 Análisis en SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Ejecutar Sonar usando mvnw si existe, sino mvn
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            ./mvnw sonar:sonar \
+              -Dsonar.projectKey=Proyecto \
+              -Dsonar.organization=utu-javaee-25 \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+              -Dsonar.branch.name=${{ github.ref_name }} \
+              -B
+          else
+            mvn sonar:sonar \
+              -Dsonar.projectKey=Proyecto \
+              -Dsonar.organization=utu-javaee-25 \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+              -Dsonar.branch.name=${{ github.ref_name }} \
+              -B
+          fi
+      
+      - name: ✅ Ejecutar pruebas
+        run: |
+          if [ -x ./mvnw ] && [ -f .mvn/wrapper/maven-wrapper.jar ]; then
+            ./mvnw test -B
+          else
+            mvn test -B
+          fi
+      
+      - name: 📦 Guardar artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: ear-file
+          path: ear/target/*.ear
+          retention-days: 5
+
+  # Job 2: Despliegue en WildFly (solo en push a main o master)
+  deploy:
+    needs: build-and-sonar
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Hacer mvnw ejecutable
+        run: chmod +x mvnw
+      
+      - name: ☕ Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      
+      - name:  Descargar artefacto EAR
+        uses: actions/download-artifact@v4
+        with:
+          name: ear-file
+          path: ear-deploy
+
+      - name: 🧰 Instalar jq
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq
+      
+      - name: 🚀 Desplegar en WildFly
+        env:
+          WILDFLY_HOST: ${{ secrets.WILDFLY_HOST }}
+          WILDFLY_PORT: ${{ secrets.WILDFLY_PORT }}
+          WILDFLY_USER: ${{ secrets.WILDFLY_USER }}
+          WILDFLY_PASSWORD: ${{ secrets.WILDFLY_PASSWORD }}
+        run: |
+          # Localiza el archivo EAR descargado desde el job build-and-sonar
+          EAR_FILE=$(find ear-deploy -name "*.ear" -type f | head -1)
+
+          if [ -z "$EAR_FILE" ]; then
+            echo "❌ Error: No se encontró ningún EAR en ear-deploy/"
+            exit 1
+          fi
+
+          echo "📦 Desplegando EAR: $EAR_FILE"
+
+          # Extrae el nombre del archivo (sin la ruta)
+          EAR_FILENAME=$(basename "$EAR_FILE")
+
+          # Construye la URL de gestión (WILDFLY_HOST debe incluir el protocolo)
+          MGMT_URL="$WILDFLY_HOST:$WILDFLY_PORT"
+
+          echo "🔗 URL de gestión: $MGMT_URL"
+          echo "📄 Nombre del EAR: $EAR_FILENAME"
+
+          # 1) Subir contenido (add-content) y capturar la respuesta JSON y el código HTTP
+          # Usamos -w para obtener el código HTTP en la última línea y -s para silencio
+          RAW_RESP=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
+            -F "file=@$EAR_FILE" \
+            "$MGMT_URL/management/add-content")
+
+          # Separar cuerpo y código HTTP
+          HTTP_CODE=$(echo "$RAW_RESP" | tail -n1)
+          BODY=$(echo "$RAW_RESP" | sed '$d')
+
+          echo "add-content HTTP code: $HTTP_CODE"
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "❌ add-content devolvió error HTTP $HTTP_CODE"
+            echo "Cuerpo de la respuesta:"
+            echo "$BODY"
+            exit 1
+          fi
+
+          echo "add-content body: $BODY"
+
+          # 2) Interpretar el identificador devuelto por add-content
+          RESULT_NODE=$(echo "$BODY" | jq -c '.result')
+
+          HASH=$(echo "$RESULT_NODE" | jq -r '
+            (if type=="array" then .[] else . end)
+            | (.hash? // empty)
+            | (."SHA-256" // ."SHA-1" // empty)
+            ' | head -n1)
+
+          BYTES_VALUE=$(echo "$RESULT_NODE" | jq -r '
+            (if type=="array" then .[] else . end)
+            | (.BYTES_VALUE? // empty)
+            ' | head -n1)
+
+          if [ -n "$HASH" ] && [ "$HASH" != "null" ]; then
+            echo "Hash hexadecimal detectado: $HASH"
+            CONTENT_TYPE="hex-hash"
+          elif [ -n "$BYTES_VALUE" ] && [ "$BYTES_VALUE" != "null" ]; then
+            echo "Valor BYTES_VALUE detectado (hash base64)"
+            CONTENT_TYPE="bytes-hash"
+          else
+            echo "WARN: No se pudo extraer hash del add-content. Salida completa:"
+            echo "$BODY"
+            exit 1
+          fi
+
+          if [ "$CONTENT_TYPE" = "hex-hash" ]; then
+            if echo "$HASH" | grep -Eq '^[0-9a-fA-F]{64}$'; then
+              ALG="SHA-256"
+            else
+              ALG="SHA-1"
+            fi
+            CONTENT_SPEC=$(jq -n --arg alg "$ALG" --arg hash "$HASH" '{hash:{algorithm:$alg,hash:$hash}}')
+          else
+            CONTENT_SPEC=$(jq -n --arg bytes "$BYTES_VALUE" '{hash:{"BYTES_VALUE":$bytes}}')
+          fi
+
+          # 3) Registrar el deployment (add) y activarlo usando el hash almacenado en el repositorio
+          APP_NAME="$EAR_FILENAME"
+          DEPLOY_JSON=$(jq -n --arg name "$APP_NAME" --argjson content "$CONTENT_SPEC" \
+            '{address:[{deployment:$name}], operation:"add", content:[$content], enabled:true}')
+
+          echo "JSON de deploy: $DEPLOY_JSON"
+
+          # 4) Ejecutar la operación de add (registro) del deployment y comprobar resultado
+          DEPLOY_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$DEPLOY_JSON" \
+            "$MGMT_URL/management")
+
+          DEPLOY_HTTP=$(echo "$DEPLOY_RAW" | tail -n1)
+          DEPLOY_BODY=$(echo "$DEPLOY_RAW" | sed '$d')
+
+          echo "deploy HTTP code: $DEPLOY_HTTP"
+          echo "deploy body: $DEPLOY_BODY"
+
+          if [ "$DEPLOY_HTTP" -ge 400 ]; then
+            echo "❌ La operación de deploy devolvió HTTP $DEPLOY_HTTP"
+            echo "$DEPLOY_BODY"
+
+            # Si la falla fue por recurso duplicado, intentar undeploy + remove + add
+            if echo "$DEPLOY_BODY" | grep -q -e 'Duplicate resource' -e 'WFLYCTL0212'; then
+              echo "Detectado recurso duplicado; intentando undeploy + remove + add..."
+
+              # Paso 1: Intentar undeploy (desactivar el deployment existente)
+              UNDEPLOY_JSON=$(jq -n --arg name "$APP_NAME" '{address:[{deployment:$name}], operation:"undeploy"}')
+              echo "JSON undeploy: $UNDEPLOY_JSON"
+              UNDEPLOY_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" -H "Content-Type: application/json" -d "$UNDEPLOY_JSON" "$MGMT_URL/management")
+              UNDEPLOY_HTTP=$(echo "$UNDEPLOY_RAW" | tail -n1)
+              UNDEPLOY_BODY=$(echo "$UNDEPLOY_RAW" | sed '$d')
+
+              echo "undeploy HTTP: $UNDEPLOY_HTTP"
+              echo "undeploy body: $UNDEPLOY_BODY"
+              
+              if [ "$UNDEPLOY_HTTP" -ge 400 ]; then
+                echo "⚠️ undeploy falló con HTTP $UNDEPLOY_HTTP (puede no existir el deployment o no estar activo)"
+              fi
+
+              # Paso 2: Intentar remove (eliminar el contenido del deployment)
+              REMOVE_JSON=$(jq -n --arg name "$APP_NAME" '{address:[{deployment:$name}], operation:"remove"}')
+              echo "JSON remove: $REMOVE_JSON"
+              REMOVE_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" -H "Content-Type: application/json" -d "$REMOVE_JSON" "$MGMT_URL/management")
+              REMOVE_HTTP=$(echo "$REMOVE_RAW" | tail -n1)
+              REMOVE_BODY=$(echo "$REMOVE_RAW" | sed '$d')
+
+              echo "remove HTTP: $REMOVE_HTTP"
+              echo "remove body: $REMOVE_BODY"
+              if [ "$REMOVE_HTTP" -ge 400 ]; then
+                echo "⚠️ remove devolvió HTTP $REMOVE_HTTP (intentando add de todas formas)"
+              fi
+
+              # Paso 3: Reintentar add con el nuevo contenido
+              echo "Reintentando add después de undeploy/remove..."
+              ADD_RETRY_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" -H "Content-Type: application/json" -d "$DEPLOY_JSON" "$MGMT_URL/management")
+              ADD_RETRY_HTTP=$(echo "$ADD_RETRY_RAW" | tail -n1)
+              ADD_RETRY_BODY=$(echo "$ADD_RETRY_RAW" | sed '$d')
+
+              echo "add(retry) HTTP: $ADD_RETRY_HTTP"
+              echo "add(retry) body: $ADD_RETRY_BODY"
+              
+              if [ "$ADD_RETRY_HTTP" -ge 400 ]; then
+                echo "❌ add(retry) devolvió HTTP $ADD_RETRY_HTTP"
+                echo "$ADD_RETRY_BODY"
+                exit 1
+              fi
+
+              ADD_RETRY_OUTCOME=$(echo "$ADD_RETRY_BODY" | jq -r '.outcome // empty')
+              if [ "$ADD_RETRY_OUTCOME" != "success" ]; then
+                echo "❌ add(retry) no fue exitosa (outcome: $ADD_RETRY_OUTCOME)" 
+                echo "$ADD_RETRY_BODY"
+                exit 1
+              fi
+              
+              echo "✅ Despliegue actualizado correctamente (undeploy + remove + add)"
+            else
+              # Si no es recurso duplicado, fallamos inmediatamente
+              echo "❌ add devolvió error no relacionado con recurso duplicado. Salida completa:" 
+              echo "$DEPLOY_BODY"
+              exit 1
+            fi
+          else
+            OUTCOME=$(echo "$DEPLOY_BODY" | jq -r '.outcome // empty')
+            if [ "$OUTCOME" != "success" ]; then
+              echo "Advertencia: add no retornó success (resultado: $OUTCOME). Intentando reemplazo completo..."
+
+              # Construir JSON para full-replace-deployment usando el mismo contenido
+              REPLACE_JSON=$(jq -n --arg name "$APP_NAME" --argjson content "$CONTENT_SPEC" \
+                '{address:[{deployment:$name}], operation:"full-replace-deployment", content:[$content], enabled:true}')
+
+              echo "JSON de replace: $REPLACE_JSON"
+              REPLACE_RAW=$(curl -k --digest -s -w "\n%{http_code}" -u "$WILDFLY_USER:$WILDFLY_PASSWORD" -H "Content-Type: application/json" -d "$REPLACE_JSON" "$MGMT_URL/management")
+              REPLACE_HTTP=$(echo "$REPLACE_RAW" | tail -n1)
+              REPLACE_BODY=$(echo "$REPLACE_RAW" | sed '$d')
+
+              echo "replace HTTP: $REPLACE_HTTP"
+              echo "replace body: $REPLACE_BODY"
+              if [ "$REPLACE_HTTP" -ge 400 ]; then
+                echo "❌ full-replace-deployment devolvió HTTP $REPLACE_HTTP"
+                echo "$REPLACE_BODY"
+                exit 1
+              fi
+
+              REPLACE_OUTCOME=$(echo "$REPLACE_BODY" | jq -r '.outcome // empty')
+              if [ "$REPLACE_OUTCOME" != "success" ]; then
+                echo "❌ full-replace-deployment no fue exitosa:"
+                echo "$REPLACE_BODY"
+                exit 1
+              fi
+
+              echo "✅ Despliegue reemplazado y activado correctamente"
+            else
+              echo "✅ Despliegue registrado y activado correctamente"
+            fi
+          fi
+      
+      - name: 📢 Notificar despliegue exitoso
+        if: success()
+        run: echo "✅ Despliegue completado exitosamente en WildFly"
+      
+      - name: ⚠️ Notificar error de despliegue
+        if: failure()
+        run: echo "❌ Error en el despliegue - revisar logs"
+        continue-on-error: true

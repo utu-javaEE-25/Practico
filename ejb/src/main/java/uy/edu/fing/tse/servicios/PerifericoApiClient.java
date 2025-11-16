@@ -29,7 +29,7 @@ public class PerifericoApiClient {
     @EJB
     private PrestadorSaludPerLocal prestadorDAO;
 
-    private static final String SHARED_SECRET = "UnSecretoMuyLargoSeguroYComplejoQueNadieDebeAdivinarParaElComponentePeriferico12345";
+    //private static final String SHARED_SECRET = "UnSecretoMuyLargoSeguroYComplejoQueNadieDebeAdivinarParaElComponentePeriferico12345";
 
     public DocumentoClinicoApiDTO getDocumento(String idExternaDoc, Long tenantCustodioId) throws Exception {
         // 1. Obtener los datos del prestador custodio
@@ -39,17 +39,22 @@ public class PerifericoApiClient {
         if (custodio == null || endpoint == null) {
             throw new Exception("Configuración del prestador custodio (ID: " + tenantCustodioId + ") no encontrada en HCEN.");
         }
+
+        String secretKey = endpoint.getHashCliente();
+        if (secretKey == null || secretKey.isBlank()) {
+            throw new Exception("No se ha configurado una clave secreta (hash_cliente) para el tenant ID: " + tenantCustodioId);
+        }
         
         // 2. Generar el token JWT usando el nombre del schema del custodio
-        String token = generarTokenDeServicio(custodio.getNombreSchema());
+        String token = generarTokenDeServicio(custodio.getNombreSchema(), secretKey);
 
         // 3. Llamar a la API del periférico con el token
         return llamarApiConToken(endpoint, custodio.getNombreSchema(), idExternaDoc, token);
     }
 
-    private String generarTokenDeServicio(String schemaName) {
+    private String generarTokenDeServicio(String schemaName, String secretKey) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(SHARED_SECRET.getBytes(StandardCharsets.UTF_8));
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
             long nowMillis = System.currentTimeMillis();
             Date now = new Date(nowMillis);
             Date expiryDate = new Date(nowMillis + 60000); // 1 minuto de validez

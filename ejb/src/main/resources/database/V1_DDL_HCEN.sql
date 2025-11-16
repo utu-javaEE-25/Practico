@@ -33,7 +33,8 @@ CREATE TABLE tenant_endpoint (
     uri_base VARCHAR(255) NOT NULL,
     tipo_auth VARCHAR(50),
     hash_cliente VARCHAR(255),
-    activo BOOLEAN NOT NULL
+    activo BOOLEAN NOT NULL,
+    es_multitenant BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE admin_global (
@@ -69,6 +70,8 @@ CREATE TABLE documento_clinico_metadata (
 CREATE TABLE solicitud_acceso (
     solicitud_id BIGSERIAL PRIMARY KEY,
     requester_tenant_id BIGINT NOT NULL REFERENCES tenant(tenant_id),
+    id_profesional_solicitante BIGINT,
+    nombre_profesional_solicitante VARCHAR(100),
     target_user_id BIGINT NOT NULL REFERENCES usuario_global(user_id),
     doc_id BIGINT REFERENCES documento_clinico_metadata(doc_id),
     motivo TEXT,
@@ -97,6 +100,8 @@ CREATE TABLE politica_acceso (
     politica_id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES usuario_global(user_id),
     tenant_id BIGINT REFERENCES tenant(tenant_id),
+    id_profesional_autorizado BIGINT,
+    doc_metadata_id BIGINT REFERENCES documento_clinico_metadata(doc_id),
     accion VARCHAR(50),
     ventana_desde TIMESTAMP,
     ventana_hasta TIMESTAMP
@@ -106,6 +111,7 @@ CREATE TABLE audit_log (
     audit_id BIGSERIAL PRIMARY KEY, --Identificador unico de la entrada de auditoria
     tipo_actor VARCHAR(50), --Tipo de actor (e.g., 'USER', 'SYSTEM')
     actor_id BIGINT NOT NULL, --Identificador del actor que realiza la accion
+    actor_tenant_id BIGINT DEFAULT NULL, --Identificador del tenant del actor
     accion VARCHAR(100), --Descripcion de la accion realizada
     recurso_id BIGINT, --Identificador del recurso afectado
     resultado VARCHAR(100), --Resultado de la accion (e.g., 'SUCCESS', 'FAILURE')

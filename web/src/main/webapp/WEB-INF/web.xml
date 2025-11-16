@@ -6,10 +6,6 @@
     
     <!-- Esta sección le dice al servidor cuál es la página de inicio -->
     <welcome-file-list>
-        <!-- El servidor buscará primero index.xhtml. Si lo encuentra, lo mostrará. -->
-        <welcome-file>index.xhtml</welcome-file>
-        <!-- Si no, buscará index.html, y así sucesivamente. -->
-        <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 

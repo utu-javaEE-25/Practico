@@ -8,6 +8,7 @@ import jakarta.ejb.Stateless;
 import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
 import uy.edu.fing.tse.entidades.AdminHcen;
 import uy.edu.fing.tse.persistencia.AdminGlobalDAO;
+import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 
 @Stateless
 public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
@@ -24,6 +25,14 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     }
 
     @Override
+    public boolean esAdminPorCi(String ci) {
+        if (ci == null || ci.isBlank()) {
+            return false;
+        }
+        return adminDAO.buscarPorCi(ci) != null;
+    }
+
+    @Override
     public boolean esAdminPorEmail(String email) {
         if (email == null || email.isBlank()) {
             return false;
@@ -32,25 +41,41 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     }
 
     @Override
-    public AdminHcen crearAdminManual(String gubUyId, String email) {
-        if (gubUyId == null || gubUyId.isBlank()) {
-            throw new IllegalArgumentException("El identificador Gub.uy es obligatorio.");
+    public AdminHcen crearAdminManual(String ci, String email) {
+        if (ci == null || ci.isBlank()) {
+            throw new IllegalArgumentException("La cedula de identidad es obligatoria.");
         }
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("El email es obligatorio.");
         }
+        if (adminDAO.buscarPorCi(ci) != null) {
+            throw new IllegalStateException("Ya existe un administrador con esa cedula.");
+        }
+        
+        return adminDAO.guardar(new AdminHcen(ci.trim(), email.trim(), LocalDateTime.now()));
 
-        if (esAdminPorSub(gubUyId)) {
-            throw new IllegalStateException("Ya existe un administrador con ese identificador Gub.uy.");
+    }
+
+    @Override
+    public AdminHcen convertirUsuarioEnAdmin(UsuarioServicioSalud usuario) {
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("El usuario no puede ser nulo.");
+        }
+
+        String email = usuario.getEmail();
+        String ci = usuario.getCedulaIdentidad();
+
+        if (adminDAO.buscarPorCi(ci) != null) {
+            throw new IllegalStateException("Ya existe un administrador con esa cedula.");
         }
         if (esAdminPorEmail(email)) {
             throw new IllegalStateException("Ya existe un administrador con ese email.");
         }
 
         AdminHcen nuevo = new AdminHcen();
-        nuevo.setGubUyId(gubUyId.trim());
+        nuevo.setCi(ci.trim());
         nuevo.setEmail(email.trim());
-        nuevo.setEstado("ACTIVO");
         nuevo.setFechaCreacion(LocalDateTime.now());
 
         return adminDAO.guardar(nuevo);
@@ -59,5 +84,10 @@ public class AdminGlobalServiceBean implements AdminGlobalServiceLocal {
     @Override
     public List<AdminHcen> listarAdministradores() {
         return adminDAO.listarTodos();
+    }
+
+    @Override
+    public AdminHcen actualizarGubUyIdPorCI(String ci, String gubUyId) {
+        return adminDAO.actualizarGubUyIdPorCI(ci, gubUyId);
     }
 }
