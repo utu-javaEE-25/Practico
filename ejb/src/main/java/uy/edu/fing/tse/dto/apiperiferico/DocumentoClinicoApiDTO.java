@@ -21,7 +21,7 @@ public class DocumentoClinicoApiDTO implements Serializable {
     private List<DiagnosticoDTO> diagnosticos;
     private List<InstruccionSeguimientoDTO> instruccionesDeSeguimiento;
 
-    // --- Getters y Setters para la clase principal ---
+    
 
     public PacienteInfo getPaciente() { return paciente; }
     public void setPaciente(PacienteInfo paciente) { this.paciente = paciente; }
@@ -56,7 +56,7 @@ public class DocumentoClinicoApiDTO implements Serializable {
     public List<InstruccionSeguimientoDTO> getInstruccionesDeSeguimiento() { return instruccionesDeSeguimiento; }
     public void setInstruccionesDeSeguimiento(List<InstruccionSeguimientoDTO> instruccionesDeSeguimiento) { this.instruccionesDeSeguimiento = instruccionesDeSeguimiento; }
 
-    // --- Clases anidadas estáticas con sus getters y setters ---
+   
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PacienteInfo implements Serializable {

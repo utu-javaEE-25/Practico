@@ -61,7 +61,7 @@ public class HistoriaClinicaResource {
             DocumentoClinicoMetadata metadata = metadataDAO.findByIdExternaDoc(docId);
             if (metadata == null) return Response.status(Response.Status.NOT_FOUND).entity("Documento no encontrado en el índice.").build();
 
-            Object documento = historiaService.verificarYObtenerDocumento(cedulaPaciente, docId, solicitante.getTenantId(), idProfesional, metadata.getDocId());
+            Object documento = historiaService.verificarYObtenerDocumento(cedulaPaciente, docId, solicitante, idProfesional, metadata.getDocId());
             return Response.ok(documento).build();
 
         } catch (AccesoNoAutorizadoException e) {

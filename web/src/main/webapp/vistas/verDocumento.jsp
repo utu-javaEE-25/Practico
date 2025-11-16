@@ -14,7 +14,7 @@
         .info-table td:first-child { background-color: #007bff; color: white; font-weight: bold; width: 180px; }
         .content-section { margin-top: 30px; }
         .content-section h3 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-bottom: 15px;}
-        .diagnostico-table { background-color: #ffffe0; width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #ddd; }
+        .diagnostico-table { background-color: #ffffe0; width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #ddd; margin-bottom: 15px; }
         .diagnostico-table td { border: 1px solid #ddd; padding: 8px; }
         .diagnostico-table td:first-child { font-weight: bold; width: 200px; }
         ul { list-style-type: '• '; padding-left: 20px; margin: 0; }
@@ -22,46 +22,54 @@
 </head>
 <body>
 <div class="container">
-    <a href="${pageContext.request.contextPath}/historia" style="float: right; margin-bottom: 10px;" class="btn btn-secondary">Volver al Índice</a>
-    <h2>Consulta no urgente</h2>
+    <a href="${pageContext.request.contextPath}/historia" style="float: right; margin-bottom: 10px;">Volver al Índice</a>
+    <h2>Consulta de Documento Clínico</h2>
 
     <c:if test="${not empty error}">
         <p style="color:red; font-weight: bold;">${error}</p>
     </c:if>
 
-    <c:if test="${empty documento and empty error}">
-         <p>No se ha encontrado la información del documento.</p>
-    </c:if>
-
     <c:if test="${not empty documento}">
         <table class="info-table">
-            <tr><td>PACIENTE</td><td><c:out value="${documento.pacienteNombre}"/></td></tr>
-            <tr><td>Nro. documento</td><td><c:out value="${documento.pacienteNroDocumento}"/></td></tr>
-            <tr><td>Fecha de nacimiento</td><td><c:out value="${documento.pacienteFechaNacimiento}"/></td></tr>
-            <tr><td>Sexo</td><td><c:out value="${documento.pacienteSexo}"/></td></tr>
-            <tr><td>INSTANCIA MEDICA</td><td><c:out value="${documento.instanciaMedica}"/></td></tr>
-            <tr><td>Fecha atención</td><td><c:out value="${documento.fechaAtencion}"/></td></tr>
-            <tr><td>Lugar</td><td><c:out value="${documento.lugar}"/></td></tr>
-            <tr><td>Autor</td><td><c:out value="${documento.autor}"/></td></tr>
-            <tr><td>DOCUMENTO</td><td><c:out value="${documento.documentoId}"/></td></tr>
-            <tr><td>Fecha generación</td><td><c:out value="${documento.fechaGeneracion}"/></td></tr>
-            <tr><td>Custodio</td><td><c:out value="${documento.custodio}"/></td></tr>
+            <tbody>
+                <tr><td>PACIENTE</td><td><c:out value="${documento.pacienteNombre}"/></td></tr>
+                <tr><td>Nro. documento</td><td><c:out value="${documento.pacienteNroDocumento}"/></td></tr>
+                <tr><td>Fecha de nacimiento</td><td><c:out value="${documento.pacienteFechaNacimiento}"/></td></tr>
+                <tr><td>Sexo</td><td><c:out value="${documento.pacienteSexo}"/></td></tr>
+                <tr><td>INSTANCIA MEDICA</td><td><c:out value="${documento.instanciaMedica}"/></td></tr>
+                <tr><td>Fecha atención</td><td><c:out value="${documento.fechaAtencion}"/></td></tr>
+                <tr><td>Lugar</td><td><c:out value="${documento.lugar}"/></td></tr>
+                <tr><td>Autor</td><td><c:out value="${documento.autor}"/></td></tr>
+                <tr><td>DOCUMENTO</td><td><c:out value="${documento.documentoId}"/></td></tr>
+                <tr><td>Fecha generación</td><td><c:out value="${documento.fechaGeneracion}"/></td></tr>
+                <tr><td>Custodio</td><td><c:out value="${documento.custodio}"/></td></tr>
+            </tbody>
         </table>
 
-        <div class="content-section">
-            <h3>Motivos de consulta</h3>
-            <p>Descripción del motivo de consulta: <c:out value="${documento.motivoConsulta}"/></p>
-        </div>
+        <c:if test="${not empty documento.motivosDeConsulta}">
+            <div class="content-section">
+                <h3>Motivos de consulta</h3>
+                <ul>
+                    <c:forEach var="motivo" items="${documento.motivosDeConsulta}">
+                        <li><c:out value="${motivo}" /></li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </c:if>
 
-        <c:if test="${not empty documento.diagnostico}">
+        <c:if test="${not empty documento.diagnosticos}">
             <div class="content-section">
                 <h3>Diagnósticos</h3>
-                <table class="diagnostico-table">
-                    <tr><td>Descripción del diagnóstico</td><td><c:out value="${documento.diagnostico.descripcion}"/></td></tr>
-                    <tr><td>Fecha de inicio</td><td><c:out value="${documento.diagnostico.fechaInicio}"/></td></tr>
-                    <tr><td>Estado del problema</td><td><c:out value="${documento.diagnostico.estadoProblema}"/></td></tr>
-                    <tr><td>Grado de certeza</td><td><c:out value="${documento.diagnostico.gradoCerteza}"/></td></tr>
-                </table>
+                <c:forEach var="diagnosticoItem" items="${documento.diagnosticos}">
+                    <table class="diagnostico-table">
+                        <tbody>
+                            <tr><td>Descripción del diagnóstico</td><td><c:out value="${diagnosticoItem.descripcion}"/></td></tr>
+                            <tr><td>Fecha de inicio</td><td><c:out value="${diagnosticoItem.fechaInicio}"/></td></tr>
+                            <tr><td>Estado del problema</td><td><c:out value="${diagnosticoItem.estadoProblema}"/></td></tr>
+                            <tr><td>Grado de certeza</td><td><c:out value="${diagnosticoItem.gradoCerteza}"/></td></tr>
+                        </tbody>
+                    </table>
+                </c:forEach>
             </div>
         </c:if>
 

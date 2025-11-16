@@ -5,14 +5,14 @@ import java.time.LocalDateTime;
 
 public class DocumentoMetadataDTO implements Serializable {
 
-    private String idExternaDoc; // Identificador de negocio (String)
-    private Long idCustodio;     // ID numérico del tenant custodio
+    private String idExternaDoc; 
+    private Long idCustodio;   
     private String tipoDocumento;
     private LocalDateTime fechaCreacion;
     private String nombrePrestador;
     private String schemaCustodio;
 
-    // Getters y Setters
+  
     public String getIdExternaDoc() { return idExternaDoc; }
     public void setIdExternaDoc(String idExternaDoc) { this.idExternaDoc = idExternaDoc; }
     public Long getIdCustodio() { return idCustodio; }

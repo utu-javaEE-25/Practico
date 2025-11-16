@@ -80,12 +80,12 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
     }
 
      @Override
-    public DocumentoDetalleDTO verificarYObtenerDocumento(String cedulaPaciente, String idExternaDoc, Long idTenantSolicitante, Long idProfesional, Long docMetadataId) {
+    public DocumentoClinicoApiDTO verificarYObtenerDocumento(String cedulaPaciente, String idExternaDoc, PrestadorSalud tenantSolicitante, Long idProfesional, Long docMetadataId) {
         UsuarioServicioSalud paciente = usuarioDAO.buscarPorCI(cedulaPaciente);
         if (paciente == null) throw new IllegalArgumentException("Paciente no encontrado.");
 
         
-        PoliticaAcceso politica = politicaDAO.findPoliticaActiva(paciente.getId(), idTenantSolicitante, idProfesional, docMetadataId);
+        PoliticaAcceso politica = politicaDAO.findPoliticaActiva(paciente.getId(), tenantSolicitante.getTenantId(), idProfesional, docMetadataId);
         
         if (politica == null) {
             
@@ -99,53 +99,61 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
              throw new IllegalArgumentException("Metadatos del documento no encontrados con ID: " + docMetadataId);
         }
 
-        DocumentoDetalleDTO documento = getDocumentoDetalle(idExternaDoc, metadata.getTenantId());
+         DocumentoClinicoApiDTO documentoOriginal;
+        try {
+            documentoOriginal = apiClient.getDocumento(idExternaDoc, metadata.getTenantId());
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo obtener el documento del prestador custodio: " + e.getMessage(), e);
+        }
 
         auditLogService.registrarEvento("PROFESIONAL", idProfesional, "VISUALIZAR_DOCUMENTO_EXTERNO", docMetadataId, "SUCCESS", null);
         
-        return documento;
+        return documentoOriginal;
     }
     
     private DocumentoDetalleDTO mapApiDtoToViewDto(DocumentoClinicoApiDTO apiDto) {
-        if (apiDto == null) return null;
-        
-        DocumentoDetalleDTO viewDto = new DocumentoDetalleDTO();
-        
-        if (apiDto.getPaciente() != null) {
-            viewDto.setPacienteNombre(apiDto.getPaciente().getNombreCompleto());
-            viewDto.setPacienteNroDocumento(apiDto.getPaciente().getNroDocumento());
-            viewDto.setPacienteFechaNacimiento(apiDto.getPaciente().getFechaNacimiento());
-            viewDto.setPacienteSexo(apiDto.getPaciente().getSexo());
-        }
-
-        viewDto.setInstanciaMedica(apiDto.getInstanciaMedica());
-        viewDto.setFechaAtencion(apiDto.getFechaAtencion());
-        viewDto.setLugar(apiDto.getLugar());
-
-        if (apiDto.getProfesional() != null) {
-            viewDto.setAutor(apiDto.getProfesional().getNombreCompleto());
-        }
-
-        viewDto.setDocumentoId(apiDto.getIdExternaDoc());
-        viewDto.setFechaGeneracion(apiDto.getFechaGeneracion() != null ? apiDto.getFechaGeneracion().toString() : "N/A");
-        viewDto.setCustodio(apiDto.getCustodio());
-        
-        if (apiDto.getMotivosDeConsulta() != null && !apiDto.getMotivosDeConsulta().isEmpty()) {
-            viewDto.setMotivoConsulta(apiDto.getMotivosDeConsulta().get(0).getDescripcion());
-        }
-        
-        if (apiDto.getDiagnosticos() != null && !apiDto.getDiagnosticos().isEmpty()) {
-            DocumentoClinicoApiDTO.DiagnosticoDTO diagApi = apiDto.getDiagnosticos().get(0);
-            viewDto.setDiagnostico(new DiagnosticoDTO(diagApi.getDescripcion(), diagApi.getFechaInicio(), diagApi.getEstadoProblema(), diagApi.getGradoCerteza()));
-        }
-        
-        if (apiDto.getInstruccionesDeSeguimiento() != null) {
-            List<String> instrucciones = apiDto.getInstruccionesDeSeguimiento().stream()
-                .map(inst -> inst.getDescripcion()) 
-                .collect(Collectors.toList());
-        viewDto.setInstruccionesSeguimiento(instrucciones);
+    if (apiDto == null) return null;
+    
+    DocumentoDetalleDTO viewDto = new DocumentoDetalleDTO();
+    
+    if (apiDto.getPaciente() != null) {
+        viewDto.setPacienteNombre(apiDto.getPaciente().getNombreCompleto());
+        viewDto.setPacienteNroDocumento(apiDto.getPaciente().getNroDocumento());
+        viewDto.setPacienteFechaNacimiento(apiDto.getPaciente().getFechaNacimiento());
+        viewDto.setPacienteSexo(apiDto.getPaciente().getSexo());
     }
-        
-        return viewDto;
+
+    viewDto.setInstanciaMedica(apiDto.getInstanciaMedica());
+    viewDto.setFechaAtencion(apiDto.getFechaAtencion());
+    viewDto.setLugar(apiDto.getLugar());
+    viewDto.setAutor(apiDto.getProfesional() != null ? apiDto.getProfesional().getNombreCompleto() : null);
+    viewDto.setDocumentoId(apiDto.getIdExternaDoc());
+    viewDto.setFechaGeneracion(apiDto.getFechaGeneracion() != null ? apiDto.getFechaGeneracion().toString() : "N/A");
+    viewDto.setCustodio(apiDto.getCustodio());
+
+    if (apiDto.getMotivosDeConsulta() != null) {
+        viewDto.setMotivosDeConsulta(
+            apiDto.getMotivosDeConsulta().stream()
+                .map(DocumentoClinicoApiDTO.MotivoConsultaDTO::getDescripcion)
+                .collect(Collectors.toList())
+        );
+    }
+    
+    if (apiDto.getDiagnosticos() != null) {
+        viewDto.setDiagnosticos(
+            apiDto.getDiagnosticos().stream()
+                .map(diagApi -> new DiagnosticoDTO(diagApi.getDescripcion(), diagApi.getFechaInicio(), diagApi.getEstadoProblema(), diagApi.getGradoCerteza()))
+                .collect(Collectors.toList())
+        );
+    }
+    
+    if (apiDto.getInstruccionesDeSeguimiento() != null) {
+        viewDto.setInstruccionesSeguimiento(
+            apiDto.getInstruccionesDeSeguimiento().stream()
+                .map(DocumentoClinicoApiDTO.InstruccionSeguimientoDTO::getDescripcion)
+                .collect(Collectors.toList())
+        );
+    }
+    return viewDto;
     }
 }

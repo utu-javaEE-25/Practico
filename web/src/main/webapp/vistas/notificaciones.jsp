@@ -14,7 +14,7 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Centro de Notificaciones y Permisos</h1>
-        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-secondary">Volver al Portal</a>
+        <a href="${pageContext.request.contextPath}/vistas/index_user.jsp" class="btn btn-secondary">Volver al Portal</a>
     </div>
 
     <c:if test="${not empty successMessage}">
