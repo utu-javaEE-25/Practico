@@ -14,7 +14,7 @@ import uy.edu.fing.tse.entidades.TenantEndpoint;
 @Stateless
 public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
 
-    public static final String MULTITENANT_URI_PREFIX = "http://pruebamulti.web.elasticloud.uy/";
+    public static final String MULTITENANT_URI_PREFIX = "http://pruebamulti.web.elasticloud.uy";
     private static final String MULTITENANT_SHARED_SECRET = "UnSecretoMuyLargoSeguroYComplejoQueNadieDebeAdivinarParaElComponentePeriferico12345";
 
     @PersistenceContext(unitName = "PU_CENTRAL")

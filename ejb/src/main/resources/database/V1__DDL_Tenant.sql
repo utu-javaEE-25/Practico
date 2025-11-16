@@ -76,3 +76,4 @@ CREATE TABLE audit_log (
     ip VARCHAR(45),
     fecha_creacion TIMESTAMP
 );
+
