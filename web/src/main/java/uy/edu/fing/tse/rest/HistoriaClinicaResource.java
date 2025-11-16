@@ -14,7 +14,6 @@ import uy.edu.fing.tse.entidades.DocumentoClinicoMetadata;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.persistencia.DocumentoClinicoMetadataDAO;
 import uy.edu.fing.tse.servicios.AccesoNoAutorizadoException;
-import uy.edu.fing.tse.servicios.AccesoNoAutorizadoException;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
 
 

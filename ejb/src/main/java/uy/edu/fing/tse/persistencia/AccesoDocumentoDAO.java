@@ -1,7 +1,7 @@
 package uy.edu.fing.tse.persistencia;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
