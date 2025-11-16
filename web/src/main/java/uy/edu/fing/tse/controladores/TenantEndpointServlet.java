@@ -242,5 +242,4 @@ public class TenantEndpointServlet extends HttpServlet {
             return null;
         }
     }
-
 }

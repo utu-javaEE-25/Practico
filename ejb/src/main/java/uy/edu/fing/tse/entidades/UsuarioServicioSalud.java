@@ -50,6 +50,9 @@ public class UsuarioServicioSalud implements Serializable {
     @Column(name = "activo")
     private boolean activo;
 
+    @Column(name = "token_id")
+    private String tokenId;
+
     public Long getId() {
         return id;
     }
@@ -159,5 +162,13 @@ public class UsuarioServicioSalud implements Serializable {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public String getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
     }
 }

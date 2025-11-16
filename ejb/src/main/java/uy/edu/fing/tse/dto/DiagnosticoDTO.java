@@ -2,7 +2,6 @@ package uy.edu.fing.tse.dto;
 
 import java.io.Serializable;
 
-
 public class DiagnosticoDTO implements Serializable {
 
     private String descripcion;

@@ -39,7 +39,6 @@ public class CallbackServlet extends HttpServlet {
 
     @EJB
     private UsuarioDAO usuarioDAO;
-
     @EJB
     private AdminGlobalServiceLocal adminService;
     @EJB
