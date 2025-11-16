@@ -24,6 +24,9 @@ public class AuditLog {
     @Column(name = "actor_id")
     private Long actorId;
 
+    @Column(name = "actor_tenant_id") 
+    private Long actorTenantId;   
+
     @Column(name = "accion")
     private String accion;
 
@@ -101,5 +104,13 @@ public class AuditLog {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public Long getActorTenantId() { 
+        return actorTenantId;
+    }
+
+    public void setActorTenantId(Long actorTenantId) { 
+        this.actorTenantId = actorTenantId;
     }
 }

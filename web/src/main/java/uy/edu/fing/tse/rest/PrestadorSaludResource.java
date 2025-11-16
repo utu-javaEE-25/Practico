@@ -47,6 +47,7 @@ public class PrestadorSaludResource {
         AuditHelper.registrarEvento(
                 auditService,
                 request,
+                 null,
                 AuditLogConstants.Acciones.PRESTADOR_ALTA,
                 creado != null ? creado.getTenantId() : null,
                 AuditLogConstants.Resultados.SUCCESS);
@@ -62,6 +63,7 @@ public class PrestadorSaludResource {
         AuditHelper.registrarEvento(
                 auditService,
                 request,
+                 null,
                 AuditLogConstants.Acciones.PRESTADOR_BAJA,
                 prestador != null ? prestador.getTenantId() : null,
                 AuditLogConstants.Resultados.SUCCESS);
@@ -76,6 +78,7 @@ public class PrestadorSaludResource {
         AuditHelper.registrarEvento(
                 auditService,
                 request,
+                 null,
                 AuditLogConstants.Acciones.PRESTADOR_ACTIVACION,
                 prestador != null ? prestador.getTenantId() : null,
                 AuditLogConstants.Resultados.SUCCESS);
@@ -90,6 +93,7 @@ public class PrestadorSaludResource {
         AuditHelper.registrarEvento(
                 auditService,
                 request,
+                 null,
                 AuditLogConstants.Acciones.PRESTADOR_BAJA,
                 prestador != null ? prestador.getTenantId() : null,
                 AuditLogConstants.Resultados.SUCCESS);

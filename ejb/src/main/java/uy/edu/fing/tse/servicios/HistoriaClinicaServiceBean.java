@@ -89,7 +89,7 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
         
         if (politica == null) {
             
-            auditLogService.registrarEvento("PROFESIONAL", idProfesional, "VISUALIZAR_DOCUMENTO_EXTERNO", docMetadataId, "FAILURE - NO_PERMISSION", null);
+           auditLogService.registrarEvento("PROFESIONAL", idProfesional, tenantSolicitante.getTenantId(), "VISUALIZAR_DOCUMENTO_EXTERNO", docMetadataId, "FAILURE - NO_PERMISSION", null);
             throw new AccesoNoAutorizadoException("Acceso no permitido por política del usuario. Debe solicitar permiso.");
         }
 
@@ -106,7 +106,7 @@ public class HistoriaClinicaServiceBean implements HistoriaClinicaServiceLocal {
             throw new RuntimeException("No se pudo obtener el documento del prestador custodio: " + e.getMessage(), e);
         }
 
-        auditLogService.registrarEvento("PROFESIONAL", idProfesional, "VISUALIZAR_DOCUMENTO_EXTERNO", docMetadataId, "SUCCESS", null);
+        auditLogService.registrarEvento("PROFESIONAL", idProfesional, tenantSolicitante.getTenantId(), "VISUALIZAR_DOCUMENTO_EXTERNO", docMetadataId, "SUCCESS", null);
         
         return documentoOriginal;
     }

@@ -126,6 +126,7 @@ public class TenantEndpointServlet extends HttpServlet {
         AuditHelper.registrarEvento(
                 auditService,
                 req,
+                null,
                 AuditLogConstants.Acciones.ENDPOINT_ALTA,
                 tenantId,
                 AuditLogConstants.Resultados.SUCCESS);
@@ -151,6 +152,7 @@ public class TenantEndpointServlet extends HttpServlet {
         AuditHelper.registrarEvento(
                 auditService,
                 req,
+                null,
                 AuditLogConstants.Acciones.ENDPOINT_MODIFICACION,
                 tenantId,
                 AuditLogConstants.Resultados.SUCCESS);
@@ -170,6 +172,7 @@ public class TenantEndpointServlet extends HttpServlet {
         AuditHelper.registrarEvento(
                 auditService,
                 req,
+                null,
                 AuditLogConstants.Acciones.ENDPOINT_BAJA,
                 tenantId,
                 AuditLogConstants.Resultados.SUCCESS);

@@ -10,7 +10,7 @@ public final class AuditHelper {
     }
 
     public static void registrarEvento(AuditLogServiceLocal service, HttpServletRequest request,
-            String accion, Long recursoId, String resultado) {
+    Long actorTenantId, String accion, Long recursoId, String resultado) {
         if (service == null || accion == null) {
             return;
         }
@@ -20,13 +20,7 @@ public final class AuditHelper {
         Long actorId = obtenerActorId(session);
         String ip = request != null ? request.getRemoteAddr() : null;
 
-        service.registrarEvento(
-                tipoActor,
-                actorId,
-                accion,
-                recursoId,
-                resultado,
-                ip);
+        service.registrarEvento(tipoActor, actorId, actorTenantId, accion, recursoId, resultado, ip);
     }
 
     private static String obtenerTipoActor(HttpSession session) {

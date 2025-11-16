@@ -35,7 +35,7 @@ public class CallbackServlet extends HttpServlet {
     private static final String TOKEN_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/token";
 
     private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
-   // private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
+    //private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
 
     @EJB
     private UsuarioDAO usuarioDAO;
@@ -174,6 +174,7 @@ public class CallbackServlet extends HttpServlet {
         AuditHelper.registrarEvento(
                 auditLogService,
                 req,
+                null,
                 AuditLogConstants.Acciones.LOGIN,
                 recursoId,
                 resultado);

@@ -19,7 +19,7 @@ public class AuditLogServiceBean implements AuditLogServiceLocal {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void registrarEvento(String tipoActor, Long actorId, String accion, Long recursoId, String resultado, String ip) {
+    public void registrarEvento(String tipoActor, Long actorId, Long actorTenantId, String accion, Long recursoId, String resultado, String ip){
         if (accion == null || accion.isBlank()) {
             throw new IllegalArgumentException("La accion de auditoria es obligatoria.");
         }
@@ -30,6 +30,7 @@ public class AuditLogServiceBean implements AuditLogServiceLocal {
 
         registro.setTipoActor(actor);
         registro.setActorId(actorId != null ? actorId : 0L);
+        registro.setActorTenantId(actorTenantId);
         registro.setAccion(accion);
         registro.setRecursoId(recursoId);
         registro.setResultado(resultadoFinal);

@@ -213,7 +213,7 @@ public class PrestadorSaludBean implements Serializable {
 
     private void registrarAuditoria(String accion, Long recursoId, String resultado) {
         HttpServletRequest request = obtenerRequestActual();
-        AuditHelper.registrarEvento(auditLogService, request, accion, recursoId, resultado);
+        AuditHelper.registrarEvento(auditLogService, request,null, accion, recursoId, resultado);
     }
 
     private HttpServletRequest obtenerRequestActual() {
