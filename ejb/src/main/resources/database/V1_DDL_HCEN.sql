@@ -111,10 +111,10 @@ CREATE TABLE audit_log (
     audit_id BIGSERIAL PRIMARY KEY, --Identificador unico de la entrada de auditoria
     tipo_actor VARCHAR(50), --Tipo de actor (e.g., 'USER', 'SYSTEM')
     actor_id BIGINT NOT NULL, --Identificador del actor que realiza la accion
+    actor_tenant_id BIGINT DEFAULT NULL, --Identificador del tenant del actor
     accion VARCHAR(100), --Descripcion de la accion realizada
-    recurso_id BIGINT, --Identificador del recurso afectado
+    recurso_id BIGINT,| --Identificador del recurso afectado
     resultado VARCHAR(100), --Resultado de la accion (e.g., 'SUCCESS', 'FAILURE')
-    ip VARCHAR(50), --Direccion IP desde donde se realizo la accion (por ahora no se usa)
     fecha_creacion TIMESTAMP --Fecha y hora de la accion
 );
 
