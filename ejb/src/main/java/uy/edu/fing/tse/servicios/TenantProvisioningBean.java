@@ -17,6 +17,9 @@ public class TenantProvisioningBean {
     @Resource(lookup = "java:/jdbc/DS_MASTER")
     private DataSource dsMaster;
 
+    @Resource(lookup = "java:/jdbc/DS_TENANT")
+    private DataSource dsTenant;
+
     //Estandarizo los nombres de schema a minusculas sin espacios ni caracteres raros
     private static final Pattern SCHEMA_PATTERN = Pattern.compile("^[a-z_][a-z0-9_]{1,30}$");
 
@@ -44,7 +47,12 @@ public class TenantProvisioningBean {
                 + "GRANT SELECT,INSERT,UPDATE,DELETE ON TABLES TO hcen_tenant");
             st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " "
                 + "GRANT ALL ON SEQUENCES TO hcen_tenant");
-            st.executeUpdate("INSERT INTO " + nombreEsquema + ".admin_tenant (nombre_usuario, password_hash, nombre, apellido, email, estado)\r\n" + //
+        }
+
+        try (Connection c = dsTenant.getConnection();
+             Statement st = c.createStatement()) {
+            st.executeUpdate("SET search_path TO " + schema);
+            st.executeUpdate("INSERT INTO " + schema + ".admin_tenant (nombre_usuario, password_hash, nombre, apellido, email, estado)\r\n" + //
                                 "VALUES ('admin', '$2a$10$Ws4d3QITf3d4gZMFiRIu8.PF2th8.6O516MvVn09Il35lM9lulc0G', 'Admin', 'Tenant', 'admin@tenant', 'ACTIVE');");
         }
   }
