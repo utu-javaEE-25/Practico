@@ -45,7 +45,7 @@ public class TenantProvisioningBean {
             st.executeUpdate("ALTER DEFAULT PRIVILEGES IN SCHEMA " + schema + " "
                 + "GRANT ALL ON SEQUENCES TO hcen_tenant");
             st.executeUpdate("INSERT INTO " + nombreEsquema + ".admin_tenant (nombre_usuario, password_hash, nombre, apellido, email, estado)\r\n" + //
-                                "VALUES ('admin', '$2a$10$Ws4d3QITf3d4gZMFiRIu8.PF2th8.6O516MvVn09Il35lM9lulc0G', 'Admin', 'Tenant', 'admin@tenant', 'ACTIVE');")
+                                "VALUES ('admin', '$2a$10$Ws4d3QITf3d4gZMFiRIu8.PF2th8.6O516MvVn09Il35lM9lulc0G', 'Admin', 'Tenant', 'admin@tenant', 'ACTIVE');");
         }
   }
 
