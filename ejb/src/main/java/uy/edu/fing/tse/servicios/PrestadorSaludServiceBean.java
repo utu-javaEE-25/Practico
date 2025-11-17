@@ -32,7 +32,9 @@ public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
         PrestadorSalud creado = per.crear(prestador);
 
-        tenantProvisioning.provisionarTenant(creado.getNombreSchema());
+        if (!"SINGLETENANT".equalsIgnoreCase(creado.getTipo())) {
+            tenantProvisioning.provisionarTenant(creado.getNombreSchema());
+        }
 
         return creado;
     }

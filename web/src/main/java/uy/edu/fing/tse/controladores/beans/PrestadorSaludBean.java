@@ -3,6 +3,7 @@ package uy.edu.fing.tse.controladores.beans;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ public class PrestadorSaludBean implements Serializable {
     private PrestadorSalud nuevoPrestador;
     private PrestadorSalud prestadorEnEdicion;
     private boolean modoEdicion;
+    private List<String> tiposDisponibles;
 
     private String buscarRut;
     private String buscarNombre;
@@ -48,6 +50,7 @@ public class PrestadorSaludBean implements Serializable {
         this.prestadorEnEdicion = new PrestadorSalud();
         this.cargarListaCompleta();
         this.prestadoresFiltrados = this.listaCompleta;
+        this.tiposDisponibles = Arrays.asList("MULTITENANT", "SINGLETENANT");
     }
 
     private void cargarListaCompleta() {
@@ -255,6 +258,10 @@ public class PrestadorSaludBean implements Serializable {
 
     public void setBuscarNombre(String buscarNombre) {
         this.buscarNombre = buscarNombre;
+    }
+
+    public List<String> getTiposDisponibles() {
+        return tiposDisponibles;
     }
 
     public PrestadorSalud getPrestadorEnEdicion() {

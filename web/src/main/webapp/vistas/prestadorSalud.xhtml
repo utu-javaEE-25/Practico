@@ -94,8 +94,12 @@
                         </div>
                         <div class="col-md-6">
                             <h:outputLabel for="tipo" value="Tipo" styleClass="form-label"/>
-                            <h:inputText id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}"
-                                         styleClass="form-control"/>
+                            <h:selectOneMenu id="tipo" value="#{prestadorSaludBean.nuevoPrestador.tipo}"
+                                             styleClass="form-select">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{prestadorSaludBean.tiposDisponibles}" var="t"
+                                               itemLabel="#{t}" itemValue="#{t}"/>
+                            </h:selectOneMenu>
                             <h:message for="tipo" styleClass="text-danger small"/>
                         </div>
                         <div class="col-md-6">
@@ -161,9 +165,13 @@
                         </div>
                         <div class="col-md-6">
                             <h:outputLabel for="editTipo" value="Tipo" styleClass="form-label"/>
-                            <h:inputText id="editTipo" value="#{prestadorSaludBean.prestadorEnEdicion.tipo}"
-                                         disabled="#{not prestadorSaludBean.modoEdicion}"
-                                         styleClass="form-control"/>
+                            <h:selectOneMenu id="editTipo" value="#{prestadorSaludBean.prestadorEnEdicion.tipo}"
+                                             disabled="#{not prestadorSaludBean.modoEdicion}"
+                                             styleClass="form-select">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{prestadorSaludBean.tiposDisponibles}" var="t"
+                                               itemLabel="#{t}" itemValue="#{t}"/>
+                            </h:selectOneMenu>
                             <h:message for="editTipo" styleClass="text-danger small"/>
                         </div>
                         <div class="col-md-6">
