@@ -7,6 +7,37 @@
     <title>Administrar endpoints de tenants</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .navbar {
+        background-color: #8b3a55;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .footerOuter {
+        text-align: center;
+        color: #888;
+        font-size: 0.9rem;
+        padding: 1rem 0;
+        margin-top: auto;
+        }
+        .tabla-compacta td,
+        .tabla-compacta th {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            white-space: nowrap;
+        }
+        .admin-title {
+        color: #8b3a55 !important;
+        }
+        .table-container {
+            border-radius: 0.5rem;
+            max-height: calc(8 * 3.5rem + 3.5rem);
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .table-container table {
+            margin-bottom: 0;
+        }
+    </style>
 </head>
 <body class="bg-light">
 <%
@@ -31,7 +62,7 @@
     }
 %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="<%=ctx%>/index_admin">HCEN Admin</a>
         <div class="d-flex align-items-center ms-auto text-white gap-2">
@@ -61,7 +92,7 @@
     <% } %>
 
     <div class="row">
-        <div class="col-12 col-xl-3 col-lg-4 mb-4">
+        <div class="col-12 col-xl-3 col-lg-4 mb-4 small">
             <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">
                     <% if (endpointEnEdicion != null && prestadorEnEdicion != null) { %>
@@ -180,15 +211,15 @@
 
         <div class="col-12 col-xl-9 col-lg-8 mb-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
                     <span>Tenants y endpoints configurados</span>
                     <span class="badge bg-light text-dark">
                         <%= activos %> endpoints activos
                     </span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                    <div class="table-container">
+                        <table class="table table-hover align-middle tabla-compacta">
                             <thead>
                             <tr>
                                 <th>Tenant</th>
@@ -296,6 +327,9 @@
     });
 })();
 </script>
+<div class="footerOuter">
+    &#169; 2025 HCEN - Administración del Sistema
+  </div>
 </body>
 </html>
 

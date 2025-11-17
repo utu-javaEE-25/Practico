@@ -8,10 +8,41 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
     <h:outputStylesheet library="css" name="prestadorSalud.css"/>
+    <style>
+        .navbar {
+        background-color: #8b3a55;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .footerOuter {
+        text-align: center;
+        color: #888;
+        font-size: 0.9rem;
+        padding: 1rem 0;
+        margin-top: auto;
+        }
+        .tabla-compacta td,
+        .tabla-compacta th {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            white-space: nowrap;
+        }
+        .admin-title {
+        color: #8b3a55 !important;
+        }
+        .table-container {
+            border-radius: 0.5rem;
+            max-height: calc(8 * 3.5rem + 3.5rem);
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .table-container table {
+            margin-bottom: 0;
+        }
+    </style>
 </h:head>
 <h:body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="#{facesContext.externalContext.requestContextPath}/index_admin">HCEN Admin</a>
         <div class="d-flex gap-2 ms-auto">
@@ -38,8 +69,7 @@
 <div class="container pb-5">
     <div class="d-flex align-items-center mb-4">
         <div>
-            <h1 class="h3 mb-1 text-primary">Gestión de Prestadores de Salud</h1>
-            <p class="text-muted mb-0">Administre altas, ediciones y búsquedas con la misma estética del portal HCEN.</p>
+            <h1 class="h3 mb-1 admin-title">Gestión de Prestadores de Salud</h1>
         </div>
     </div>
 
@@ -50,14 +80,6 @@
                 infoClass="alert alert-info"
                 warnClass="alert alert-warning"
                 errorClass="alert alert-danger"/>
-
-    <div class="d-flex justify-content-end flex-wrap gap-2 mb-4">
-        <h:outputLink value="#{facesContext.externalContext.requestContextPath}/tenant_endpoints"
-                      styleClass="btn btn-outline-primary btn-sm d-flex align-items-center">
-            <i class="bi bi-link-45deg me-1"></i>
-            Endpoints
-        </h:outputLink>
-    </div>
 
     <div class="row g-4 mb-4">
         <div class="col-lg-6">
@@ -114,7 +136,7 @@
                 </div>
                 <div class="card-footer bg-transparent border-0 pt-0">
                     <h:commandButton value="Crear prestador" action="#{prestadorSaludBean.crear}"
-                                     styleClass="btn btn-primary">
+                                     styleClass="btn btn-danger">
                         <f:ajax execute="@form" render=":formTabla:tablaContainer :formCrear :globalMessages"/>
                     </h:commandButton>
                 </div>
@@ -190,7 +212,7 @@
                     <h:panelGroup layout="block" styleClass="d-flex flex-wrap gap-2"
                                   rendered="#{prestadorSaludBean.modoEdicion}">
                         <h:commandButton value="Guardar cambios" action="#{prestadorSaludBean.actualizar}"
-                                         styleClass="btn btn-primary">
+                                         styleClass="btn btn-danger">
                             <f:ajax execute="@form" render=":formTabla:tablaContainer :formEditar :globalMessages"/>
                         </h:commandButton>
                         <h:commandButton value="Cancelar" action="#{prestadorSaludBean.cancelarEdicion}"
@@ -220,7 +242,7 @@
                 </div>
                 <div class="col-md-4 d-flex gap-2">
                     <h:commandButton value="Buscar" action="#{prestadorSaludBean.buscar}"
-                                     styleClass="btn btn-primary flex-grow-1">
+                                     styleClass="btn btn-danger flex-grow-1">
                         <f:ajax execute="@form" render=":formTabla:tablaContainer"/>
                     </h:commandButton>
                     <h:commandButton value="Limpiar" action="#{prestadorSaludBean.limpiarBusqueda}"
@@ -238,11 +260,11 @@
             <p class="text-muted small mb-0">Monitoree el estado de los prestadores registrados y ejecute acciones rápidas.</p>
         </div>
         <div class="card-body">
-            <h:panelGroup id="tablaContainer" layout="block" styleClass="table-responsive">
+            <h:panelGroup id="tablaContainer" layout="block" styleClass="table-responsive table-container">
                 <h:dataTable id="tablaPrestadores"
                              value="#{prestadorSaludBean.prestadoresFiltrados}"
                              var="p"
-                             styleClass="table table-hover align-middle mb-0"
+                             styleClass="table table-hover align-middle mb-0 tabla-compacta"
                              headerClass="table-light"
                              rowClasses="">
                     <h:column>
@@ -308,6 +330,8 @@
         </div>
     </h:form>
 </div>
-
+<div class="footerOuter">
+    &#169; 2025 HCEN - Administración del Sistema
+  </div>
 </h:body>
 </html>

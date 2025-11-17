@@ -8,13 +8,66 @@
     <title>Mis Notificaciones - HCEN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .navbar {
+            background-color: #0d6efd;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.6rem;
+            color: white !important;
+        }
+        .welcome {
+            color: white;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 3rem;
+        }
+        .list-group-item:nth-child(odd) {
+            background-color: white;
+        }
+        .list-group-item:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body class="bg-light">
+    <%
+    String nombre = (String) session.getAttribute("nombre");
+    String apellido = (String) session.getAttribute("apellido");
+    String email = (String) session.getAttribute("email");
+
+    if (nombre == null) {
+        // Si no hay sesión, redirige al home
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        return;
+    }
+%>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/vistas/index_user.jsp">HCEN</a>
+        <div class="d-flex align-items-center ms-auto">
+            <span class="welcome">Bienvenido, <%= nombre %></span>
+            <a href="${pageContext.request.contextPath}/vistas/index_user.jsp" class="btn btn-outline-light btn-sm me-2">
+                <i class="bi bi-house-door"></i> Inicio
+            </a>
+            <a href="${pageContext.request.contextPath}/logout?login_type=usuario" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+            </a>
+        </div>
+    </div>
+</nav>
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Centro de Notificaciones y Permisos</h1>
-        <a href="${pageContext.request.contextPath}/vistas/index_user.jsp" class="btn btn-secondary">Volver al Portal</a>
     </div>
 
     <c:if test="${not empty successMessage}">
@@ -57,6 +110,12 @@
             </c:choose>
         </div>
     </div>
+</div>
+
+<div class="footer">
+    &copy; 2025 HCEN - Taller de Sistemas Empresariales
+    <br>
+    <small><%= email %></small>
 </div>
 </body>
 </html>
