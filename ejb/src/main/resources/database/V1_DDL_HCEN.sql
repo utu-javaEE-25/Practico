@@ -18,7 +18,7 @@ SET search_path TO central;
 
 CREATE TABLE tenant (
     tenant_id BIGSERIAL PRIMARY KEY,
-    nombre_schema VARCHAR(15) UNIQUE,
+    nombre_schema VARCHAR(63) UNIQUE,
     nombre VARCHAR(50) UNIQUE NOT NULL,
     rut VARCHAR(11) UNIQUE NOT NULL,
     estado BOOLEAN NOT NULL,
