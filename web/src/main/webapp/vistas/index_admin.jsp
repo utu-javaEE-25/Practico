@@ -12,6 +12,13 @@
         background-color: #8b3a55;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
+        .footer {
+        text-align: center;
+        color: #888;
+        font-size: 0.9rem;
+        padding: 1rem 0;
+        margin-top: auto;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -60,7 +67,7 @@
     <% } %>
 
     <div class="row">
-        <div class="col-lg-5 mb-4">
+        <div class="col-lg-9 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">
                     Administradores registrados
@@ -101,7 +108,7 @@
             </div>
         </div>
 
-        <div class="col-lg-7 mb-4">
+        <div class="col-lg-3 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     Alta manual de administradores
@@ -130,7 +137,9 @@
         </div>
     </div>
 </div>
-
+<div class="footer">
+    &copy; 2025 HCEN - Administración del Sistema
+  </div>
 </body>
 </html>
 

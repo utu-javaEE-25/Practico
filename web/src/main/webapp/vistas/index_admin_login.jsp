@@ -76,6 +76,27 @@
       margin-top: auto;
     }
 
+    /* Admin title and login button use the same color as the navbar.
+       Use more specific selectors and !important to avoid Bootstrap overrides. */
+    .main-container .info-text .admin-title {
+      color: #8b3a55 !important;
+    }
+
+    .card .btn-login {
+      background-color: #8b3a55 !important;
+      border-color: #8b3a55 !important;
+      color: #fff !important;
+    }
+
+    .card .btn-login:hover,
+    .card .btn-login:focus,
+    .card .btn-login:active {
+      background-color: #6f3147 !important;
+      border-color: #6f3147 !important;
+      color: #fff !important;
+      box-shadow: none !important;
+    }
+
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
@@ -98,14 +119,14 @@
 <body>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="<%=request.getContextPath()%>/index_admin.jsp">HCEN</a>
+      <a class="navbar-brand" href="<%=request.getContextPath()%>/vistas/index_admin_login.jsp">HCEN</a>
     </div>
   </nav>
 
   <div class="container">
     <div class="main-container">
       <div class="info-text">
-        <h3 class="mb-3 text-primary fw-bold">Portal de Administración HCEN</h3>
+        <h3 class="mb-3 admin-title fw-bold">Portal de Administración HCEN</h3>
         <p>
           Este portal está destinado exclusivamente a los administradores del sistema HCEN. 
           Desde aquí podrán gestionar usuarios, monitorear accesos, revisar registros 
@@ -118,7 +139,7 @@
         <i class="bi bi-shield-lock"></i>
         <h4 class="card-title mb-3">Acceso de administradores</h4>
         <p class="text-muted mb-4">Inicie sesión con sus credenciales administrativas.</p>
-        <a href="<%=request.getContextPath()%>/login?type=admin" class="btn btn-primary btn-lg w-100">
+        <a href="<%=request.getContextPath()%>/login?type=admin" class="btn btn-login btn-lg w-100">
           Iniciar sesión
         </a>
       </div>

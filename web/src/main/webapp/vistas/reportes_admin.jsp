@@ -15,6 +15,25 @@
         background-color: #8b3a55;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
+        .footer {
+        text-align: center;
+        color: #888;
+        font-size: 0.9rem;
+        padding: 1rem 0;
+        margin-top: auto;
+        }
+        .admin-title {
+        color: #8b3a55 !important;
+        }
+        .table-container {
+            border-radius: 0.5rem;
+            max-height: calc(8 * 3.5rem + 3.5rem);
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .table-container table {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -47,7 +66,7 @@
 
 <div class="container pb-4">
     <div class="d-flex align-items-center mb-3">
-        <h1 class="h4 mb-0">Reportes operativos</h1>
+        <h1 class="h4 mb-0 admin-title">Reportes operativos</h1>
         <% if (resumen != null && resumen.getUltimaActualizacion() != null) { %>
         <span class="ms-auto text-muted small">
             Actualizado: <%= resumen.getUltimaActualizacion().format(formatter) %>
@@ -182,7 +201,7 @@
                 <% if (actividad.getEventosRecientes() == null || actividad.getEventosRecientes().isEmpty()) { %>
                     <div class="p-4 text-center text-muted">No se registran eventos recientes.</div>
                 <% } else { %>
-                <div class="table-responsive">
+                <div class="table-responsive table-container">
                     <table class="table table-striped mb-0">
                         <thead class="table-light">
                         <tr>
@@ -230,6 +249,8 @@
         <% } %>
     </section>
 </div>
-
+<div class="footer">
+    &copy; 2025 HCEN - Administración del Sistema
+  </div>
 </body>
 </html>
