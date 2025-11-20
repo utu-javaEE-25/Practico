@@ -32,15 +32,28 @@
             align-items: flex-start;
             flex-wrap: wrap;
             padding: 3rem 1rem;
-            gap: 2rem;
+            gap: 1rem;
+            width: 100%;
+            box-sizing: border-box;
         }
         .card {
             border: none;
             border-radius: 1rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all 0.25s ease;
-            width: 18rem;
+            flex: 1 1 18rem; /* base width for small/medium screens */
+            min-width: 12rem;
+            max-width: 22rem;
             text-align: center;
+        }
+
+        /* For large screens try to fit exactly 5 cards per row */
+        @media (min-width: 1200px) {
+            .main-container { gap: 1rem; }
+            .card {
+                flex: 0 1 calc((100% - 4rem) / 5);
+                max-width: calc((100% - 4rem) / 5);
+            }
         }
         .card:hover {
             transform: translateY(-6px);
@@ -73,7 +86,7 @@
 %>
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="<%=request.getContextPath()%>/index.jsp">HCEN</a>
+        <a class="navbar-brand" href="<%=request.getContextPath()%>/vistas/index_user.jsp">HCEN</a>
         <div class="d-flex align-items-center ms-auto">
             <span class="welcome">Bienvenido, <%= nombre %></span>
             <a href="<%=request.getContextPath()%>/logout?login_type=usuario" class="btn btn-outline-light btn-sm">
@@ -113,7 +126,7 @@
     </div>
 
     <div class="card p-4">
-        <i class="bi bi-bell"></i>
+        <i class="bi bi-phone-vibrate"></i>
         <h5 class="card-title">Configuración de notificaciones</h5>
         <p class="card-text text-muted">Elija qué notificaciones recibir en su dispositivo móvil.</p>
         <a href="#" class="btn btn-primary">Configurar</a>
