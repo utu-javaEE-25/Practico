@@ -2,22 +2,18 @@ package uy.edu.fing.tse.client;
 
 import jakarta.ejb.Stateless;
 import jakarta.xml.ws.WebServiceRef;
+import uy.edu.fing.tse.client.dnic.*;
 import uy.edu.fing.tse.exception.PDIClientException;
 
 @Stateless
 public class PDIClient {
 
     // 1. Inyección del servicio generado usando @WebServiceRef
-    // El contenedor de Jakarta EE (Glassfish, WildFly, Open Liberty) se encarga
-    // de inicializar esta referencia al WSDL.
     // La wsdlLocation es opcional si el servidor ya la conoce.
     @WebServiceRef(wsdlLocation = "https://env-3816318.web.elasticloud.uy/ws/dnic.wsdl")
     private DnicPortService service;
 
     // 2. Inyección de la contraseña de la entidad
-    // Asumimos que tienes una propiedad de configuración o una variable de entorno inyectada.
-    // En Jakarta EE, esto podría hacerse con @Inject o un mecanismo de MicroProfile Config.
-    // Usaremos un placeholder simple aquí, ya que el mecanismo exacto depende del servidor.
     private static final String PASSWORD_ENTIDAD = "hcen-uy-pwd-secreta";
     private static final String ORGANIZACION = "HCEN-UY"; // Asumiendo un valor estático
     private static final String TIPO_DOCUMENTO = "CI"; // Asumiendo Cédula de Identidad

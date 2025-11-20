@@ -119,6 +119,18 @@ public class CallbackServlet extends HttpServlet {
             if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) {
                 return;
             }
+            if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) return;
+
+//            UsuarioServicioSalud usuario = new UsuarioServicioSalud();
+//            usuario.setSub(sub);
+//            usuario.setNombre(nombre);
+//            usuario.setApellido(apellido);
+//            usuario.setEmail(email);
+//            usuario.setCedulaIdentidad(cedulaIdentidad);
+//            UsuarioServicioSalud guardado = usuarioDAO.guardar(usuario);
+//            if (guardado == null) {
+//                guardado = usuarioDAO.buscarPorSub(sub);
+//            }
 
             if ("admin".equalsIgnoreCase(loginType)) {
                  //Verificar si es un admin registrado por CI

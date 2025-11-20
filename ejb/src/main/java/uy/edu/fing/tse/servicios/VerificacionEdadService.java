@@ -3,7 +3,7 @@ package uy.edu.fing.tse.servicios;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import uy.edu.fing.tse.client.PDIClient;
-import uy.edu.fing.tse.client.Persona;
+import uy.edu.fing.tse.client.dnic.Persona;
 import uy.edu.fing.tse.exception.PDIClientException;
 
 import java.time.LocalDate;
