@@ -42,18 +42,13 @@ public class MobileAuthService {
         if (usuario == null) {
             usuario = new UsuarioServicioSalud();
             usuario.setSub(sub);
-            usuario.setEmail(email);
-            usuario.setNombre(nombre);
-            usuario.setApellido(apellido);
-            usuario.setCedulaIdentidad(ci);
             usuario.setActivo(true);
             esNuevo = true;
-        } else {
-            usuario.setEmail(email);
-            usuario.setNombre(nombre);
-            usuario.setApellido(apellido);
-            usuario.setCedulaIdentidad(ci);
         }
+        usuario.setEmail(email);
+        usuario.setNombre(nombre);
+        usuario.setApellido(apellido);
+        usuario.setCedulaIdentidad(ci);
 
         usuarioDAO.guardar(usuario);
 
