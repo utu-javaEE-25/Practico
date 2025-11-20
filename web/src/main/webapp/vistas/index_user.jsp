@@ -102,7 +102,7 @@
         <i class="bi bi-shield-lock"></i>
         <h5 class="card-title">Gestión de políticas de acceso</h5>
         <p class="card-text text-muted">Administre quién puede acceder a su historia clínica y configure permisos.</p>
-        <a href="#" class="btn btn-primary">Administrar</a>
+        <a href="${pageContext.request.contextPath}/politicas" class="btn btn-primary">Administrar</a>
     </div>
 
     <div class="card p-4">
