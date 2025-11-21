@@ -10,7 +10,7 @@ import uy.edu.fing.tse.api.PrestadorSaludServiceLocal;
 import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
 
-@Stateless
+@Stateless 
 public class PrestadorSaludServiceBean implements PrestadorSaludServiceLocal {
 
     @EJB

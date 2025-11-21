@@ -94,7 +94,8 @@
                                         del prestador <strong>${empty prestadorNombre ? 'Prestador desconocido' : prestadorNombre}</strong>
                                         solicita acceso a su documento.
                                     </p>
-                                    <small class="text-muted">Motivo: "${solicitud.motivo}"</small>
+                                    <small class="text-muted d-block">Motivo: "${solicitud.motivo}"</small>
+                                    <small class="text-muted d-block">Solicitud realizada el ${empty solicitud.fechaSolicitudFormateada ? 'Fecha no disponible' : solicitud.fechaSolicitudFormateada}</small>
                                 </div>
                                 <form method="post" action="${pageContext.request.contextPath}/notificaciones" class="d-flex align-items-center gap-2 mt-2 mt-md-0">
                                     <input type="hidden" name="solicitudId" value="${solicitud.id}" />
