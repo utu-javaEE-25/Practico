@@ -135,5 +135,39 @@
     <br>
     <small><%= email %></small>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    };
+
+    document.querySelectorAll(".table-container table tbody tr").forEach(row => {
+        const fechaTd = row.cells[0];
+        if (!fechaTd) return;
+
+        let text = fechaTd.innerText.trim();
+
+        // Si viene con microsegundos, quitarlos
+        if (text.includes(".")) {
+            text = text.split(".")[0];
+        }
+
+        // Si viene con espacio en vez de T → convertirlo a formato ISO válido
+        if (text.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
+            text = text.replace(" ", "T");
+        }
+
+        const fecha = new Date(text);
+
+        if (!isNaN(fecha.getTime())) {
+            fechaTd.innerText = fecha.toLocaleString("es-UY", options);
+        }
+    });
+});
+</script>
 </body>
 </html>

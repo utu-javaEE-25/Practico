@@ -138,5 +138,34 @@
     <br>
     <small><%= email %></small>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    };
+
+    document.querySelectorAll(".table-container table tbody tr").forEach(row => {
+        const fechaTd = row.cells[1];
+
+        if (!fechaTd) return;
+
+        const text = fechaTd.innerText.trim();
+
+        // Detectar formato ISO
+        if (/^\d{4}-\d{2}-\d{2}T/.test(text)) {
+            const limpio = text.split(".")[0]; // quitar microsegundos
+            const fecha = new Date(limpio);
+
+            if (!isNaN(fecha.getTime())) {
+                fechaTd.innerText = fecha.toLocaleString("es-UY", options);
+            }
+        }
+    });
+});
+</script>
 </body>
 </html>

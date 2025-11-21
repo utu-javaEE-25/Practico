@@ -8,17 +8,70 @@
     <title>Politicas de Acceso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .navbar {
+            background-color: #0d6efd;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .welcome {
+            color: white;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.6rem;
+            color: white !important;
+        }
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 3rem;
+        }
+        .table-container {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            max-height: calc(6 * 3.5rem + 3.5rem);
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body class="bg-light">
+    <%
+    String nombre = (String) session.getAttribute("nombre");
+    String apellido = (String) session.getAttribute("apellido");
+    String email = (String) session.getAttribute("email");
+
+    if (nombre == null) {
+        // Si no hay sesión, redirige al home
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        return;
+    }
+%>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/vistas/index_user.jsp">HCEN</a>
+        <div class="d-flex align-items-center ms-auto">
+            <span class="welcome">Bienvenido, <%= nombre %></span>
+            <a href="${pageContext.request.contextPath}/vistas/index_user.jsp" class="btn btn-outline-light btn-sm me-2">
+                <i class="bi bi-house-door"></i> Inicio
+            </a>
+            <a href="${pageContext.request.contextPath}/logout?login_type=usuario" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+            </a>
+        </div>
+    </div>
+</nav>
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h4 mb-1">Gestion de politicas de acceso</h1>
-            <p class="text-muted mb-0">Autorice a tenants o profesionales para acceder a sus documentos.</p>
+            <p class="text-muted mb-0">Autorice a Clinicas o Profesionales de la salud para acceder a sus documentos.</p>
         </div>
-        <a href="${pageContext.request.contextPath}/vistas/index_user.jsp" class="btn btn-outline-secondary btn-sm">
-            Volver al portal
-        </a>
     </div>
 
     <c:if test="${not empty successMessage}">
@@ -35,7 +88,7 @@
         <div class="card-body">
             <form method="post" action="${pageContext.request.contextPath}/politicas" class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Tenant solicitante *</label>
+                    <label class="form-label">Clinica solicitante *</label>
                     <select name="tenantId" class="form-select" required>
                         <option value="">Seleccione...</option>
                         <c:forEach var="p" items="${prestadores}">
@@ -78,68 +131,105 @@
             <h2 class="h6 mb-0">Politicas vigentes</h2>
         </div>
         <div class="card-body">
-            <c:choose>
-                <c:when test="${not empty politicas}">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Tenant</th>
-                                    <th>Profesional</th>
-                                    <th>Documento</th>
-                                    <th>Desde</th>
-                                    <th>Hasta</th>
-                                    <th>Accion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="p" items="${politicas}">
+            <div class="table-container">
+                <c:choose>
+                    <c:when test="${not empty politicas}">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>
-                                            <c:set var="prestador" value="${prestadoresMapa[p.tenantId]}"/>
-                                            <c:choose>
-                                                <c:when test="${prestador != null}">${prestador.nombre} (${prestador.nombreSchema})</c:when>
-                                                <c:otherwise>Tenant ${p.tenantId}</c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${p.idProfesionalAutorizado != null}">ID ${p.idProfesionalAutorizado}</c:when>
-                                                <c:otherwise>Todos los profesionales</c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${p.docMetadataId != null}">Doc #${p.docMetadataId}</c:when>
-                                                <c:otherwise>Todos los documentos</c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td><c:out value="${p.ventanaDesde}"/></td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${p.ventanaHasta != null}"><c:out value="${p.ventanaHasta}"/></c:when>
-                                                <c:otherwise>Sin vencimiento</c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <form method="post" action="${pageContext.request.contextPath}/politicas" class="d-inline">
-                                                <input type="hidden" name="action" value="delete">
-                                                <input type="hidden" name="politicaId" value="${p.id}">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm">Revocar</button>
-                                            </form>
-                                        </td>
+                                        <th>Clinica</th>
+                                        <th>Profesional</th>
+                                        <th>Documento</th>
+                                        <th>Desde</th>
+                                        <th>Hasta</th>
+                                        <th>Accion</th>
                                     </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <p class="text-muted mb-0">No tiene politicas registradas.</p>
-                </c:otherwise>
-            </c:choose>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="p" items="${politicas}">
+                                        <tr>
+                                            <td>
+                                                <c:set var="prestador" value="${prestadoresMapa[p.tenantId]}"/>
+                                                <c:choose>
+                                                    <c:when test="${prestador != null}">${prestador.nombre} (${prestador.nombreSchema})</c:when>
+                                                    <c:otherwise>Tenant ${p.tenantId}</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${p.idProfesionalAutorizado != null}">ID ${p.idProfesionalAutorizado}</c:when>
+                                                    <c:otherwise>Todos los profesionales</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${p.docMetadataId != null}">Doc #${p.docMetadataId}</c:when>
+                                                    <c:otherwise>Todos los documentos</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td><c:out value="${p.ventanaDesde}"/></td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${p.ventanaHasta != null}"><c:out value="${p.ventanaHasta}"/></c:when>
+                                                    <c:otherwise>Sin vencimiento</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <form method="post" action="${pageContext.request.contextPath}/politicas" class="d-inline">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <input type="hidden" name="politicaId" value="${p.id}">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">Revocar</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="text-muted mb-0">No tiene politicas registradas.</p>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
     </div>
 </div>
+<div class="footer">
+    &copy; 2025 HCEN - Taller de Sistemas Empresariales
+    <br>
+    <small><%= email %></small>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const options = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    };
+
+    document.querySelectorAll("table tbody tr").forEach(row => {
+        const desde = row.cells[3];
+        const hasta = row.cells[4];
+
+        [desde, hasta].forEach(td => {
+            if (!td) return;
+
+            const text = td.innerText.trim();
+            if (/^\d{4}-\d{2}-\d{2}T/.test(text)) {
+                const limpio = text.split(".")[0]; // sacar microsegundos
+                const fecha = new Date(limpio);
+
+                if (!isNaN(fecha.getTime())) {
+                    td.innerText = fecha.toLocaleString("es-UY", options);
+                }
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>
