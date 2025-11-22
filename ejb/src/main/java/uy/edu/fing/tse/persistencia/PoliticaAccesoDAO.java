@@ -6,6 +6,8 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import uy.edu.fing.tse.entidades.PoliticaAcceso;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Stateless
 public class PoliticaAccesoDAO {
@@ -15,6 +17,31 @@ public class PoliticaAccesoDAO {
 
     public void guardar(PoliticaAcceso politica) {
         em.persist(politica);
+    }
+
+    public PoliticaAcceso findById(Long politicaId) {
+        if (politicaId == null) {
+            return null;
+        }
+        return em.find(PoliticaAcceso.class, politicaId);
+    }
+
+    public void eliminar(Long politicaId) {
+        PoliticaAcceso existente = politicaId != null ? em.find(PoliticaAcceso.class, politicaId) : null;
+        if (existente != null) {
+            em.remove(existente);
+        }
+    }
+
+    public List<PoliticaAcceso> listarPorUsuario(Long userId) {
+        if (userId == null) {
+            return Collections.emptyList();
+        }
+        return em.createQuery(
+                "SELECT p FROM PoliticaAcceso p WHERE p.userId = :userId ORDER BY p.ventanaHasta DESC, p.ventanaDesde DESC, p.id DESC",
+                PoliticaAcceso.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
     public PoliticaAcceso findPoliticaActiva(Long userId, Long tenantId, Long idProfesional, Long docMetadataId) {

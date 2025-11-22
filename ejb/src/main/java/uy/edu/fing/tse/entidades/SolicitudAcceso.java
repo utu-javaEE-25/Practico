@@ -1,6 +1,7 @@
 package uy.edu.fing.tse.entidades;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,6 +50,12 @@ public class SolicitudAcceso {
     public String getMotivo() { return motivo;}
     public String getEstado() {  return estado;}
     public LocalDateTime getFechaSolicitud() {return fechaSolicitud;}
+    public String getFechaSolicitudFormateada() {
+        if (fechaSolicitud == null) {
+            return "";
+        }
+        return fechaSolicitud.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
     public void setId(Long id) {this.id = id;}
     public void setRequesterTenantId(Long requesterTenantId) {this.requesterTenantId = requesterTenantId;}
     public void setTargetUserId(Long targetUserId) {this.targetUserId = targetUserId;}

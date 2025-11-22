@@ -88,15 +88,21 @@
                         <c:forEach var="solicitud" items="${solicitudesPendientes}">
                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 <div>
-                                    <p class="mb-1">El profesional <strong>${solicitud.nombreProfesionalSolicitante}</strong> del prestador <strong>(Nombre Prestador Aquí)</strong> solicita acceso a su documento.</p>
-                                    <small class="text-muted">Motivo: "${solicitud.motivo}"</small>
+                                    <c:set var="prestadorNombre" value="${prestadoresPorId[solicitud.requesterTenantId]}" />
+                                    <p class="mb-1">
+                                        El profesional <strong>${solicitud.nombreProfesionalSolicitante}</strong>
+                                        del prestador <strong>${empty prestadorNombre ? 'Prestador desconocido' : prestadorNombre}</strong>
+                                        solicita acceso a su documento.
+                                    </p>
+                                    <small class="text-muted d-block">Motivo: "${solicitud.motivo}"</small>
+                                    <small class="text-muted d-block">Solicitud realizada el ${empty solicitud.fechaSolicitudFormateada ? 'Fecha no disponible' : solicitud.fechaSolicitudFormateada}</small>
                                 </div>
                                 <form method="post" action="${pageContext.request.contextPath}/notificaciones" class="d-flex align-items-center gap-2 mt-2 mt-md-0">
                                     <input type="hidden" name="solicitudId" value="${solicitud.id}" />
                                     <select name="diasVigencia" class="form-select form-select-sm" style="width: auto;">
-                                        <option value="1">Permitir por 1 día</option>
-                                        <option value="7" selected>Permitir por 7 días</option>
-                                        <option value="30">Permitir por 30 días</option>
+                                        <option value="1">Permitir por 1 d&iacute;a</option>
+                                        <option value="7" selected>Permitir por 7 d&iacute;as</option>
+                                        <option value="30">Permitir por 30 d&iacute;as</option>
                                     </select>
                                     <button type="submit" class="btn btn-success btn-sm">Aprobar</button>
                                 </form>
