@@ -58,9 +58,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Bean Validation Implementation
-             Provides portable constraints such as @Email
-             Hibernate Validator is shipped in WildFly / JBoss EAP -->
         <!-- Import the JPA API, we use provided scope as the API is included in WildFly / JBoss EAP -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
@@ -68,19 +65,14 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Optional, but highly recommended -->
-        <!-- Arquillian allows you to test enterprise code such as EJBs and
-            Transactional(JTA) JPA from JUnit/TestNG -->
+        <!-- Arquillian for container tests -->
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- Declare the APIs we depend on and need for compilation. All of
-            them are provided by WildFly / JBoss EAP -->
-
-        <!-- Import the EJB API, we use provided scope as the API is included in WildFly / JBoss EAP -->
+        <!-- EJB / Jakarta EE APIs provided by the server -->
         <dependency>
             <groupId>jakarta.ejb</groupId>
             <artifactId>jakarta.ejb-api</artifactId>
@@ -103,7 +95,8 @@
             <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
-        
+
+        <!-- Flyway + PostgreSQL -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -116,6 +109,7 @@
             <version>42.7.3</version>
         </dependency>
 
+        <!-- JWT (para otras partes del sistema) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -135,20 +129,21 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-        
+
+        <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.15.2</version>
         </dependency>
 
-        <!--Firebase-->
+        <!-- Firebase -->
         <dependency>
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
@@ -159,6 +154,27 @@
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>1.37.1</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- JOSE4J para validación OIDC / JWT -->
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>0.9.3</version>
+        </dependency>
+
+        <!-- org.json para manejar claims en JSON -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20231013</version>
+        </dependency>
+
+        <!-- Jakarta JSON API (opcional, soporte JSON-P) -->
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.0.1</version>
         </dependency>
 
     </dependencies>

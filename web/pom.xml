@@ -44,13 +44,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Dependency on the EJB module so we can use it's services if needed -->
+        <!-- Dependency on the EJB module so we can use its services and DTOs -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Laboratorio-ejb</artifactId>
-            <type>ejb</type>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <type>ejb</type>
         </dependency>
 
         <!-- Import the JSF API, we use provided scope as the API is included in WildFly / JBoss EAP -->
@@ -87,6 +86,7 @@
             <artifactId>jakarta.ejb-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <!-- Required for e.g. "javax.annotation.PostConstruct" -->
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -129,7 +129,6 @@
             <version>20250517</version>
         </dependency>
 
-        
     </dependencies>
 
     <build>
