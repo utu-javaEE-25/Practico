@@ -16,7 +16,7 @@ public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String CLIENT_ID = "890192";
+    String clientId = System.getProperty("CLIENT_ID");
     private static final String AUTH_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize";
     private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
     //private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
@@ -34,7 +34,7 @@ public class LoginServlet extends HttpServlet {
         String scope = "openid email profile personal_info document";
 
         String redirectUrl = AUTH_ENDPOINT + "?" +
-                "client_id=" + URLEncoder.encode(CLIENT_ID, StandardCharsets.UTF_8) +
+                "client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8) +
                 "&redirect_uri=" + URLEncoder.encode(REDIRECT_URI, StandardCharsets.UTF_8) +
                 "&response_type=code" +
                 "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8) +
