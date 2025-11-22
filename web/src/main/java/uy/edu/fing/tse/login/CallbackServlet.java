@@ -121,17 +121,6 @@ public class CallbackServlet extends HttpServlet {
             }
             if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) return;
 
-//            UsuarioServicioSalud usuario = new UsuarioServicioSalud();
-//            usuario.setSub(sub);
-//            usuario.setNombre(nombre);
-//            usuario.setApellido(apellido);
-//            usuario.setEmail(email);
-//            usuario.setCedulaIdentidad(cedulaIdentidad);
-//            UsuarioServicioSalud guardado = usuarioDAO.guardar(usuario);
-//            if (guardado == null) {
-//                guardado = usuarioDAO.buscarPorSub(sub);
-//            }
-
             if ("admin".equalsIgnoreCase(loginType)) {
                  //Verificar si es un admin registrado por CI
                 boolean esAdmin = adminService != null && adminService.esAdminPorCi(cedulaIdentidad);
@@ -174,7 +163,48 @@ public class CallbackServlet extends HttpServlet {
                 if (guardado != null) {
                     session.setAttribute("usuario_id", guardado.getId());
                 }
-                resp.sendRedirect(req.getContextPath() + "/vistas/index_user.jsp");
+
+                Boolean esMobile = (Boolean) session.getAttribute("es_mobile_login");
+
+                if (Boolean.TRUE.equals(esMobile)) {
+                    // 1. Limpieza
+                    session.removeAttribute("es_mobile_login");
+                    String sessionId = session.getId();
+                    
+                    // 2. Tu URL de Expo
+                    String deepLink = "hcenapp//?jsessionid=" + sessionId;
+                    
+                    System.out.println("--- MOBILE: Redirigiendo a: " + deepLink);
+
+                    // 3. EN LUGAR DE sendRedirect, devolvemos HTML
+                    resp.setContentType("text/html;charset=UTF-8");
+                    var out = resp.getWriter();
+                    
+                    out.println("<!DOCTYPE html>");
+                    out.println("<html>");
+                    out.println("<head>");
+                    out.println("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
+                    out.println("<title>Volviendo a la App</title>");
+                    out.println("</head>");
+                    out.println("<body style='text-align:center; font-family:sans-serif; padding-top:40px;'>");
+                    out.println("<h2>Login Exitoso</h2>");
+                    out.println("<p>Si no vuelves automáticamente, pulsa el botón:</p>");
+                    
+                    // Botón Grande y Azul
+                    out.println("<a href='" + deepLink + "' style='display:inline-block; background:#007bff; color:white; padding:15px 25px; text-decoration:none; border-radius:8px; font-size:18px; margin-top:20px;'>Volver a la App</a>");
+                    
+                    // Script para intentar hacerlo automático
+                    out.println("<script>window.location.href='" + deepLink + "';</script>");
+                    
+                    out.println("</body>");
+                    out.println("</html>");
+                    
+                    return; // IMPORTANTE: Cortar aquí
+                
+                } else {
+                    // --- CASO WEB ---
+                    resp.sendRedirect(req.getContextPath() + "/vistas/index_user.jsp");
+                }
             }
 
         } catch (InterruptedException e) {
@@ -188,6 +218,7 @@ public class CallbackServlet extends HttpServlet {
         }
     }
 
+    
     private boolean verificarEsMayorDeEdad(HttpServletRequest req, HttpServletResponse resp, String cedulaIdentidad) {
         try {
             if (!verificacionEdadService.esMayorDeEdad(cedulaIdentidad)) {

@@ -15,7 +15,9 @@ import uy.edu.fing.tse.entidades.PrestadorSalud;
 import uy.edu.fing.tse.persistencia.DocumentoClinicoMetadataDAO;
 import uy.edu.fing.tse.servicios.AccesoNoAutorizadoException;
 import uy.edu.fing.tse.api.PrestadorSaludPerLocal;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.core.Context;
 
 import java.util.List;
 
@@ -72,4 +74,36 @@ public class HistoriaClinicaResource {
             return Response.serverError().entity("Error interno al procesar la solicitud.").build();
         }
     }
+
+    @GET
+    @Path("/mi-historia") // <--- ESTA ES LA RUTA QUE FALTA
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerMiHistoriaClinica(@Context HttpServletRequest request) {
+        // 1. Obtener la sesión (la cookie que manda el celular)
+        HttpSession session = request.getSession(false);
+
+        // 2. Validar que hay sesión
+        if (session == null || session.getAttribute("usuario_id") == null) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                           .entity("{\"error\": \"No hay sesión activa. Haga login nuevamente.\"}")
+                           .build();
+        }
+
+        try {
+            // 3. Sacar el ID del usuario que guardamos en el CallbackServlet
+            Long usuarioId = (Long) session.getAttribute("usuario_id");
+
+            // 4. Consultar la historia de ESE usuario
+            List<DocumentoMetadataDTO> historia = historiaService.getHistoriaMetadata(usuarioId);
+
+            return Response.ok(historia).build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError()
+                           .entity("{\"error\": \"" + e.getMessage() + "\"}")
+                           .build();
+        }
+    }
+
 }

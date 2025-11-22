@@ -26,11 +26,17 @@ public class LoginServlet extends HttpServlet {
         String nonce = UUID.randomUUID().toString();
         String type = req.getParameter("type");
 
+        String isMobile = req.getParameter("mobile");
+
         HttpSession session = req.getSession(true);
         session.setAttribute("oauth_state", state);
         session.setAttribute("oauth_nonce", nonce);
         session.setAttribute("login_type", type != null ? type : "user");
 
+        if ("true".equalsIgnoreCase(isMobile)) {
+            session.setAttribute("es_mobile_login", true);//MOBILE
+        }
+        
         String scope = "openid email profile personal_info document";
 
         String redirectUrl = AUTH_ENDPOINT + "?" +
