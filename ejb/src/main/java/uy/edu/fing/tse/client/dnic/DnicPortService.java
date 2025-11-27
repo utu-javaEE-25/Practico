@@ -32,7 +32,7 @@ public class DnicPortService extends Service {
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(DnicPortService.class.getName())
                 .log(java.util.logging.Level.INFO,
-                     "Can not initialize the default wsdl from {0}", "https://env-3816318.web.elasticloud.uy/ws/dnic.wsdl");
+                     "Can not initialize the default wsdl from {0}", "http://env-3816318.web.elasticloud.uy/ws/dnic.wsdl");
         }
         WSDL_LOCATION = url;
     }
