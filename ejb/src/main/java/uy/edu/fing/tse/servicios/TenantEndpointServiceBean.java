@@ -118,8 +118,8 @@ public class TenantEndpointServiceBean implements TenantEndpointServiceLocal {
             throw new IllegalArgumentException("La URI base no tiene un formato valido.");
         }
 
-        if (!valor.endsWith("/")) {
-            valor = valor + "/";
+        while (valor.endsWith("/")) {
+            valor = valor.substring(0, valor.length() - 1);
         }
         return valor;
     }
