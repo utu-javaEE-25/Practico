@@ -9,6 +9,10 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import org.json.JSONObject;
 
 import jakarta.ejb.EJB;
@@ -35,8 +39,14 @@ public class CallbackServlet extends HttpServlet {
     String clientSecret = System.getProperty("CLIENT_SECRET");
     private static final String TOKEN_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/token";
 
-    private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
-    //private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
+    // private static final String REDIRECT_URI
+    // ="https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
+    private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
+
+    private static final String LOGOUT_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/logout";
+    private static final String POST_LOGOUT_REDIRECT_URI = "http://localhost:8080/Laboratorio/logout";
+    // private static final String POST_LOGOUT_REDIRECT_URI =
+    // "https://hcenuy.web.elasticloud.uy/Laboratorio/logout";
 
     @EJB
     private UsuarioDAO usuarioDAO;
@@ -48,13 +58,13 @@ public class CallbackServlet extends HttpServlet {
     private VerificacionEdadService verificacionEdadService;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html;charset=UTF-8");
 
         String code = req.getParameter("code");
         if (code == null || code.isBlank()) {
             registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-            resp.getWriter().println("<p>Error: missing authorization code.</p>");
+            forwardError(req, resp, "Error", "Missing authorization code.", null);
             return;
         }
 
@@ -62,14 +72,14 @@ public class CallbackServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
         if (session == null) {
             registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-            resp.getWriter().println("<p>Error: session not found when validating state.</p>");
+            forwardError(req, resp, "Error", "Session not found.", null);
             return;
         }
 
         String originalState = (String) session.getAttribute("oauth_state");
-        if (!Objects.equals(returnedState, originalState)) {
+        if (!returnedState.equals(originalState)) {
             registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-            resp.getWriter().println("<p>Error: state parameter does not match the stored value.</p>");
+            forwardError(req, resp, "Error", "State parameter does not match the stored value.", null);
             return;
         }
 
@@ -96,7 +106,8 @@ public class CallbackServlet extends HttpServlet {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
                 registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-                resp.getWriter().println("<pre>OIDC token endpoint error (" + response.statusCode() + "):\n" + response.body() + "</pre>");
+                forwardError(req, resp, "Error", "OIDC token endpoint error (" + response.statusCode() + ")",
+                        response.body());
                 return;
             }
 
@@ -104,7 +115,7 @@ public class CallbackServlet extends HttpServlet {
             String idToken = json.optString("id_token", null);
             if (idToken == null) {
                 registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-                resp.getWriter().println("<p>Error: the token endpoint response is missing id_token.</p>");
+                forwardError(req, resp, "Error", "The token endpoint response is missing id_token.", null);
                 return;
             }
 
@@ -115,17 +126,17 @@ public class CallbackServlet extends HttpServlet {
             String cedulaIdentidad = claims.optString("numero_documento");
             String sub = claims.optString("sub");
 
-            //Verificar si es mayor de edad
-            if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) {
+            // Verificar si es mayor de edad
+            if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad, idToken)) {
                 return;
             }
-            if (verificarEsMayorDeEdad(req, resp, cedulaIdentidad)) return;
 
             if ("admin".equalsIgnoreCase(loginType)) {
                  //Verificar si es un admin registrado por CI
                 boolean esAdmin = adminService != null && adminService.esAdminPorCi(cedulaIdentidad);
                 if (!esAdmin) {
-                    resp.getWriter().println("<p>Acceso denegado: el usuario no es un administrador registrado.</p>");
+                    registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
+                    forwardError(req, resp, "Acceso denegado", "El usuario no es un administrador registrado.", null);
                     return;
                 }
 
@@ -170,16 +181,16 @@ public class CallbackServlet extends HttpServlet {
                     // 1. Limpieza
                     session.removeAttribute("es_mobile_login");
                     String sessionId = session.getId();
-                    
+
                     // 2. Tu URL de Expo
                     String deepLink = "hcenapp://?jsessionid=" + sessionId;
-                    
+
                     System.out.println("--- MOBILE: Redirigiendo a: " + deepLink);
 
                     // 3. EN LUGAR DE sendRedirect, devolvemos HTML
                     resp.setContentType("text/html;charset=UTF-8");
                     var out = resp.getWriter();
-                    
+
                     out.println("<!DOCTYPE html>");
                     out.println("<html>");
                     out.println("<head>");
@@ -189,18 +200,18 @@ public class CallbackServlet extends HttpServlet {
                     out.println("<body style='text-align:center; font-family:sans-serif; padding-top:40px;'>");
                     out.println("<h2>Login Exitoso</h2>");
                     out.println("<p>Si no vuelves automáticamente, pulsa el botón:</p>");
-                    
+
                     // Botón Grande y Azul
                     out.println("<a href='" + deepLink + "' style='display:inline-block; background:#007bff; color:white; padding:15px 25px; text-decoration:none; border-radius:8px; font-size:18px; margin-top:20px;'>Volver a la App</a>");
-                    
+
                     // Script para intentar hacerlo automático
                     out.println("<script>window.location.href='" + deepLink + "';</script>");
-                    
+
                     out.println("</body>");
                     out.println("</html>");
-                    
+
                     return; // IMPORTANTE: Cortar aquí
-                
+
                 } else {
                     // --- CASO WEB ---
                     resp.sendRedirect(req.getContextPath() + "/vistas/index_user.jsp");
@@ -210,27 +221,48 @@ public class CallbackServlet extends HttpServlet {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-            resp.getWriter().println("<p>Callback aborted while contacting the identity provider.</p>");
+            forwardError(req, resp, "Error", "Callback aborted while contacting the identity provider.",
+                    e.getMessage());
         } catch (Exception e) {
             registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-            resp.getWriter().println("<pre>Error processing callback:\n" + e.getMessage() + "</pre>");
-            e.printStackTrace(resp.getWriter());
+            forwardError(req, resp, "Error processing callback", "An internal error occurred.", e.getMessage());
         }
     }
 
-    
-    private boolean verificarEsMayorDeEdad(HttpServletRequest req, HttpServletResponse resp, String cedulaIdentidad) {
+    private boolean verificarEsMayorDeEdad(HttpServletRequest req, HttpServletResponse resp, String cedulaIdentidad,
+            String idToken) throws ServletException, IOException {
         try {
             if (!verificacionEdadService.esMayorDeEdad(cedulaIdentidad)) {
-                //pintar un error y retornar al login
                 registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
-                resp.getWriter().println("<p>Error: El usuario debe ser mayor de edad para acceder al sistema.</p>");
+
+                // Construir URL de logout externo
+                String logoutUrl = l
+                        + "?id_token_hint=" + URLEncoder.encode(idToken, StandardCharsets.UTF_8)
+                        + "&post_logout_redirect_uri="
+                        + URLEncoder.encode(POST_LOGOUT_REDIRECT_URI, StandardCharsets.UTF_8)
+                        + "&state=logout_done";
+
+                req.setAttribute("returnUrl", logoutUrl);
+                forwardError(req, resp, "Acceso denegado", "El usuario debe ser mayor de edad para acceder al sistema.",
+                        "No está permitido el acceso al sistema a menores de edad.");
                 return true;
             }
-        }catch (Exception e) {
-            //si hay un error en la verificacion de edad, se deja pasar al usuario
+        } catch (Exception e) {
+            // si hay un error en la verificacion de edad, se deja pasar al usuario
         }
         return false;
+    }
+
+    private void forwardError(HttpServletRequest req, HttpServletResponse resp, String title, String message,
+            String details) throws ServletException, IOException {
+        req.setAttribute("errorTitle", title);
+        req.setAttribute("errorMessage", message);
+        req.setAttribute("errorDetails", details);
+        if (req.getAttribute("returnUrl") == null) {
+            req.setAttribute("returnUrl", req.getContextPath() + "/");
+        }
+        RequestDispatcher rd = req.getRequestDispatcher("/vistas/error.jsp");
+        rd.forward(req, resp);
     }
 
     private void registrarLogin(HttpServletRequest req, Long recursoId, String resultado) {
@@ -242,4 +274,5 @@ public class CallbackServlet extends HttpServlet {
                 recursoId,
                 resultado);
     }
+
 }
