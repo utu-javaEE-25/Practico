@@ -18,8 +18,8 @@ public class LoginServlet extends HttpServlet {
 
     String clientId = System.getProperty("CLIENT_ID");
     private static final String AUTH_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize";
-    //private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
-    private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
+    private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
+    //private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String state = UUID.randomUUID().toString();

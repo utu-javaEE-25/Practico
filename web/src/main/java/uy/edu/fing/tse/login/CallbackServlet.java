@@ -1,26 +1,14 @@
 package uy.edu.fing.tse.login;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import org.json.JSONObject;
-
 import jakarta.ejb.EJB;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.json.JSONObject;
 import uy.edu.fing.tse.api.AdminGlobalServiceLocal;
 import uy.edu.fing.tse.api.AuditLogServiceLocal;
 import uy.edu.fing.tse.audit.AuditHelper;
@@ -29,6 +17,14 @@ import uy.edu.fing.tse.entidades.AdminHcen;
 import uy.edu.fing.tse.entidades.UsuarioServicioSalud;
 import uy.edu.fing.tse.persistencia.UsuarioDAO;
 import uy.edu.fing.tse.servicios.VerificacionEdadService;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/callback")
 public class CallbackServlet extends HttpServlet {
@@ -39,14 +35,12 @@ public class CallbackServlet extends HttpServlet {
     String clientSecret = System.getProperty("CLIENT_SECRET");
     private static final String TOKEN_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/token";
 
-    // private static final String REDIRECT_URI
-    // ="https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
-    private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
+    private static final String REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/callback";
+    //private static final String REDIRECT_URI = "http://localhost:8080/Laboratorio/callback";
 
     private static final String LOGOUT_ENDPOINT = "https://auth-testing.iduruguay.gub.uy/oidc/v1/logout";
-    private static final String POST_LOGOUT_REDIRECT_URI = "http://localhost:8080/Laboratorio/logout";
-    // private static final String POST_LOGOUT_REDIRECT_URI =
-    // "https://hcenuy.web.elasticloud.uy/Laboratorio/logout";
+    //private static final String POST_LOGOUT_REDIRECT_URI = "http://localhost:8080/Laboratorio/logout";
+    private static final String POST_LOGOUT_REDIRECT_URI = "https://hcenuy.web.elasticloud.uy/Laboratorio/logout";
 
     @EJB
     private UsuarioDAO usuarioDAO;
@@ -132,7 +126,7 @@ public class CallbackServlet extends HttpServlet {
             }
 
             if ("admin".equalsIgnoreCase(loginType)) {
-                 //Verificar si es un admin registrado por CI
+                //Verificar si es un admin registrado por CI
                 boolean esAdmin = adminService != null && adminService.esAdminPorCi(cedulaIdentidad);
                 if (!esAdmin) {
                     registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
@@ -230,13 +224,13 @@ public class CallbackServlet extends HttpServlet {
     }
 
     private boolean verificarEsMayorDeEdad(HttpServletRequest req, HttpServletResponse resp, String cedulaIdentidad,
-            String idToken) throws ServletException, IOException {
+                                           String idToken) throws ServletException, IOException {
         try {
             if (!verificacionEdadService.esMayorDeEdad(cedulaIdentidad)) {
                 registrarLogin(req, null, AuditLogConstants.Resultados.FAILURE);
 
                 // Construir URL de logout externo
-                String logoutUrl = l
+                String logoutUrl = LOGOUT_ENDPOINT
                         + "?id_token_hint=" + URLEncoder.encode(idToken, StandardCharsets.UTF_8)
                         + "&post_logout_redirect_uri="
                         + URLEncoder.encode(POST_LOGOUT_REDIRECT_URI, StandardCharsets.UTF_8)
@@ -254,7 +248,7 @@ public class CallbackServlet extends HttpServlet {
     }
 
     private void forwardError(HttpServletRequest req, HttpServletResponse resp, String title, String message,
-            String details) throws ServletException, IOException {
+                              String details) throws ServletException, IOException {
         req.setAttribute("errorTitle", title);
         req.setAttribute("errorMessage", message);
         req.setAttribute("errorDetails", details);
