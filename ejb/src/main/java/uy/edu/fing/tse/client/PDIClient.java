@@ -10,7 +10,7 @@ public class PDIClient {
 
     // 1. Inyección del servicio generado usando @WebServiceRef
     // La wsdlLocation es opcional si el servidor ya la conoce.
-    @WebServiceRef(wsdlLocation = "https://env-3816318.web.elasticloud.uy/ws/dnic.wsdl")
+    @WebServiceRef(wsdlLocation = "http://env-3816318.web.elasticloud.uy/ws/dnic.wsdl")
     private DnicPortService service;
 
     // 2. Inyección de la contraseña de la entidad

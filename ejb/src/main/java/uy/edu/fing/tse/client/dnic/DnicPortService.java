@@ -17,7 +17,7 @@ import java.net.URL;
  *
  */
 @WebServiceClient(name = "DnicPortService",
-                  wsdlLocation = "https://env-3816318.web.elasticloud.uy/ws/dnic.wsdl",
+                  wsdlLocation = "http://env-3816318.web.elasticloud.uy/ws/dnic.wsdl",
                   targetNamespace = "http://agesic.gub.uy/pdi/ws/dnic")
 public class DnicPortService extends Service {
 
@@ -28,11 +28,11 @@ public class DnicPortService extends Service {
     static {
         URL url = null;
         try {
-            url = URI.create("https://env-3816318.web.elasticloud.uy/ws/dnic.wsdl").toURL();
+            url = URI.create("http://env-3816318.web.elasticloud.uy/ws/dnic.wsdl").toURL();
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(DnicPortService.class.getName())
                 .log(java.util.logging.Level.INFO,
-                     "Can not initialize the default wsdl from {0}", "https://env-3816318.web.elasticloud.uy/ws/dnic.wsdl");
+                     "Can not initialize the default wsdl from {0}", "http://env-3816318.web.elasticloud.uy/ws/dnic.wsdl");
         }
         WSDL_LOCATION = url;
     }

@@ -172,7 +172,7 @@ public class CallbackServlet extends HttpServlet {
                     String sessionId = session.getId();
                     
                     // 2. Tu URL de Expo
-                    String deepLink = "hcenapp//?jsessionid=" + sessionId;
+                    String deepLink = "hcenapp://?jsessionid=" + sessionId;
                     
                     System.out.println("--- MOBILE: Redirigiendo a: " + deepLink);
 
