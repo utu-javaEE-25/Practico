@@ -29,8 +29,8 @@ public final class TokenValidator {
 
     private static final String JWKS_URI = "https://auth-testing.iduruguay.gub.uy/oidc/v1/jwks";
     private static final String EXPECTED_ISSUER = "https://auth-testing.iduruguay.gub.uy/oidc/v1";
-    private static final String CLIENT_ID = "890192";
-    private static final String CLIENT_SECRET = "457d52f181bf11804a3365b49ae4d29a2e03bbabe74997a2f510b179";
+    private static final String CLIENT_ID = System.getProperty("CLIENT_ID");
+    private static final String CLIENT_SECRET  = System.getProperty("CLIENT_SECRET");
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     private TokenValidator() {
@@ -50,7 +50,7 @@ public final class TokenValidator {
             JWSVerifier verifier = new RSASSAVerifier(publicKey);
             firmaValida = signedJWT.verify(verifier);
         } else if (JWSAlgorithm.HS256.equals(algorithm)) {
-            JWSVerifier verifier = new MACVerifier(CLIENT_SECRET.getBytes(StandardCharsets.UTF_8));
+            JWSVerifier verifier = new MACVerifier(CLIENT_SECRET .getBytes(StandardCharsets.UTF_8));
             firmaValida = signedJWT.verify(verifier);
         } else {
             throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
